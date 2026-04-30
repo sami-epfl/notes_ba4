@@ -6,7 +6,7 @@
 \usepackage{graphicx}
 
 \begin{document}
-\begin{multicols*}{3}
+\begin{multicols*}{4}
 
 \cheattitle{Intro To Machine Learning}{}{BA4}
 
@@ -35,6 +35,25 @@ For all $u,v\in V$, $0\le f(u,v)\le c(u,v)$.
 \begin{thm}[title=Flow conservation]
 For all $u\in V\setminus\{s,t\}$, $\sum_{v\in V} f(u,v) = \sum_{v\in V} f(v,u)$.
 \end{thm}
+
+\subsection{Maximum flow problem - Ford-Fulkerson method}
+
+\begin{prop}[title={Residual network $G_f=(V,E_f)$}]
+$\forall (u,v)\in E_f$, $c_f(u,v)$ is the residual capacity:
+\begin{itemize}
+    \item Additional flow possible (forward edge)
+    \item Flow removable (backward edge)
+\end{itemize}
+\end{prop}
+
+\begin{lstlisting}
+FORD-FULKERSON-METHOD(G, s, t)
+    initialize flow f to 0
+    while exists an augmenting path p in G_f
+        b = bottleneck(p)
+        augment flow along p by b
+    return f
+\end{lstlisting}
 
 % ============================================================
 % En haut c'est le plan du cours, il faut maintenant le remplir

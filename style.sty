@@ -57,9 +57,9 @@
 % ============================================================
 
 % ---------- Color palette -----------------------------------
-\definecolor{accent}{HTML}{1F4E79}      % deep blue
-\definecolor{accent2}{HTML}{0B6E4F}     % green
-\definecolor{accent3}{HTML}{B83227}     % red/warning
+\definecolor{blueColor}{HTML}{1F4E79}      % deep blue
+\definecolor{greenColor}{HTML}{0B6E4F}     % green
+\definecolor{redColor}{HTML}{B83227}     % red/warning
 \definecolor{soft}{HTML}{F2F2F2}        % light gray bg
 
 % ---------- Section headers ---------------------------------
@@ -68,7 +68,7 @@
 \renewcommand{\section}[1]{%
   \par\addvspace{4pt}%
   \refstepcounter{cheatsec}%
-  \noindent\colorbox{accent}{%
+  \noindent\colorbox{blueColor}{%
     \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
       \color{white}\small\bfseries\strut\thecheatsec\ \ #1%
     }%
@@ -77,12 +77,12 @@
 }
 
 \titleformat{\subsection}
-  {\normalfont\footnotesize\bfseries\color{accent}}
+  {\normalfont\footnotesize\bfseries\color{blueColor}}
   {\thesubsection}{0.4em}{}
 \titlespacing*{\subsection}{0pt}{3pt}{1pt}
 
 \titleformat{\subsubsection}
-  {\normalfont\footnotesize\itshape\color{accent2}}
+  {\normalfont\footnotesize\itshape\color{greenColor}}
   {}{0pt}{}
 \titlespacing*{\subsubsection}{0pt}{2pt}{0pt}
 
@@ -106,28 +106,36 @@
 \setlength{\columnseprule}{0.2pt}
 
 % ---------- Custom boxes ------------------------------------
-\newtcolorbox{defn}[1][]{
-  enhanced,breakable,colback=soft,colframe=accent,
+\newtcolorbox{prop}[1][]{
+  enhanced,breakable,colback=soft,colframe=blueColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
-  colbacktitle=accent,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=accent,boxrule=0pt,arc=0pt},
+  colbacktitle=blueColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=blueColor,boxrule=0pt,arc=0pt},
+  title=Prop,#1
+}
+\newtcolorbox{defn}[1][]{
+  enhanced,breakable,colback=greenColor!8,colframe=greenColor,
+  boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
+  fonttitle=\bfseries\footnotesize,coltitle=white,
+  colbacktitle=greenColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=greenColor,boxrule=0pt,arc=0pt},
   title=Def,#1
 }
 \newtcolorbox{thm}[1][]{
-  enhanced,breakable,colback=accent2!8,colframe=accent2,
+  enhanced,breakable,colback=redColor!8,colframe=redColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
-  colbacktitle=accent2,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=accent2,boxrule=0pt,arc=0pt},
+  colbacktitle=redColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=redColor,boxrule=0pt,arc=0pt},
   title=Thm,#1
 }
 \newtcolorbox{warn}[1][]{
-  enhanced,breakable,colback=accent3!8,colframe=accent3,
+  enhanced,breakable,colback=soft,colframe=blueColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
-  colbacktitle=accent3,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=accent3,boxrule=0pt,arc=0pt},
+  colbacktitle=blueColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=blueColor,boxrule=0pt,arc=0pt},
   title=!,#1
 }
 \newtcolorbox{ex}[1][]{
@@ -165,7 +173,7 @@
 
 % ---------- Listings (code blocks) --------------------------
 \lstset{
-  basicstyle=\ttfamily\scriptsize,
+  basicstyle=\ttfamily\small,
   breaklines=true,
   columns=fullflexible,
   keepspaces=true,
@@ -182,7 +190,7 @@
 \def\cheat@course{Cheat Sheet}
 \newcommand{\cheattitle}[3]{%
   \gdef\cheat@course{#1}%
-  \begin{tcolorbox}[colback=accent,colframe=accent,arc=1pt,
+  \begin{tcolorbox}[colback=blueColor,colframe=blueColor,arc=1pt,
     left=3pt,right=3pt,top=2pt,bottom=2pt,boxrule=0pt]
     \color{white}\bfseries\small #1%
     \hfill \color{white}\scriptsize #2\ \textbullet\ \ #3%
