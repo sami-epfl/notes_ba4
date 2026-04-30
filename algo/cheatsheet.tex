@@ -1,0 +1,351 @@
+\documentclass[8pt,a4paper,landscape]{extarticle}
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usepackage{style}
+\usepackage{graphicx}
+
+\begin{document}
+\begin{multicols*}{3}
+
+\cheattitle{Intro To Machine Learning}{}{BA4}
+
+% ============================================================
+%                       COURSE OUTLINE
+% ============================================================
+\section{Flow network}
+\subsection{Definition}
+\begin{center}
+    \includegraphics[width=\linewidth]{images/flow_network.png}
+\end{center}
+
+\begin{defn}[title=Formally]
+\begin{itemize}
+    \item Directed graph (DG): $G=(V,E)$
+    \item Each (u, v) has a capacity $c(u,v)>=0$
+    \item Source: $s\in V$, sink: $t\in V$
+    \item No antiparallel edges: if $(u,v)\in E$, then $(v,u)\not\in E$
+\end{itemize}
+\end{defn}
+
+It satisfies the following properties:
+\begin{thm}[title=Capacity constraint]
+For all $u,v\in V$, $0\le f(u,v)\le c(u,v)$.
+\end{thm}
+\begin{thm}[title=Flow conservation]
+For all $u\in V\setminus\{s,t\}$, $\sum_{v\in V} f(u,v) = \sum_{v\in V} f(v,u)$.
+\end{thm}
+
+% ============================================================
+% En haut c'est le plan du cours, il faut maintenant le remplir
+% avec les exemples du bas (à supprimer une fois rempli).
+% ============================================================
+
+\section{-----------------}
+
+\subsection{Key definiti2ons}
+\begin{defn}[title=Linear map]
+$T:V\to W$ is linear if $T(\alpha x+\beta y)=\alpha T(x)+\beta T(y)$
+for all $x,y\in V$, $\alpha,\beta\in\R$.
+\end{defn}
+
+\begin{thm}[title=Rank--nullity]
+For $T:V\to W$ with $\dim V<\infty$:
+\[ \dim\ker T + \dim\operatorname{im}T \;=\; \dim V. \]
+\end{thm}
+
+\subsection{Formulas to remember}
+\begin{itemize}
+  \item \kv{Quadratic}{$x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$}
+  \item \kv{Euler}{$e^{i\theta}=\cos\theta+i\sin\theta$}
+  \item \kv{Geom.\ sum}{$\sum_{k=0}^{n}r^k=\dfrac{1-r^{n+1}}{1-r}$, $r\neq 1$}
+  \item \kv{Taylor}{$f(x)=\sum_{k\ge0}\dfrac{f^{(k)}(a)}{k!}(x-a)^k$}
+\end{itemize}
+
+\begin{warn}[title=Pitfall]
+$\log(ab)=\log a+\log b$ \emph{only} when $a,b>0$.
+\end{warn}
+
+\subsection{Useful identities}
+\begin{align*}
+ \sin^2\theta+\cos^2\theta &= 1 \\
+ \cos(2\theta) &= \cos^2\theta-\sin^2\theta \\
+ \sin(2\theta) &= 2\sin\theta\cos\theta
+\end{align*}
+
+% ============================================================
+\section{Topic 2 --- Probability}
+
+\subsection{Basics}
+\begin{itemize}
+  \item $\PR(A\cup B)=\PR(A)+\PR(B)-\PR(A\cap B)$
+  \item $\PR(A\mid B)=\dfrac{\PR(A\cap B)}{\PR(B)}$
+  \item Bayes: $\PR(A\mid B)=\dfrac{\PR(B\mid A)\PR(A)}{\PR(B)}$
+\end{itemize}
+
+\subsection{Common distributions}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+Dist. & PMF/PDF & $\E[X]$ \\
+\midrule
+Bern$(p)$  & $p^x(1-p)^{1-x}$           & $p$ \\
+Bin$(n,p)$ & $\binom{n}{x}p^x(1-p)^{n-x}$ & $np$ \\
+Poiss$(\lambda)$ & $e^{-\lambda}\lambda^x/x!$ & $\lambda$ \\
+$\mathcal{N}(\mu,\sigma^2)$ & $\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$ & $\mu$ \\
+\bottomrule
+\end{tabularx}
+
+\begin{ex}[title=Worked]
+$X\sim \mathcal{N}(0,1)$. Then $\PR(|X|<1)\approx 0.6827$.
+\end{ex}
+
+% ============================================================
+\section{Topic 3 --- Algorithms}
+
+\subsection{Complexity cheat}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Op & Cost \\
+\midrule
+Sort (comparison) & $\Theta(n\log n)$ \\
+Hash lookup (avg) & $\Theta(1)$ \\
+BFS / DFS         & $\Theta(V+E)$ \\
+Dijkstra (heap)   & $\Theta((V+E)\log V)$ \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Code snippet}
+\begin{lstlisting}[language=Python]
+def bsearch(a, x):
+    lo, hi = 0, len(a)-1
+    while lo <= hi:
+        m = (lo+hi)//2
+        if a[m] == x: return m
+        if a[m] <  x: lo = m+1
+        else:         hi = m-1
+    return -1
+\end{lstlisting}
+
+% ============================================================
+\section{Quick reference}
+
+\textbf{Greek:} $\alpha\,\beta\,\gamma\,\delta\,\eps\,\zeta\,\eta\,\theta\,
+\iota\,\kappa\,\lambda\,\mu\,\nu\,\xi\,\pi\,\rho\,\sigma\,\tau\,\phi\,\chi\,\psi\,\omega$
+
+\textbf{Sets:} $\R\;\N\;\Z\;\Q\;\C$ \quad
+\textbf{Logic:} $\forall\;\exists\;\Rightarrow\;\Leftrightarrow\;\neg$
+
+\textbf{Derivatives:}
+$(\sin x)'=\cos x$,\ $(\cos x)'=-\sin x$,\ $(\ln x)'=1/x$,\
+$(e^x)'=e^x$,\ $(x^n)'=nx^{n-1}$.
+
+\textbf{Integrals:}
+$\int x^n\dd x=\tfrac{x^{n+1}}{n+1}$,\
+$\int \tfrac{1}{x}\dd x=\ln|x|$,\
+$\int e^x\dd x=e^x$.
+
+\section{-----------------}
+
+\subsection{Key definitions}
+\begin{defn}[title=Linear map]
+$T:V\to W$ is linear if $T(\alpha x+\beta y)=\alpha T(x)+\beta T(y)$
+for all $x,y\in V$, $\alpha,\beta\in\R$.
+\end{defn}
+
+\begin{thm}[title=Rank--nullity]
+For $T:V\to W$ with $\dim V<\infty$:
+\[ \dim\ker T + \dim\operatorname{im}T \;=\; \dim V. \]
+\end{thm}
+
+\subsection{Formulas to remember}
+\begin{itemize}
+  \item \kv{Quadratic}{$x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$}
+  \item \kv{Euler}{$e^{i\theta}=\cos\theta+i\sin\theta$}
+  \item \kv{Geom.\ sum}{$\sum_{k=0}^{n}r^k=\dfrac{1-r^{n+1}}{1-r}$, $r\neq 1$}
+  \item \kv{Taylor}{$f(x)=\sum_{k\ge0}\dfrac{f^{(k)}(a)}{k!}(x-a)^k$}
+\end{itemize}
+
+\begin{warn}[title=Pitfall]
+$\log(ab)=\log a+\log b$ \emph{only} when $a,b>0$.
+\end{warn}
+
+\subsection{Useful identities}
+\begin{align*}
+ \sin^2\theta+\cos^2\theta &= 1 \\
+ \cos(2\theta) &= \cos^2\theta-\sin^2\theta \\
+ \sin(2\theta) &= 2\sin\theta\cos\theta
+\end{align*}
+
+% ============================================================
+\section{Topic 2 --- Probability}
+
+\subsection{Basics}
+\begin{itemize}
+  \item $\PR(A\cup B)=\PR(A)+\PR(B)-\PR(A\cap B)$
+  \item $\PR(A\mid B)=\dfrac{\PR(A\cap B)}{\PR(B)}$
+  \item Bayes: $\PR(A\mid B)=\dfrac{\PR(B\mid A)\PR(A)}{\PR(B)}$
+\end{itemize}
+
+\subsection{Common distributions}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+Dist. & PMF/PDF & $\E[X]$ \\
+\midrule
+Bern$(p)$  & $p^x(1-p)^{1-x}$           & $p$ \\
+Bin$(n,p)$ & $\binom{n}{x}p^x(1-p)^{n-x}$ & $np$ \\
+Poiss$(\lambda)$ & $e^{-\lambda}\lambda^x/x!$ & $\lambda$ \\
+$\mathcal{N}(\mu,\sigma^2)$ & $\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$ & $\mu$ \\
+\bottomrule
+\end{tabularx}
+
+\begin{ex}[title=Worked]
+$X\sim \mathcal{N}(0,1)$. Then $\PR(|X|<1)\approx 0.6827$.
+\end{ex}
+
+% ============================================================
+\section{Topic 3 --- Algorithms}
+
+\subsection{Complexity cheat}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Op & Cost \\
+\midrule
+Sort (comparison) & $\Theta(n\log n)$ \\
+Hash lookup (avg) & $\Theta(1)$ \\
+BFS / DFS         & $\Theta(V+E)$ \\
+Dijkstra (heap)   & $\Theta((V+E)\log V)$ \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Code snippet}
+\begin{lstlisting}[language=Python]
+def bsearch(a, x):
+    lo, hi = 0, len(a)-1
+    while lo <= hi:
+        m = (lo+hi)//2
+        if a[m] == x: return m
+        if a[m] <  x: lo = m+1
+        else:         hi = m-1
+    return -1
+\end{lstlisting}
+
+% ============================================================
+\section{Quick reference}
+
+\textbf{Greek:} $\alpha\,\beta\,\gamma\,\delta\,\eps\,\zeta\,\eta\,\theta\,
+\iota\,\kappa\,\lambda\,\mu\,\nu\,\xi\,\pi\,\rho\,\sigma\,\tau\,\phi\,\chi\,\psi\,\omega$
+
+\textbf{Sets:} $\R\;\N\;\Z\;\Q\;\C$ \quad
+\textbf{Logic:} $\forall\;\exists\;\Rightarrow\;\Leftrightarrow\;\neg$
+
+\textbf{Derivatives:}
+$(\sin x)'=\cos x$,\ $(\cos x)'=-\sin x$,\ $(\ln x)'=1/x$,\
+$(e^x)'=e^x$,\ $(x^n)'=nx^{n-1}$.
+
+\textbf{Integrals:}
+$\int x^n\dd x=\tfrac{x^{n+1}}{n+1}$,\
+$\int \tfrac{1}{x}\dd x=\ln|x|$,\
+$\int e^x\dd x=e^x$.
+\section{-----------------}
+
+\begin{thm}[title=Rank--nullity]
+For $T:V\to W$ with $\dim V<\infty$:
+\[ \dim\ker T + \dim\operatorname{im}T \;=\; \dim V. \]
+\end{thm}
+
+\subsection{Formulas to remember}
+\begin{itemize}
+  \item \kv{Quadratic}{$x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$}
+  \item \kv{Euler}{$e^{i\theta}=\cos\theta+i\sin\theta$}
+  \item \kv{Geom.\ sum}{$\sum_{k=0}^{n}r^k=\dfrac{1-r^{n+1}}{1-r}$, $r\neq 1$}
+  \item \kv{Taylor}{$f(x)=\sum_{k\ge0}\dfrac{f^{(k)}(a)}{k!}(x-a)^k$}
+\end{itemize}
+
+\begin{warn}[title=Pitfall]
+$\log(ab)=\log a+\log b$ \emph{only} when $a,b>0$.
+\end{warn}
+
+\subsection{Useful identities}
+\begin{align*}
+ \sin^2\theta+\cos^2\theta &= 1 \\
+ \cos(2\theta) &= \cos^2\theta-\sin^2\theta \\
+ \sin(2\theta) &= 2\sin\theta\cos\theta
+\end{align*}
+
+% ============================================================
+\section{Topic 2 --- Probability}
+
+\subsection{Basics}
+\begin{itemize}
+  \item $\PR(A\cup B)=\PR(A)+\PR(B)-\PR(A\cap B)$
+  \item $\PR(A\mid B)=\dfrac{\PR(A\cap B)}{\PR(B)}$
+  \item Bayes: $\PR(A\mid B)=\dfrac{\PR(B\mid A)\PR(A)}{\PR(B)}$
+\end{itemize}
+
+\subsection{Common distributions}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+Dist. & PMF/PDF & $\E[X]$ \\
+\midrule
+Bern$(p)$  & $p^x(1-p)^{1-x}$           & $p$ \\
+Bin$(n,p)$ & $\binom{n}{x}p^x(1-p)^{n-x}$ & $np$ \\
+Poiss$(\lambda)$ & $e^{-\lambda}\lambda^x/x!$ & $\lambda$ \\
+$\mathcal{N}(\mu,\sigma^2)$ & $\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$ & $\mu$ \\
+\bottomrule
+\end{tabularx}
+
+\begin{ex}[title=Worked]
+$X\sim \mathcal{N}(0,1)$. Then $\PR(|X|<1)\approx 0.6827$.
+\end{ex}
+
+% ============================================================
+\section{Topic 3 --- Algorithms}
+
+\subsection{Complexity cheat}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Op & Cost \\
+\midrule
+Sort (comparison) & $\Theta(n\log n)$ \\
+Hash lookup (avg) & $\Theta(1)$ \\
+BFS / DFS         & $\Theta(V+E)$ \\
+Dijkstra (heap)   & $\Theta((V+E)\log V)$ \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Code snippet}
+\begin{lstlisting}[language=Python]
+def bsearch(a, x):
+    lo, hi = 0, len(a)-1
+    while lo <= hi:
+        m = (lo+hi)//2
+        if a[m] == x: return m
+        if a[m] <  x: lo = m+1
+        else:         hi = m-1
+    return -1
+\end{lstlisting}
+
+% ============================================================
+\section{Quick2 reference}
+
+\textbf{Greek:} $\alpha\,\beta\,\gamma\,\delta\,\eps\,\zeta\,\eta\,\theta\,
+\iota\,\kappa\,\lambda\,\mu\,\nu\,\xi\,\pi\,\rho\,\sigma\,\tau\,\phi\,\chi\,\psi\,\omega$
+
+\textbf{Sets:} $\R\;\N\;\Z\;\Q\;\C$ \quad
+\textbf{Logic:} $\forall\;\exists\;\Rightarrow\;\Leftrightarrow\;\neg$
+
+\textbf{Derivatives:}
+$(\sin x)'=\cos x$,\ $(\cos x)'=-\sin x$,\ $(\ln x)'=1/x$,\
+$(e^x)'=e^x$,\ $(x^n)'=nx^{n-1}$.
+
+\textbf{Integrals:}
+$\int x^n\dd x=\tfrac{x^{n+1}}{n+1}$,\
+$\int \tfrac{1}{x}\dd x=\ln|x|$,\
+$\int e^x\dd x=e^x$.
+
+
+\end{multicols*}
+\end{document}
