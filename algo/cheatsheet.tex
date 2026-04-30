@@ -64,8 +64,12 @@ FORD-FULKERSON-METHOD(G, s, t)
 \subsection{Min cut problem}
 
 \begin{defn}[title=Min cut]
-A minimum cut is a cut of the flow network with the smallest capacity.
+It is a cut where the capacity crossing it is the minimum among all cuts.
 \end{defn}
+
+\begin{prop}[title=Capacity of a cut]
+$c(S,T) = \sum_{u\in S, v\in T} c(u,v)$
+\end{prop}
 
 \begin{prop}[title=Net flow accross cut]
 $f(S,T) = \sum_{u\in S, v\in T} f(u,v) - \sum_{u\in S, v\in T} f(v,u)$
@@ -78,6 +82,13 @@ $f(S,T) = \sum_{u\in S, v\in T} f(u,v) - \sum_{u\in S, v\in T} f(v,u)$
   \item $|f| = c(S,T)$ for a minimum cut (S, T)
 \end{itemize}
 \end{thm}
+
+\begin{prop}[title=Bipartite matching as flow problem]
+\begin{itemize}
+  \item Run the Ford-Fulkerson method
+  \item Matching is complete
+\end{itemize}
+\end{prop}
 
 % ============================================================
 % En haut c'est le plan du cours, il faut maintenant le remplir
