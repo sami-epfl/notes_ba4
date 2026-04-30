@@ -15,7 +15,7 @@
 % ============================================================
 
 \section{Flow network}
-\subsection{Definition}
+\subsection{Definitions}
 \begin{center}
     \includegraphics[width=\linewidth]{images/flow_network.png}
 \end{center}
@@ -38,6 +38,10 @@ $\forall u\in V\setminus\{s,t\}$,
 $\sum_{v\in V} f(u,v) = \sum_{v\in V} f(v,u)$
 \end{thm}
 
+\begin{defn}[title=Cut]
+A cut of a flow network is a partition of $V$ into two disjoint sets $S$ and $T$ such that $s\in S$ and $t\in T$. The capacity of the cut is defined as $c(S,T)=\sum_{u\in S, v\in T} c(u,v)$.
+\end{defn}
+
 \subsection{Maximum flow problem - Ford-Fulkerson method}
 
 \begin{prop}[title={Residual network $G_f=(V,E_f)$}]
@@ -56,6 +60,24 @@ FORD-FULKERSON-METHOD(G, s, t)
         augment flow along p by b
     return f
 \end{lstlisting}
+
+\subsection{Min cut problem}
+
+\begin{defn}[title=Min cut]
+A minimum cut is a cut of the flow network with the smallest capacity.
+\end{defn}
+
+\begin{prop}[title=Net flow accross cut]
+$f(S,T) = \sum_{u\in S, v\in T} f(u,v) - \sum_{u\in S, v\in T} f(v,u)$
+\end{prop}
+
+\begin{thm}[title=Max-flow min-cut theorem]
+\begin{itemize}
+  \item f is the maximum flow
+  \item $G_f$ has no augmenting path
+  \item $|f| = c(S,T)$ for a minimum cut (S, T)
+\end{itemize}
+\end{thm}
 
 % ============================================================
 % En haut c'est le plan du cours, il faut maintenant le remplir
