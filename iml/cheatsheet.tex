@@ -1,0 +1,293 @@
+% ============================================================
+%  CHEAT SHEET TEMPLATE — A4 double-sided, 3-column, ultra-dense
+%  Compile with: pdflatex cheatsheet.tex   (or use latexmk)
+% ============================================================
+\documentclass[8pt,a4paper,landscape]{extarticle}
+
+% ---------- Page geometry: tiny margins to maximise space ----
+\usepackage[a4paper,landscape,
+            top=4mm,bottom=4mm,left=4mm,right=4mm,
+            includefoot,footskip=10pt]{geometry}
+
+% ---------- Core packages ------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}      % change to [french] if needed
+\usepackage{lmodern}
+\usepackage{microtype}           % better justification
+\usepackage{multicol}            % multi-column layout
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}                  % bold math
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}     % colored boxes
+\usepackage{enumitem}            % compact lists
+\usepackage{titlesec}            % compact section headers
+\usepackage{array,booktabs,tabularx}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xfrac}               % nicer inline fractions \sfrac
+\usepackage{siunitx}             % units, if needed
+\usepackage{listings}            % code blocks (optional)
+
+% ---------- Hyperref styling ---------------------------------
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue!60!black}
+
+% ---------- Color palette ------------------------------------
+\definecolor{accent}{HTML}{1F4E79}      % deep blue
+\definecolor{accent2}{HTML}{0B6E4F}     % green
+\definecolor{accent3}{HTML}{B83227}     % red/warning
+\definecolor{soft}{HTML}{F2F2F2}        % light gray bg
+
+% ---------- Compact section headers --------------------------
+% NOTE: We bypass titlesec for \section because nested constructs
+% (colorbox + parbox + #1) trip up its internal \def. We keep
+% titlesec for subsection/subsubsection where it works fine.
+\newcounter{cheatsec}
+\renewcommand{\section}[1]{%
+  \par\addvspace{4pt}%
+  \refstepcounter{cheatsec}%
+  \noindent\colorbox{accent}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \color{white}\small\bfseries\strut\thecheatsec\ \ #1%
+    }%
+  }%
+  \par\nobreak\addvspace{2pt}%
+}
+% If you prefer NO numbering on sections, comment the \refstepcounter
+% line above and replace \thecheatsec\ \ #1 with just #1.
+
+\titleformat{\subsection}
+  {\normalfont\footnotesize\bfseries\color{accent}}
+  {\thesubsection}{0.4em}{}
+\titlespacing*{\subsection}{0pt}{3pt}{1pt}
+
+\titleformat{\subsubsection}
+  {\normalfont\footnotesize\itshape\color{accent2}}
+  {}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{2pt}{0pt}
+
+% Section numbering: our \section uses its own counter (\thecheatsec),
+% so secnumdepth controls only sub/subsubsection numbering.
+\setcounter{secnumdepth}{0}    % set to 2 to number subsections too
+
+% ---------- Tight lists --------------------------------------
+\setlist{nosep,leftmargin=*,labelindent=0pt,topsep=1pt,partopsep=0pt,
+         parsep=0pt,itemsep=1pt}
+
+% ---------- Tighter math spacing -----------------------------
+\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\setlength{\jot}{2pt}                   % spacing inside align
+
+% ---------- Paragraph & column spacing -----------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\columnsep}{6pt}
+\setlength{\columnseprule}{0.2pt}        % thin rule between columns
+
+% ---------- Custom boxes -------------------------------------
+\newtcolorbox{defn}[1][]{
+  enhanced,breakable,colback=soft,colframe=accent,
+  boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
+  fonttitle=\bfseries\footnotesize,coltitle=white,
+  colbacktitle=accent,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=accent,boxrule=0pt,arc=0pt},
+  title=Def,#1
+}
+\newtcolorbox{thm}[1][]{
+  enhanced,breakable,colback=accent2!8,colframe=accent2,
+  boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
+  fonttitle=\bfseries\footnotesize,coltitle=white,
+  colbacktitle=accent2,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=accent2,boxrule=0pt,arc=0pt},
+  title=Thm,#1
+}
+\newtcolorbox{warn}[1][]{
+  enhanced,breakable,colback=accent3!8,colframe=accent3,
+  boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
+  fonttitle=\bfseries\footnotesize,coltitle=white,
+  colbacktitle=accent3,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=accent3,boxrule=0pt,arc=0pt},
+  title=!,#1
+}
+\newtcolorbox{ex}[1][]{
+  enhanced,breakable,colback=white,colframe=black!50,
+  boxrule=0.3pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
+  fonttitle=\bfseries\footnotesize,coltitle=black,
+  colbacktitle=black!10,attach boxed title to top left={yshift=-2pt,xshift=2pt},
+  boxed title style={size=small,colback=black!10,boxrule=0pt,arc=0pt},
+  title=Ex,#1
+}
+
+% ---------- Handy math shortcuts -----------------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\PR}{\mathbb{P}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\inner}[2]{\left\langle #1,\, #2 \right\rangle}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\dd}{\,\mathrm{d}}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\newcommand{\kv}[2]{\textbf{#1:}\ #2}
+
+% ---------- Code listings (optional) -------------------------
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  frame=single,
+  framesep=2pt,
+  xleftmargin=2pt,xrightmargin=2pt,
+  aboveskip=2pt,belowskip=2pt,
+}
+
+% ---------- Header / footer (very small) ---------------------
+% To RECLAIM ~7mm of vertical space per page: comment out this
+% whole block AND change "includefoot,footskip=10pt" to just
+% "nofoot" in the geometry options at the top of the file.
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\scriptsize\color{black!60} Intro To Machine Learning \ \textbullet\ \ Page \thepage}
+
+% ============================================================
+%                       DOCUMENT START
+% ============================================================
+\begin{document}
+
+\begin{multicols*}{3}     % 3-column layout. Use 4 for very dense content.
+
+% =============== TITLE STRIP (small) =========================
+\begin{tcolorbox}[colback=accent,colframe=accent,arc=1pt,
+  left=3pt,right=3pt,top=2pt,bottom=2pt,boxrule=0pt]
+  \color{white}\bfseries\small Intro To Machine Learning
+  \hfill \color{white}\scriptsize \ \textbullet\ \ BA4
+\end{tcolorbox}
+
+% ============================================================
+%   DEMO CONTENT — replace with your own; keep the patterns
+% ============================================================
+
+\section{Topic 1}
+
+\subsection{Key definitions}
+\begin{defn}[title=Linear map]
+$T:V\to W$ is linear if $T(\alpha x+\beta y)=\alpha T(x)+\beta T(y)$
+for all $x,y\in V$, $\alpha,\beta\in\R$.
+\end{defn}
+
+\begin{thm}[title=Rank--nullity]
+For $T:V\to W$ with $\dim V<\infty$:
+\[ \dim\ker T + \dim\operatorname{im}T \;=\; \dim V. \]
+\end{thm}
+
+\subsection{Formulas to remember}
+\begin{itemize}
+  \item \kv{Quadratic}{$x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$}
+  \item \kv{Euler}{$e^{i\theta}=\cos\theta+i\sin\theta$}
+  \item \kv{Geom.\ sum}{$\sum_{k=0}^{n}r^k=\dfrac{1-r^{n+1}}{1-r}$, $r\neq 1$}
+  \item \kv{Taylor}{$f(x)=\sum_{k\ge0}\dfrac{f^{(k)}(a)}{k!}(x-a)^k$}
+\end{itemize}
+
+\begin{warn}[title=Pitfall]
+$\log(ab)=\log a+\log b$ \emph{only} when $a,b>0$.
+\end{warn}
+
+\subsection{Useful identities}
+\begin{align*}
+ \sin^2\theta+\cos^2\theta &= 1 \\
+ \cos(2\theta) &= \cos^2\theta-\sin^2\theta \\
+ \sin(2\theta) &= 2\sin\theta\cos\theta
+\end{align*}
+
+% ============================================================
+\section{Topic 2 — Probability}
+
+\subsection{Basics}
+\begin{itemize}
+  \item $\PR(A\cup B)=\PR(A)+\PR(B)-\PR(A\cap B)$
+  \item $\PR(A\mid B)=\dfrac{\PR(A\cap B)}{\PR(B)}$
+  \item Bayes: $\PR(A\mid B)=\dfrac{\PR(B\mid A)\PR(A)}{\PR(B)}$
+\end{itemize}
+
+\subsection{Common distributions}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+Dist. & PMF/PDF & $\E[X]$ \\
+\midrule
+Bern$(p)$  & $p^x(1-p)^{1-x}$           & $p$ \\
+Bin$(n,p)$ & $\binom{n}{x}p^x(1-p)^{n-x}$ & $np$ \\
+Poiss$(\lambda)$ & $e^{-\lambda}\lambda^x/x!$ & $\lambda$ \\
+$\mathcal{N}(\mu,\sigma^2)$ & $\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$ & $\mu$ \\
+\bottomrule
+\end{tabularx}
+
+\begin{ex}[title=Worked]
+$X\sim \mathcal{N}(0,1)$. Then $\PR(|X|<1)\approx 0.6827$.
+\end{ex}
+
+% ============================================================
+\section{Topic 3 — Algorithms}
+
+\subsection{Complexity cheat}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Op & Cost \\
+\midrule
+Sort (comparison) & $\Theta(n\log n)$ \\
+Hash lookup (avg) & $\Theta(1)$ \\
+BFS / DFS         & $\Theta(V+E)$ \\
+Dijkstra (heap)   & $\Theta((V+E)\log V)$ \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Code snippet}
+\begin{lstlisting}[language=Python]
+def bsearch(a, x):
+    lo, hi = 0, len(a)-1
+    while lo <= hi:
+        m = (lo+hi)//2
+        if a[m] == x: return m
+        if a[m] <  x: lo = m+1
+        else:         hi = m-1
+    return -1
+\end{lstlisting}
+
+% ============================================================
+\section{Quick reference}
+
+\textbf{Greek:} $\alpha\,\beta\,\gamma\,\delta\,\eps\,\zeta\,\eta\,\theta\,
+\iota\,\kappa\,\lambda\,\mu\,\nu\,\xi\,\pi\,\rho\,\sigma\,\tau\,\phi\,\chi\,\psi\,\omega$
+
+\textbf{Sets:} $\R\;\N\;\Z\;\Q\;\C$ \quad
+\textbf{Logic:} $\forall\;\exists\;\Rightarrow\;\Leftrightarrow\;\neg$
+
+\textbf{Derivatives:}
+$(\sin x)'=\cos x$,\ $(\cos x)'=-\sin x$,\ $(\ln x)'=1/x$,\
+$(e^x)'=e^x$,\ $(x^n)'=nx^{n-1}$.
+
+\textbf{Integrals:}
+$\int x^n\dd x=\tfrac{x^{n+1}}{n+1}$,\
+$\int \tfrac{1}{x}\dd x=\ln|x|$,\
+$\int e^x\dd x=e^x$.
+
+\end{multicols*}
+\end{document}
