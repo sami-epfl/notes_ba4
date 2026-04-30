@@ -8,11 +8,12 @@
 \begin{document}
 \begin{multicols*}{4}
 
-\cheattitle{Algorithm}{}{BA4}
+\cheattitle{Algorithms I}{}{BA4}
 
 % ============================================================
 %                       COURSE OUTLINE
 % ============================================================
+
 \section{Flow network}
 \subsection{Definition}
 \begin{center}
@@ -21,19 +22,20 @@
 
 \begin{defn}[title=Formally]
 \begin{itemize}
-    \item Directed graph (DG): $G=(V,E)$
-    \item Each (u, v) has a capacity $c(u,v)>=0$
     \item Source: $s\in V$, sink: $t\in V$
-    \item No antiparallel edges: if $(u,v)\in E$, then $(v,u)\not\in E$
+    \item Directed graph (DG): $G=(V,E)$
+    \item Each (u, v) has a capacity $c(u,v) \ge 0$
+    \item No antiparallel: if $(u,v)\in E$, then $(v,u)\not\in E$
 \end{itemize}
 \end{defn}
 
 It satisfies the following properties:
 \begin{thm}[title=Capacity constraint]
-For all $u,v\in V$, $0\le f(u,v)\le c(u,v)$.
+$\forall u,v\in V$, $0\le f(u,v)\le c(u,v)$
 \end{thm}
 \begin{thm}[title=Flow conservation]
-For all $u\in V\setminus\{s,t\}$, $\sum_{v\in V} f(u,v) = \sum_{v\in V} f(v,u)$.
+$\forall u\in V\setminus\{s,t\}$,
+$\sum_{v\in V} f(u,v) = \sum_{v\in V} f(v,u)$
 \end{thm}
 
 \subsection{Maximum flow problem - Ford-Fulkerson method}
