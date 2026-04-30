@@ -27,6 +27,8 @@
 
 % ---------- Layout & typography -----------------------------
 \RequirePackage{multicol}
+\RequirePackage{needspace}
+\RequirePackage{etoolbox}
 \RequirePackage{enumitem}
 \RequirePackage{titlesec}
 \RequirePackage{array,booktabs,tabularx}
@@ -86,6 +88,12 @@
   {}{0pt}{}
 \titlespacing*{\subsubsection}{0pt}{2pt}{0pt}
 
+% Keep subsection/subsubsection headers with following content in multicols
+\AtBeginDocument{%
+  \pretocmd{\subsection}{\needspace{4\baselineskip}}{}{}%
+  \pretocmd{\subsubsection}{\needspace{3\baselineskip}}{}{}%
+}
+
 \setcounter{secnumdepth}{0}    % set to 2 to number subsections too
 
 % ---------- Tight lists -------------------------------------
@@ -107,7 +115,7 @@
 
 % ---------- Custom boxes ------------------------------------
 \newtcolorbox{prop}[1][]{
-  enhanced,breakable,colback=soft,colframe=blueColor,
+  enhanced,colback=soft,colframe=blueColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
   colbacktitle=blueColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
@@ -115,7 +123,7 @@
   title=Prop,#1
 }
 \newtcolorbox{defn}[1][]{
-  enhanced,breakable,colback=greenColor!8,colframe=greenColor,
+  enhanced,colback=greenColor!8,colframe=greenColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
   colbacktitle=greenColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
@@ -123,7 +131,7 @@
   title=Def,#1
 }
 \newtcolorbox{thm}[1][]{
-  enhanced,breakable,colback=redColor!8,colframe=redColor,
+  enhanced,colback=redColor!8,colframe=redColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
   colbacktitle=redColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
@@ -131,7 +139,7 @@
   title=Thm,#1
 }
 \newtcolorbox{warn}[1][]{
-  enhanced,breakable,colback=soft,colframe=blueColor,
+  enhanced,colback=soft,colframe=blueColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
   colbacktitle=blueColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
@@ -139,7 +147,7 @@
   title=!,#1
 }
 \newtcolorbox{ex}[1][]{
-  enhanced,breakable,colback=white,colframe=black!50,
+  enhanced,colback=white,colframe=black!50,
   boxrule=0.3pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=black,
   colbacktitle=black!10,attach boxed title to top left={yshift=-2pt,xshift=2pt},

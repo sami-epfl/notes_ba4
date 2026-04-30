@@ -1,0 +1,515 @@
+\documentclass[8pt,a4paper,landscape]{extarticle}
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usepackage{style}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\begin{document}
+\begin{multicols*}{4}
+
+\cheattitle{Signal Processing --- Fourier}{}{BA4}
+
+% ============================================================
+\section{Which Fourier Transform?}
+
+\begin{center}
+\begin{tikzpicture}[
+  font=\tiny, >=stealth,
+  node distance=0.42cm and 1.35cm,
+  q/.style={align=center, inner sep=1.5pt, text width=1.25cm},
+  res/.style={font=\tiny\bfseries\color{blueColor!90!black}},
+  yes/.style={->, thick, color=greenColor},
+  no/.style={->, thick, color=redColor},
+]
+  \node[q] (q1) {discr.-time?};
+  \node[q, below=of q1] (q2) {finite len.\ $N$?};
+  \node[q, below=of q2] (q3) {fin.\ energy\\ $\ell^2(\mathbb{Z})$?};
+  \node[q, below=of q3] (q4) {periodic?};
+  \node[q, below=of q4] (q5) {power sig.?};
+  \node[res, below=0.32cm of q5] (r0) {$\nexists$ FT};
+
+  \node[res, right=of q1] (r1) {Continuous time FT (CTFT)};
+  \node[res, right=of q2] (r2) {Discrete FT (DFT)};
+  \node[res, right=of q3] (r3) {Discrete time FT (DTFT)};
+  \node[res, right=of q4] (r4) {Discrete Fourier Series (DFS)};
+  \node[res, right=of q5] (r5) {Generalized DTFT};
+
+  \draw[yes] (q1) -- (q2);
+  \draw[no]  (q2) -- (q3);
+  \draw[no]  (q3) -- (q4);
+  \draw[no]  (q4) -- (q5);
+  \draw[no]  (q5) -- (r0);
+  \draw[no]  (q1) -- (r1);
+  \draw[yes] (q2) -- (r2);
+  \draw[yes] (q3) -- (r3);
+  \draw[yes] (q4) -- (r4);
+  \draw[yes] (q5) -- (r5);
+\end{tikzpicture}
+\end{center}
+
+% ============================================================
+\section{The Complex Exponential}
+
+\begin{defn}[title=Discrete-time complex exponential]
+$w[n] = A\,e^{j(\omega n + \phi)}$, \quad $A\in\R$ amplitude, $\phi$ phase, $\omega\in\R$ frequency (rad).
+\end{defn}
+
+\begin{prop}[title=Recursive form]
+$w[n+1] = w[n]\,e^{j\omega}$: each step rotates by $\omega$ on the unit circle.
+\end{prop}
+
+\subsection{Periodicity}
+$\mathbf{w}$ is periodic iff $\exists N\in\Z^+, M\in\Z$ such that $\omega N = 2\pi M$:
+\[
+  \omega = \frac{M}{N}2\pi, \quad M,N\in\Z
+\]
+Only oscillations with \textbf{rational multiple of $2\pi$} are periodic.
+
+\subsection{Aliasing}
+\begin{warn}[title=Key identity]
+$e^{j\theta} = e^{j(\theta + 2k\pi)}$ $\forall k\in\Z$. Hence:
+\[
+  e^{j(\omega+2k\pi)n} = e^{j\omega n} \quad \forall k\in\Z.
+\]
+Adding multiples of $2\pi$ to $\omega$ gives the \textbf{same samples}.
+\end{warn}
+
+\begin{itemize}
+  \item $0\le\omega<\pi$: counterclockwise, increasing speed
+  \item $\omega=\pi$: max speed, $+1/-1$ alternating
+  \item $\pi<\omega<2\pi$: more ``economical'' as clockwise $\omega'=\omega-2\pi$
+\end{itemize}
+\textbf{Reference interval:} $[-\pi, \pi]$.
+
+\subsection{Why complex oscillations?}
+\begin{itemize}
+  \item \kv{Simpler math}{$\cos(\alpha+\beta)=\Re\{e^{j\alpha}e^{j\beta}\}$}
+  \item \kv{Compact notation}{polar vs.\ two real coordinates}
+  \item \kv{Digital signals}{can natively be complex-valued}
+\end{itemize}
+
+% ============================================================
+\section{The DFT}
+
+\subsection{\texorpdfstring{Fourier Basis for $\mathbb{C}^N$}{Fourier Basis for CN}}
+\begin{defn}[title=Fourier basis vectors]
+$w_k[n] = e^{j\frac{2\pi}{N}kn}$, \quad $n,k=0,\ldots,N-1$.\\
+Harmonically related: $\omega_k = \frac{2\pi}{N}k$.\\
+\textbf{Note:} $\mathbf{w}_k = \mathbf{w}_{N-k}^*$.
+\end{defn}
+
+\begin{thm}[title=Orthogonality]
+$\langle \mathbf{w}_h, \mathbf{w}_k \rangle = N\,\delta[h-k]$, where
+\[
+  \langle \mathbf{x},\mathbf{y}\rangle = \sum_{n=0}^{N-1} x^*[n]\,y[n].
+\]
+Basis is orthogonal but \textbf{not} orthonormal (norms $= \sqrt{N}$).
+\end{thm}
+
+\subsection{Analysis \& Synthesis}
+\begin{defn}[title=DFT (analysis)]
+\[
+  X[k] = \sum_{n=0}^{N-1} x[n]\,e^{-j\frac{2\pi}{N}nk}, \quad k=0,\ldots,N-1
+\]
+\end{defn}
+
+\begin{defn}[title=Inverse DFT (synthesis)]
+\[
+  x[n] = \frac{1}{N}\sum_{k=0}^{N-1} X[k]\,e^{j\frac{2\pi}{N}nk}, \quad n=0,\ldots,N-1
+\]
+\end{defn}
+
+\subsection{Matrix Form}
+\begin{prop}[title=DFT matrix]
+$\mathbf{X} = \mathbf{W}\mathbf{x}$, \quad $\mathbf{x} = \tfrac{1}{N}\mathbf{W}^H\mathbf{X}$, where $W_N = e^{-j\frac{2\pi}{N}}$:
+\[
+  \mathbf{W} =
+  \begin{bmatrix}
+    W_N^0 & W_N^0 & \cdots & W_N^0 \\
+    W_N^0 & W_N^1 & \cdots & W_N^{N-1} \\
+    \vdots & & \ddots & \vdots \\
+    W_N^0 & W_N^{N-1} & \cdots & W_N^{(N-1)^2}
+  \end{bmatrix}
+\]
+$\mathbf{W}^H\mathbf{W} = N\mathbf{I}$.
+\end{prop}
+
+\begin{warn}[title=Powers modulo $N$]
+$W_N^n = W_N^{n\,\mathrm{mod}\,N}$ (aliasing property). First row and column are all 1 since $W_N^0=1$.
+\end{warn}
+
+\subsubsection{Small DFT matrices}
+\[
+  \mathbf{W}_2 = \begin{bmatrix}1&1\\1&-1\end{bmatrix}
+\]
+\[
+  \mathbf{W}_4 = \begin{bmatrix}1&1&1&1\\1&-j&-1&j\\1&-1&1&-1\\1&j&-1&-j\end{bmatrix}
+\]
+DFT of size 2 and 4: no multiplications ($\times j$ = swap + sign change).
+
+% ============================================================
+\section{DFT Pairs \& Properties}
+
+\subsection{Elementary DFT Pairs}
+
+\begin{prop}[title=Impulse]
+$\boldsymbol{\delta} \overset{\mathrm{DFT}}{\longleftrightarrow} \mathbf{1}$
+\hfill (delta $\to$ all-ones vector)
+\end{prop}
+
+\begin{prop}[title=Shifted impulse]
+$\boldsymbol{\delta}_m \overset{\mathrm{DFT}}{\longleftrightarrow} \mathbf{w}_m^*$, i.e.\ $\delta[n-m]\overset{\mathrm{DFT}}{\longleftrightarrow} e^{-j\frac{2\pi}{N}mk}$
+\end{prop}
+
+\begin{prop}[title=Constant signal]
+$\mathbf{1} \overset{\mathrm{DFT}}{\longleftrightarrow} N\boldsymbol{\delta}$
+\hfill (constant $\to$ impulse at $k=0$)
+\end{prop}
+
+\begin{prop}[title=Harmonic sinusoid]
+$\mathrm{DFT}\{\mathbf{w}_m\} = N\boldsymbol{\delta}_m$, i.e.:
+$w_m[n]\overset{\mathrm{DFT}}{\longleftrightarrow} N\delta[k-m]$
+\end{prop}
+
+\begin{prop}[title=Rectangular signal ($M$ ones)]
+$x[n]=\begin{cases}1 & 0\le n<M\\0 & M\le n<N\end{cases}$
+\[
+  X[k] = \frac{\sin(\pi Mk/N)}{\sin(\pi k/N)}\,e^{j\frac{\pi}{N}(M-1)k}
+\]
+Zeros at $k=N/M, 2N/M, \ldots$
+\end{prop}
+
+\begin{prop}[title=Cosine (harmonic)]
+$x[n]=\cos\!\left(\tfrac{2\pi}{N}k_0 n\right) = \tfrac{1}{2}\mathbf{w}_{k_0}+\tfrac{1}{2}\mathbf{w}_{N-k_0}$:
+\[
+  X[k] = \tfrac{N}{2}(\delta_{k_0}+\delta_{N-k_0})
+\]
+$x[n]=\cos\!\left(\tfrac{2\pi}{N}k_0 n + \theta\right) \Rightarrow X[k_0]=\tfrac{N}{2}e^{j\theta}$, $X[N-k_0]=\tfrac{N}{2}e^{-j\theta}$
+\end{prop}
+
+\begin{warn}[title=Non-harmonic sinusoid]
+If frequency is \emph{not} a multiple of $2\pi/N$, \textbf{all} DFT coefficients are nonzero (spectral leakage).
+\end{warn}
+
+\subsection{DFT Properties}
+
+\begin{prop}[title=Linearity]
+$\mathrm{DFT}\{a\mathbf{x}+b\mathbf{y}\} = a\,\mathrm{DFT}\{\mathbf{x}\}+b\,\mathrm{DFT}\{\mathbf{y}\}$, $a,b\in\mathbb{C}$
+\end{prop}
+
+\begin{prop}[title=Circular time shift]
+$x[(n-n_0)\!\mod N]\overset{\mathrm{DFT}}{\longleftrightarrow} e^{-j\frac{2\pi}{N}n_0 k}\,X[k]$
+\end{prop}
+
+\begin{prop}[title=Frequency shift]
+$x[n]\,e^{j\frac{2\pi}{N}k_0 n}\overset{\mathrm{DFT}}{\longleftrightarrow} X[k-k_0]$
+\end{prop}
+
+\begin{prop}[title=Modulation by cosine]
+$x[n]\cos\!\left(\tfrac{2\pi}{N}k_0 n\right)\overset{\mathrm{DFT}}{\longleftrightarrow}\tfrac{X[k-k_0]+X[k+k_0]}{2}$
+\end{prop}
+
+\begin{prop}[title=Time/frequency reversal]
+$\mathrm{DFT}\{\mathcal{R}\mathbf{x}\}=\mathcal{R}\mathbf{X}$\\
+$\mathrm{DFT}\{\mathbf{x}^*\}=\mathcal{R}\mathbf{X}^*$
+\end{prop}
+
+\subsection{Symmetries of the DFT}
+A signal $\mathbf{x}$ is \textbf{symmetric} if $x[n]=x[N-n]$.\\
+A signal is \textbf{Hermitian-symmetric} if $x[n]=x^*[N-n]$.
+
+\begin{thm}[title=DFT symmetries]
+\begin{itemize}
+  \item DFT of a symmetric signal is symmetric
+  \item DFT of a \textbf{real-valued} signal is \textbf{Hermitian-symmetric}: $X[k]=X^*[N-k]$
+  \item Magnitude of DFT of real signal is symmetric: $|X[k]|=|X[N-k]|$
+  \item DFT of a real-valued symmetric signal is real and symmetric
+\end{itemize}
+\end{thm}
+
+\begin{prop}[title=Parseval's theorem (DFT)]
+\[
+  \sum_{n=0}^{N-1}|x[n]|^2 = \frac{1}{N}\sum_{k=0}^{N-1}|X[k]|^2
+\]
+Energy is preserved across the change of basis.
+\end{prop}
+
+% ============================================================
+\section{Reading \& Plotting the DFT}
+
+\begin{defn}[title=DFT magnitude plot]
+Index $k$ encodes frequency $\omega_k = \frac{2\pi}{N}k$:
+\begin{itemize}
+  \item $k=0$: DC (zero frequency)
+  \item $k=1\ldots\lfloor N/2\rfloor$: positive (CCW) frequencies, increasing
+  \item $k=\lfloor N/2\rfloor$: maximum $\omega=\pi$ (fastest oscillation)
+  \item $k=\lfloor N/2\rfloor+1\ldots N-1$: negative (CW) frequencies, decreasing
+\end{itemize}
+For real $\mathbf{x}$: often show only $k=0\ldots N/2$ (symmetric).
+\end{defn}
+
+\begin{warn}[title=DFT phase]
+Phase is $2\pi$-periodic, plotted over $[-\pi,\pi]$. Values outside are \textbf{wrapped}. Phase offset $\theta$ in time shifts all components; same magnitude DFT can give different time-domain shapes.
+\end{warn}
+
+\begin{prop}[title=Frequency axis in Hz]
+If signal sampled at $F_s = N/T$ Hz (T = duration in seconds):
+\[
+  k \to \frac{F_s}{N}k \text{ Hz}, \quad 0\le k\le N/2
+\]
+\[
+  f_{\max} = \frac{F_s}{2} \text{ (Nyquist)}
+\]
+For $k>N/2$: $k\to \frac{F_s}{2}-\frac{F_s}{N}k$ Hz (negative freqs).
+\end{prop}
+
+% ============================================================
+\section{DFS \& DFT Periodicity}
+
+\begin{thm}[title=DFT implies N-periodicity]
+The inverse DFT formula is valid for \textbf{all} $n\in\Z$:
+\[
+  x[n] = \frac{1}{N}\sum_{k=0}^{N-1}X[k]\,e^{j\frac{2\pi}{N}nk} = x[n\!\mod N]
+\]
+Both $x$ and $X$ are implicitly $N$-periodic.
+\end{thm}
+
+\begin{defn}[title=DFS (Discrete Fourier Series)]
+For an $N$-periodic signal $\tilde{x}$:
+\[
+  \tilde{\mathbf{X}} = \mathrm{DFS}\{\tilde{\mathbf{x}}\} = \mathrm{DFT}\{\tilde{x}[0],\ldots,\tilde{x}[N-1]\}
+\]
+DFS $\equiv$ DFT: same formulas, different interpretation (explicit periodicity).
+\end{defn}
+
+\begin{prop}[title=Circular shift (DFS)]
+$\tilde{x}[n-n_0] \overset{\mathrm{DFS}}{\longleftrightarrow} e^{-j\frac{2\pi}{N}n_0 k}\,\tilde{X}[k]$
+\end{prop}
+
+\begin{warn}[title=Time shifts are circular]
+With finite-length signals, time shifts wrap around modulo $N$. A linear phase multiplication on DFT coefficients computes the \textbf{circular shift} of the signal.
+\end{warn}
+
+% ============================================================
+\section{The FFT}
+
+\begin{prop}[title=Complexity comparison]
+\begin{itemize}
+  \item Naive DFT: $O(N^2)$ multiplications
+  \item FFT: $O(N\log N)$ operations
+  \item For $N=10{,}000$: $\sim\!40{,}000$ vs.\ $>100$ million ops
+\end{itemize}
+\end{prop}
+
+\begin{defn}[title=Decimation in time (Cooley-Tukey)]
+Split $N=2^L$ input into even/odd:
+$x_e[n]=x[2n]$, $x_o[n]=x[2n+1]$, $n=0,\ldots,\tfrac{N}{2}-1$
+
+Output halves:
+$X_a[k]=X[k]$ and $X_b[k]=X[k+\tfrac{N}{2}]$, $k=0,\ldots,\tfrac{N}{2}-1$
+
+\textbf{Butterfly equations:}
+\[
+  X_a[k] = X_e[k] + e^{j\frac{2\pi}{N}k}\,X_o[k]
+\]
+\[
+  X_b[k] = X_e[k] - e^{j\frac{2\pi}{N}k}\,X_o[k]
+\]
+where $X_e$, $X_o$ are the $(N/2)$-point DFTs of $x_e$, $x_o$.
+\end{defn}
+
+\begin{warn}[title=Cost breakdown]
+\begin{itemize}
+  \item $2(N/2)^2 = N^2/2$ mults for $\mathbf{X}_e$ and $\mathbf{X}_o$
+  \item $N/2$ mults by twiddle factors for $\mathbf{X}_o$
+  \item Second half is free (just sign change)
+\end{itemize}
+Recursion gives $O(N\log_2 N)$ total.
+\end{warn}
+
+% ============================================================
+\section{The DTFT}
+
+\begin{defn}[title=DTFT (analysis)]
+For infinite-length sequence $\mathbf{x}$:
+\[
+  X(\omega) = \sum_{n=-\infty}^{\infty} x[n]\,e^{-j\omega n}
+\]
+$X(\omega)$ is a \textbf{continuous, $2\pi$-periodic} function of $\omega\in\R$.
+\end{defn}
+
+\begin{defn}[title=Inverse DTFT (synthesis)]
+\[
+  x[n] = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(\omega)\,e^{j\omega n}\,d\omega
+\]
+Uses $\int_{-\pi}^{\pi} e^{j\omega(n-k)}d\omega = 2\pi\,\delta[n-k]$.
+\end{defn}
+
+\subsection{adjaaosid}
+
+\begin{thm}[title=Existence: absolutely summable $\Rightarrow$ DTFT]
+If $\sum_{n=-\infty}^{\infty}|x[n]|<\infty$, then $X(\omega)$ exists, is continuous, and $|X_N(\omega)|\to X(\omega)$ uniformly.
+\end{thm}
+
+\begin{prop}[title=Square-summable (finite energy)]
+If $\mathbf{x}\in\ell_2(\mathbb{Z})$: $\sum|x[n]|^2<\infty$, DTFT exists in mean-square sense:
+\[
+  \lim_{N\to\infty}\int_{-\pi}^{\pi}|X_N(\omega)-X(\omega)|^2\,d\omega = 0
+\]
+$X(\omega)$ may not be continuous (Gibbs phenomenon possible).
+\end{prop}
+
+\subsection{DTFT as Limit of DFT}
+As $N\to\infty$: $\omega_N = 2\pi/N \to 0$, DFT samples become dense over $[0,2\pi]$. By substituting $\omega = 2\pi k/N$:
+\[
+  X[k] \to X\!\left(\frac{2\pi k}{N}\right)
+\]
+Also: $\tilde{X}_N[k] = X\!\left(\frac{2\pi}{N}k\right)$ (DFS as samples of DTFT).
+
+% ============================================================
+\section{DTFT Pairs \& Properties}
+
+\subsection{Elementary DTFT Pairs}
+
+\begin{prop}[title=Impulse]
+$\mathrm{DTFT}\{\boldsymbol{\delta}_m\} = e^{-j\omega m}$\\
+Most concentrated in time $\Rightarrow$ spread uniformly in freq.
+\end{prop}
+
+\begin{prop}[title=Rectangular signal]
+$x[n]=\begin{cases}1 & 0\le n < M\\0 & \text{otherwise}\end{cases}$
+\[
+  X(\omega) = \frac{\sin(\omega M/2)}{\sin(\omega/2)}\,e^{-j\omega(M-1)/2}
+\]
+Zeros at $\omega = 2\pi m/M$, $m\ne 0$.
+\end{prop}
+
+\begin{prop}[title=Exponential decay ($|a|<1$)]
+$x[n] = a^n u[n]$ ($u[n]$: unit step)
+\[
+  X(\omega) = \frac{1}{1-a\,e^{-j\omega}}
+\]
+$|X(\omega)|^2 = \dfrac{1}{1+|a|^2-2a\cos\omega}$
+\end{prop}
+
+\subsection{DTFT Properties}
+
+\begin{prop}[title=Linearity]
+$\mathrm{DTFT}\{a\mathbf{x}+b\mathbf{y}\} = a\mathbf{X}+b\mathbf{Y}$, $a,b\in\mathbb{C}$
+\end{prop}
+
+\begin{prop}[title=Time shift]
+$x[n-n_0] \overset{\mathrm{DTFT}}{\longleftrightarrow} e^{-j\omega n_0}\,X(\omega)$
+\end{prop}
+
+\begin{prop}[title=Frequency shift (modulation)]
+$x[n]\,e^{j\omega_0 n} \overset{\mathrm{DTFT}}{\longleftrightarrow} X(\omega - \omega_0)$
+\[
+  x[n]\cos(\omega_0 n)\overset{\mathrm{DTFT}}{\longleftrightarrow}\tfrac{1}{2}[X(\omega-\omega_0)+X(\omega+\omega_0)]
+\]
+\end{prop}
+
+\begin{prop}[title=Time \& frequency reversal]
+$\mathrm{DTFT}\{\mathcal{R}\mathbf{x}\} = \mathcal{R}\mathbf{X}$\\
+$\mathrm{DTFT}\{\mathbf{x}^*\} = \mathcal{R}\mathbf{X}^*$
+\end{prop}
+
+\begin{thm}[title=DTFT symmetries]
+Same as DFT symmetries (with $N\to\infty$):
+\begin{itemize}
+  \item DTFT of a symmetric signal is symmetric
+  \item DTFT of a \textbf{real} signal is Hermitian-symmetric: $X(-\omega)=X^*(\omega)$
+  \item Magnitude of DTFT of real signal is even: $|X(-\omega)|=|X(\omega)|$
+  \item DTFT of real symmetric signal is real and symmetric
+\end{itemize}
+\end{thm}
+
+\begin{thm}[title=Parseval's theorem (DTFT)]
+\[
+  \sum_{n=-\infty}^{\infty}|x[n]|^2 = \frac{1}{2\pi}\int_{-\pi}^{\pi}|X(\omega)|^2\,d\omega
+\]
+\end{thm}
+
+\subsection{Reading DTFT plots}
+\begin{defn}[title=DTFT frequency axis]
+Plotted over $[-\pi,\pi]$:
+\begin{itemize}
+  \item $\omega=0$: DC
+  \item $\omega\in(0,\pi]$: positive (CCW) = high freqs near $\pm\pi$
+  \item $\omega\in[-\pi,0)$: negative (CW) = high freqs near $\pm\pi$
+  \item Low freqs near 0, high freqs near $\pm\pi$
+\end{itemize}
+DTFT is $2\pi$-periodic; plots outside $[-\pi,\pi]$ repeat.
+\end{defn}
+
+% ============================================================
+\section{DFT vs.\ DTFT vs.\ DFS}
+
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}lXX@{}}
+\toprule
+ & Input & Output \\
+\midrule
+DFT  & finite, length $N$ & vector $\in\mathbb{C}^N$ \\
+DFS  & $N$-periodic & $N$-periodic \\
+DTFT & infinite ($\ell_2$) & $2\pi$-periodic function \\
+\bottomrule
+\end{tabularx}
+
+\begin{warn}[title=DFT/DFS equivalence]
+DFS of an $N$-periodic signal $=$ DFT of one period. Both use \textbf{identical formulas} (4.10) and (4.11); only the interpretation of periodicity differs.
+\end{warn}
+
+\begin{prop}[title=DTFT as DFS limit]
+$\tilde{x}_N[n] = \sum_{p=-\infty}^{\infty} x[n+pN]$ (periodization).\\
+$\tilde{X}_N[k] = X\!\left(\frac{2\pi}{N}k\right)$: DFS samples the DTFT.\\
+As $N\to\infty$: $\tilde{x}_N\to\mathbf{x}$ and samples fill $[0,2\pi]$.
+\end{prop}
+
+% ============================================================
+\section{Quick Reference}
+
+\subsection{Geometric sum}
+\[
+  \sum_{n=0}^{N-1}r^n = \frac{1-r^N}{1-r},\quad r\ne 1
+\]
+Used in rectangular DFT derivation; also the orthogonality of Fourier vectors (set $r=e^{j\frac{2\pi}{N}(k-h)}$, $k\ne h$).
+
+\subsection{Euler \& trig}
+\begin{itemize}
+  \item $e^{j\theta}=\cos\theta+j\sin\theta$
+  \item $\cos\theta = \frac{e^{j\theta}+e^{-j\theta}}{2}$, $\sin\theta = \frac{e^{j\theta}-e^{-j\theta}}{2j}$
+  \item $e^{j\pi}=-1$, $e^{j\pi/2}=j$, $e^{-j\pi/2}=-j$
+  \item $(e^{j\theta})^* = e^{-j\theta}$
+\end{itemize}
+
+\subsection{\texorpdfstring{Inner product in $\mathbb{C}^N$}{Inner product in CN}}
+$\langle\mathbf{x},\mathbf{y}\rangle = \sum_{n=0}^{N-1}x^*[n]\,y[n]$\\
+Coefficients: $X[k]=\langle\mathbf{w}_k,\mathbf{x}\rangle$ (projection onto basis).
+
+\subsection{{DTFT inner product in \texorpdfstring{$L_2([-\pi,\pi])$}{L2([-pi,pi])}}}
+$\langle\mathbf{F},\mathbf{G}\rangle = \frac{1}{2\pi}\int_{-\pi}^{\pi}F^*(\omega)\,G(\omega)\,d\omega$\\
+Set $\{e^{-j\omega n}\}_{n\in\Z}$ forms an orthogonal basis.\\
+$x[n] = \langle e^{j\omega n}, X(\omega)\rangle$
+
+\subsection{Key warnings}
+\begin{warn}[title=DFT normalization]
+\textbf{Analysis}: no $1/N$ factor. \textbf{Synthesis}: $1/N$ factor. Convention: $\mathbf{W}^H\mathbf{W}=N\mathbf{I}$.
+\end{warn}
+
+\begin{warn}[title=Phase wrapping]
+Phase plots show $\angle X[k] \in [-\pi,\pi]$ (wrapped). Apparent discontinuities are $\pm\pi$ jumps, not real.
+\end{warn}
+
+\begin{warn}[title=Real signal DFT]
+For real $\mathbf{x}$: $X[k]=X^*[N-k]$. Only first $\lfloor N/2\rfloor+1$ coefficients are independent. Magnitude symmetric around $k=N/2$.
+\end{warn}
+
+\begin{warn}[title=Circular vs.\ linear shift]
+DFT/DFS time shifts are always \textbf{circular} (modulo $N$). For aperiodic finite signals, multiplying by phase in freq domain gives circular shift.
+\end{warn}
+
+\end{multicols*}
+\end{document}

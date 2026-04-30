@@ -7,3 +7,5 @@
 *.out
 *.toc
 *.pdf
+# AI assistant files
+.claude/
