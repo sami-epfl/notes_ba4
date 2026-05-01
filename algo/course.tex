@@ -10,6 +10,9 @@
 \usepackage{xcolor}
 \usepackage{tcolorbox}
 \usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{multicol}
+
 
 \geometry{margin=2.5cm}
 
@@ -184,6 +187,70 @@ TREE-SEARCH(x,k)
 \end{itemize}
 
 \chapter{Le quiz d'aujourd'hui}
-Efficient algorithms depend heavily on choosing the correct data structure.
+
+
+\tcbset{
+    colback=white,
+    colframe=black!70,
+    boxrule=0.6pt,
+    arc=2mm,
+    left=1mm,
+    right=1mm,
+    top=1mm,
+    bottom=1mm
+}
+
+% =========================================================
+
+\subsection{Bipartite matching via max flow}
+
+\begin{tcolorbox}[title=Bipartite matching via max flow]
+\small
+\ttfamily
+\raggedright
+
+Alors pour cet algorithme, c'est une application de l'algorithme max flow donc c'est le même code en soit mais le contexte et les règles du graphe vont changer. \\
+Le but de ce problema esta de donc dde faire un bipartite matching.¿MAIS QUE ES UN BIPARTITE MATCHING? Alors, on va avoir deux set d'éléments et le but c'est de faire le maximum de paires possibles sachant que chaque élément ne peut faire qu'une paire qu'une fois avec un seul élément de l'autre team et que on sait que chaque élément ne peut se pairer que avec certains. \\
+
+\vspace{2mm}
+\textbf{Modélisation du graphe :}
+\begin{center}
+\begin{tabular}{c}
+src $\rightarrow$ tous les éléments du premier set \\
+éléments set 1 $\rightarrow$ éléments set 2 compatibles \\
+éléments set 2 $\rightarrow$ end
+\end{tabular}
+\end{center}
+
+\vspace{2mm}
+et ensuite le max flow possible sur chaque branche est de 1 \\
+Ainsi, chaque branche ne pourra être traversée que 1 fois et on ne va pas construire des doublons de paires ou des mauvaises paires.
+
+\end{tcolorbox}
+
+% =========================================================
+
+\subsection{Edge disjoint paths via max flow}
+
+\begin{tcolorbox}[title=Edge disjoint paths via max flow]
+\small
+\ttfamily
+\raggedright
+
+Alors pour ce second algorithme, c'est un peu différend mais c'est sur la même base, on va utiliser le max flow algorithm pour solver edge disjoint paths. ¿MAIS QUE ES UN EDGE DISJOINT PATHS? On cherche à trouver le maximum de chemins de A à B (de src to end) qui n'ont pas d'intersections entre eux donc qui passent par des passages uniques. \\
+
+\vspace{2mm}
+\textbf{Idée : modélisation en graphe}
+\begin{center}
+\begin{tabular}{c}
+chaque chemin = arêtes du graphe \\
+capacité de chaque arête = 1
+\end{tabular}
+\end{center}
+
+\vspace{2mm}
+Pour cela, on va modéliser en graphe notre réseau de chemins ect et par contre, comme précédemment, on va faire en sorte que le le max flow possible sur chaque branche est de 1. Ainsi, chaque branche ne pourra être traversée que 1 fois et on ne va pas l'utiliser en doublon et au final, le max flow sera le nombre de chemins que l'on a construits au maximum et qui sont disjoints.
+
+\end{tcolorbox}
 
 \end{document}
