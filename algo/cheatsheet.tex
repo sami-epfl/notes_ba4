@@ -83,12 +83,19 @@ $f(S,T) = \sum_{u\in S, v\in T} f(u,v) - \sum_{u\in S, v\in T} f(v,u)$
 \end{itemize}
 \end{thm}
 
+\subsection{Applications of max flow}
 \begin{prop}[title=Bipartite matching as flow problem]
+Goal: find a maximum matching in a bipartite graph $G=(V,E)$ with $V=L\cup R$ (left and right parts).
 \begin{itemize}
+  \item Connect s to $\forall v\in L$ and $\forall v\in R$ to t
+  \item $c(s,u) = 1$ for $u\in L$,
+  \item $c(u,v) = 1$ for $(u,v)\in E$,
+  \item $c(v,t) = 1$ for $v\in R$
   \item Run the Ford-Fulkerson method
   \item Matching is complete
 \end{itemize}
 \end{prop}
+
 
 % ============================================================
 % En haut c'est le plan du cours, il faut maintenant le remplir
