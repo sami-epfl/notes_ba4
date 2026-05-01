@@ -96,6 +96,14 @@ Goal: find a maximum matching in a bipartite graph $G=(V,E)$ with $V=L\cup R$ (l
 \end{itemize}
 \end{prop}
 
+% Pas très clair, à revoir !!!!
+\begin{prop}[title=Edge-disjoint paths]
+Given a directed graph $G=(V,E)$ and two vertices $s,t\in V$, the maximum number of edge-disjoint paths from $s$ to $t$ is equal to the minimum number of edges whose removal disconnects $s$ from $t$.
+\begin{itemize}
+  \item max-flow = max number of edge-disjoint paths
+  \item min-cut = min number of edges to remove to disconnect $s$ from $t$
+\end{itemize}
+\end{prop}
 
 % ============================================================
 % En haut c'est le plan du cours, il faut maintenant le remplir
