@@ -12,6 +12,113 @@
 \cheattitle{Signal Processing --- Fourier}{}{BA4}
 
 % ============================================================
+
+\section{Course outline}
+\begin{itemize}
+  \item signal analysis
+  \begin{itemize}
+    \item types of discrete-time signals, elementary properties and operations
+    \item Fourier transforms for discrete-time signals
+  \end{itemize}
+  \item signal processing
+  \begin{itemize}
+    \item linear systems
+    \item filters and filter design
+  \end{itemize}
+  \item from DSP to machine learning
+  \begin{itemize}
+    \item random signals, noise, quantization
+    \item adaptive filters
+  \end{itemize}
+  \item sampling and interpolation
+  \begin{itemize}
+    \item from analog to digital and vice versa
+  \end{itemize}
+\end{itemize}
+
+\section{Useful sequences}
+\begin{defn}[title=Unit impulse | Delta]
+$\delta[n] = \begin{cases}1 & n=0\\0 & n\ne 0\end{cases}$, \quad $\delta_m[n] = \delta[n-m]$
+\end{defn}
+
+\begin{defn}[title=Unit step]
+$u[n] = \begin{cases}1 & n\ge 0\\0 & n<0\end{cases}$
+\end{defn}
+
+\begin{defn}[title=Exponential decay]
+$x[n] = a^n u[n]$, \quad $0 < a < 1$
+\end{defn}
+
+\begin{defn}[title=Sinusoidal oscillation]
+$x[n] = A \cos(\omega n + \phi)$, \quad $A\in\R$, $\omega\in\R$, $\phi\in\R$
+\end{defn}
+
+\begin{defn}[title=Complex exponential]
+$x[n] = A\,e^{j(\omega n + \phi)}$, \quad $A\in\R$ amplitude, $\phi$ phase, $\omega\in\R$ frequency (rad).
+\end{defn}
+
+\begin{warn}[title=Key differences]
+\begin{itemize}
+  \item $\delta[n]$ is the most concentrated signal in time, $u[n]$ is the most concentrated in frequency.
+  \item $\delta[n]$ has all frequencies equally present, $u[n]$ has only DC.
+  \item $\delta[n]$ is the identity for convolution, $u[n]$ is the identity for multiplication.
+\end{itemize}
+\end{warn}
+
+\begin{thm}[title=Energy and Power]
+\begin{itemize}
+  \item $E_{x} = \sum_{n=-\infty}^{\infty}|x[n]|^2$
+  \item $P_{x} = \lim_{N\to\infty}\frac{1}{2N+1}\sum_{n=-N}^{N}|x[n]|^2$. 
+  \item $E_{x}<\infty$ and $P_{x}=0$ $\Rightarrow$ Energy signal
+  \item $P_{x}<\infty$ and $E_{x}=\infty$ $\Rightarrow$ Power signal
+\end{itemize}
+\end{thm}
+
+\section{Basic operations}
+\begin{defn}[title=Amplitude scaling]
+$y[n] = \alpha x[n]$
+\end{defn}
+\begin{defn}[title=Sum of signals]
+$y[n] = x_1[n] + x_2[n]$
+\end{defn}
+\begin{defn}[title=Product of signals]
+$y[n] = x_1[n] \cdot x_2[n]$
+\end{defn}
+\begin{defn}[title=Time shift by k $\in \Z$]
+$y[n] = \mathcal{S}^{-1} x[n] = x[n+k]$
+\end{defn}
+\begin{defn}[title=Time reversal]
+$y[n] = \mathcal{R} x[n] = \mathcal{S}^{-n} x[0] = x[-n]$
+\end{defn}
+\begin{thm}[title=Sum of a sequence]
+$\sum_{k=m}^{n} z^{k} = \begin{cases} n-m+1 & z=1 \\ \frac{z^m-z^{n+1}}{1-z} & z\ne 1 \end{cases}$
+\end{thm}
+\section{Vector spaces of signals}
+
+\begin{defn}[title=Vector space of signals]
+\begin{itemize}
+    \item $\ell_2(\mathbb{Z})$: space of square-summable, infinite sequences:
+    \[
+    x \in \ell_2(\mathbb{Z}) \;\Longleftrightarrow\; \|x\|^2 = \sum_{n \in \mathbb{Z}} |x[n]|^2 < \infty
+    \]
+
+    \item $L_2([a,b])$: space of square-integrable functions over the interval $[a,b]$:
+    \[
+    x \in L_2([a,b]) \;\Longleftrightarrow\; \int_a^b |x(t)|^2 \, dt < \infty
+    \]
+\end{itemize}
+In both cases, we require vectors to have finite energy
+\end{defn}
+
+\begin{prop}{title=Inner product space}
+  \begin{itemize}
+    \item $\|x\| = \sqrt{\langle x, x \rangle}$
+    \item $\langle x, y \rangle = \langle y, x \rangle^{*}$
+    \item $\langle x, \alpha y \rangle = \alpha \langle x, y \rangle$
+    \item $\langle \alpha x, y \rangle = \alpha^{*} \langle x, y \rangle$
+  \end{itemize}
+\end{prop}
+
 \section{Which Fourier Transform?}
 
 \begin{center}
@@ -143,6 +250,9 @@ $W_N^n = W_N^{n\,\mathrm{mod}\,N}$ (aliasing property). First row and column are
 \subsubsection{Small DFT matrices}
 \[
   \mathbf{W}_2 = \begin{bmatrix}1&1\\1&-1\end{bmatrix}
+\]
+\[
+  \mathbf{W}_3 = \begin{bmatrix}1&1&1\\1&W_3&W_3^2\\1&W_3^2&W_3\end{bmatrix},\quad W_3=\tfrac{-1-j\sqrt{3}}{2}
 \]
 \[
   \mathbf{W}_4 = \begin{bmatrix}1&1&1&1\\1&-j&-1&j\\1&-1&1&-1\\1&j&-1&-j\end{bmatrix}
@@ -347,7 +457,7 @@ $X(\omega)$ is a \textbf{continuous, $2\pi$-periodic} function of $\omega\in\R$.
 Uses $\int_{-\pi}^{\pi} e^{j\omega(n-k)}d\omega = 2\pi\,\delta[n-k]$.
 \end{defn}
 
-\subsection{adjaaosid}
+\subsection{Existence \& Convergence}
 
 \begin{thm}[title=Existence: absolutely summable $\Rightarrow$ DTFT]
 If $\sum_{n=-\infty}^{\infty}|x[n]|<\infty$, then $X(\omega)$ exists, is continuous, and $|X_N(\omega)|\to X(\omega)$ uniformly.
@@ -444,6 +554,20 @@ Plotted over $[-\pi,\pi]$:
 DTFT is $2\pi$-periodic; plots outside $[-\pi,\pi]$ repeat.
 \end{defn}
 
+\subsection{Generalized DTFT (Power Signals)}
+Via functionals for infinite-energy signals:
+\begin{prop}[title=Constant \& complex exponential]
+$\mathrm{DTFT}\{1\}=\delta(\omega)$ \quad (Dirac delta at $\omega=0$)\\
+$e^{j\omega_0 n}\overset{\mathrm{DTFT}}{\longleftrightarrow}\delta(\omega-\omega_0)$
+\end{prop}
+\begin{prop}[title=Sinusoids]
+$\cos(\omega_0 n)\overset{\mathrm{DTFT}}{\longleftrightarrow}\tfrac{1}{2}[\delta(\omega-\omega_0)+\delta(\omega+\omega_0)]$\\
+$\sin(\omega_0 n)\overset{\mathrm{DTFT}}{\longleftrightarrow}\tfrac{-j}{2}[\delta(\omega-\omega_0)-\delta(\omega+\omega_0)]$
+\end{prop}
+\begin{prop}[title=Unit step]
+$U(\omega)=\dfrac{1}{1-e^{-j\omega}}+\tfrac{1}{2}\delta(\omega)$
+\end{prop}
+
 % ============================================================
 \section{DFT vs.\ DTFT vs.\ DFS}
 
@@ -467,6 +591,148 @@ $\tilde{x}_N[n] = \sum_{p=-\infty}^{\infty} x[n+pN]$ (periodization).\\
 $\tilde{X}_N[k] = X\!\left(\frac{2\pi}{N}k\right)$: DFS samples the DTFT.\\
 As $N\to\infty$: $\tilde{x}_N\to\mathbf{x}$ and samples fill $[0,2\pi]$.
 \end{prop}
+
+% ============================================================
+\section{Discrete-Time Filters (Ch.\ 6)}
+
+\subsection{LTI Systems}
+\begin{defn}[title=Linearity \& time-invariance]
+$\mathcal{H}$ is \textbf{linear} if $\mathcal{H}(\alpha\mathbf{x})=\alpha\mathcal{H}\mathbf{x}$ and $\mathcal{H}(\mathbf{x}+\mathbf{w})=\mathcal{H}\mathbf{x}+\mathcal{H}\mathbf{w}$.\\
+$\mathcal{H}$ is \textbf{time-invariant} if $\mathcal{H}(\mathcal{S}^k\mathbf{x})=\mathcal{S}^k(\mathcal{H}\mathbf{x})\ \forall k\in\Z$.
+\end{defn}
+
+\begin{defn}[title=Moving Average (MA)]
+\[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k]\]
+Causal FIR; $h[n]=\tfrac{1}{M}$ for $0\le n<M$, else $0$.
+\end{defn}
+
+\begin{defn}[title=Leaky Integrator (LI)]
+\[y[n]=\lambda\,y[n-1]+(1-\lambda)x[n],\quad |\lambda|<1\]
+Causal IIR; $h[n]=(1-\lambda)\lambda^n$ for $n\ge 0$, else $0$.
+\end{defn}
+
+\subsection{Impulse Response \& Convolution}
+\begin{defn}[title=Impulse response]
+$\mathbf{h}=\mathcal{H}\boldsymbol{\delta}$. An LTI system is \emph{fully} described by $\mathbf{h}$.
+\end{defn}
+
+\begin{defn}[title={Convolution $y=x*h$}]
+\[y[n]=\sum_{k=-\infty}^{\infty}x[k]\,h[n-k]\]
+\textbf{Comm.:} $x*h=h*x$.\quad \textbf{Assoc.:} $(x*h)*w=x*(h*w)$.\\
+Cascade of stable filters: $\mathbf{h}=\mathbf{h}_1*\mathbf{h}_2$ (order irrelevant).
+\end{defn}
+
+\begin{prop}[title={Computing $y[n]$ algorithmically}]
+\textbf{1.}~Time-reverse $h$: $h[k]\to h[-k]$\\
+\textbf{2.}~Shift by $n$: $h[-k]\to h[n-k]$\\
+\textbf{3.}~Multiply element-wise with $x[k]$ and sum.
+\end{prop}
+
+\subsection{Filter Classification (Time Domain)}
+
+\begin{defn}[title=FIR vs IIR]
+\begin{itemize}
+  \item \textbf{FIR}: finite-support $\mathbf{h}$; no feedback; \emph{always} BIBO stable.
+  \item \textbf{IIR}: infinite-support $\mathbf{h}$; realizable IIRs have one-sided $\mathbf{h}$ via feedback paths.
+\end{itemize}
+\end{defn}
+
+\begin{defn}[title=Causality]
+$\mathcal{H}$ is \textbf{causal} iff $h[n]=0$ for $n<n_0$ (some $n_0\ge 0$). Output depends only on past/present inputs. An FIR is always causal up to a delay.
+\end{defn}
+
+\begin{thm}[title=BIBO Stability]
+LTI is BIBO stable $\Longleftrightarrow$ $\displaystyle\sum_{k}|h[k]|<\infty$.\\
+Sufficient condition proves: $|y[n]|\le L\sum_k|h[k]|$ when $|x|\le L$.
+\end{thm}
+
+\subsection{Frequency Response}
+
+\begin{thm}[title=Eigensequence property]
+For $w[n]=e^{j\omega_0 n}$:\; $\mathcal{H}\mathbf{w}=H(\omega_0)\,\mathbf{w}$, where
+\[H(\omega)=\mathrm{DTFT}\{h\}=\sum_{k=-\infty}^{\infty}h[k]\,e^{-j\omega k}\]
+$H(\omega_0)=A_0 e^{j\theta_0}$: $A_0=|H(\omega_0)|$ scales amplitude, $\theta_0=\angle H(\omega_0)$ shifts phase.\\
+\textbf{LTI cannot create new frequency content.}
+\end{thm}
+
+\begin{thm}[title=Convolution Theorem]
+\[y=x*h \;\Longleftrightarrow\; Y(\omega)=X(\omega)\cdot H(\omega)\]
+Filtering $=$ pointwise multiplication in frequency domain.
+\end{thm}
+
+\subsubsection{Filter Categories}
+\begin{itemize}
+  \item \textbf{Lowpass}: $|H(\omega)|$ large near $\omega=0$, small near $\pm\pi$
+  \item \textbf{Highpass}: $|H(\omega)|$ large near $\omega=\pm\pi$, small near $0$
+  \item \textbf{Bandpass}: $|H(\omega)|$ large near $\omega=\pm\omega_c$
+  \item \textbf{Allpass}: $|H(\omega)|=\mathrm{const}$ (phase only)
+\end{itemize}
+\textbf{Passband}: where $|H|\approx 1$;\quad \textbf{Stopband}: where $|H|\approx 0$.
+
+\subsubsection{Phase Response \& Group Delay}
+\begin{defn}[title=Linear phase]
+$\angle H(\omega)=-\omega d$, $d\in\R$: uniform delay $d$ samples for all frequencies. All realizable linear-phase filters are FIR.\\
+\textbf{Generalized:} $H(\omega)=A(\omega)e^{-j(\omega d+\phi)}$, $A(\omega)\in\R$.
+\end{defn}
+\begin{defn}[title=Group delay]
+\[\mathrm{grd}\{H(\omega)\}=-\frac{d\,\angle H(\omega)}{d\omega}\]
+Constant for linear-phase filters. For a group of freqs around $\omega_0$, the group delay gives the time delay.
+\end{defn}
+
+\subsection{Key Filter Frequency Responses}
+
+\begin{prop}[title=Moving Average $H(\omega)$]
+\[H(\omega)=\frac{1}{M}\,\frac{\sin(\omega M/2)}{\sin(\omega/2)}\,e^{-j\frac{M-1}{2}\omega}\]
+Lowpass; $M-1$ zero crossings at $\omega=2\pi m/M$ ($m\ne 0$). Generalized linear phase with delay $(M-1)/2$.
+\end{prop}
+
+\begin{prop}[title=Leaky Integrator $H(\omega)$]
+\[H(\omega)=\frac{1-\lambda}{1-\lambda e^{-j\omega}}\]
+\[|H(\omega)|^2=\frac{(1-\lambda)^2}{1+\lambda^2-2\lambda\cos\omega}\]
+\[\angle H(\omega)=\arctan\!\left[\frac{-\lambda\sin\omega}{1-\lambda\cos\omega}\right]\]
+\[\mathrm{grd}\{H(\omega)\}=\frac{\lambda\cos\omega-\lambda^2}{1+\lambda^2-2\lambda\cos\omega}\]
+Lowpass; bandwidth decreases as $\lambda\to 1$.
+\end{prop}
+
+\subsection{Ideal Filters}
+
+\begin{defn}[title=sinc \& rect]
+$\mathrm{sinc}(x)=\dfrac{\sin(\pi x)}{\pi x}$,\; $\mathrm{sinc}(0)=1$.\quad
+$\mathrm{rect}(x)=\begin{cases}1&|x|\le\tfrac{1}{2}\\0&|x|>\tfrac{1}{2}\end{cases}$
+\end{defn}
+
+\begin{prop}[title=Fundamental sinc/rect DTFT pair]
+\[\frac{\omega_p}{\pi}\,\mathrm{sinc}\!\left(\frac{\omega_p}{\pi}n\right)\overset{\mathrm{DTFT}}{\longleftrightarrow}\mathrm{rect}\!\left(\frac{\omega}{2\omega_p}\right)\]
+As $\omega_p\to\pi$: recovers $\boldsymbol{\delta}\leftrightarrow\mathbf{1}$.\quad As $\omega_p\to 0$: $\mathbf{1}\leftrightarrow\tilde{\delta}(\omega)$.
+\end{prop}
+
+\begin{prop}[title=Ideal Lowpass (cutoff $\omega_p$)]
+$H_L(\omega)=\begin{cases}1&|\omega|\le\omega_p\\0&\text{else}\end{cases}$,\quad
+$h_L[n]=\dfrac{\omega_p}{\pi}\,\mathrm{sinc}\!\left(\dfrac{\omega_p}{\pi}n\right)$\\
+Infinite two-sided support $\Rightarrow$ \textbf{not realizable}.
+\end{prop}
+
+\begin{prop}[title=Ideal Highpass \& Bandpass]
+$H_H(\omega)=1-H_L(\omega)$,\quad $h_H[n]=\delta[n]-h_L[n]$\\[2pt]
+$h_B[n]=2\cos(\omega_c n)\,\dfrac{\omega_p}{\pi}\,\mathrm{sinc}\!\left(\dfrac{\omega_p}{\pi}n\right)$ (BW $2\omega_p$, center $\omega_c$)
+\end{prop}
+
+\begin{prop}[title=Hilbert Filter (allpass)]
+$H_F(\omega)=\begin{cases}-j&0\le\omega<\pi\\+j&-\pi\le\omega<0\end{cases}$,\quad $|H_F|=1$\\
+$h_F[n]=\begin{cases}2/(n\pi)&n\text{ odd}\\0&n\text{ even}\end{cases}$
+\end{prop}
+
+\subsection{Realizable Filters: CCDE}
+
+\begin{defn}[title=Constant-Coefficient Difference Equation]
+\[\sum_{k=0}^{N-1}a_k\,y[n-k]=\sum_{k=0}^{M-1}b_k\,x[n-k],\quad a_0=1\]
+\[y[n]=\sum_{k=0}^{M-1}b_k\,x[n-k]-\sum_{k=1}^{N-1}a_k\,y[n-k]\]
+\textbf{FIR}: $a_k=0$ for $k\ge 1$.\quad \textbf{IIR}: some $a_k\ne 0$ ($k\ge 1$, feedback).
+\end{defn}
+
+\begin{warn}[title=Zero initial conditions]
+Recursive filters (IIR/leaky integrator) require \emph{zero initial conditions} to be uniquely defined and LTI: the system is off for $n<n_0$, memory cells filled with 0.
+\end{warn}
 
 % ============================================================
 \section{Quick Reference}
