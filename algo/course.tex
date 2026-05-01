@@ -1,0 +1,189 @@
+\documentclass[11pt,a4paper]{book}
+
+% -------------------- Packages --------------------
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+
+\geometry{margin=2.5cm}
+
+% -------------------- Style --------------------
+\definecolor{mainblue}{RGB}{30,60,120}
+\definecolor{lightgray}{RGB}{245,245,245}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=mainblue,
+    urlcolor=mainblue
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Algorithms I}
+\fancyhead[R]{Lecture Notes}
+\fancyfoot[C]{\thepage}
+
+% -------------------- Boxes --------------------
+\newtcolorbox{definitionbox}{colback=lightgray,colframe=mainblue,title=Definition}
+\newtcolorbox{theorembox}{colback=white,colframe=mainblue,title=Theorem}
+\newtcolorbox{warningbox}{colback=white,colframe=red!70!black,title=Warning}
+
+% -------------------- Code --------------------
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{mainblue},
+    commentstyle=\color{gray},
+    frame=single,
+    breaklines=true
+}
+
+% -------------------- Document --------------------
+\begin{document}
+
+\chapter{Algorithms Fundamentals}
+
+\section{Definition of an Algorithm}
+\begin{definitionbox}
+An algorithm is a well-defined computational procedure that takes input values and produces output values through a sequence of computational steps.
+\end{definitionbox}
+
+\section{Asymptotic Complexity}
+
+\begin{itemize}
+    \item Big-O: upper bound
+    \item Big-Omega: lower bound
+    \item Big-Theta: tight bound
+    \item little-o: strict upper bound
+    \item little-omega: strict lower bound
+\end{itemize}
+
+\section{Sorting Algorithms}
+
+\subsection{Insertion Sort}
+\textbf{Complexity:} $O(n^2)$ \\n\textbf{Space:} $O(1)$
+
+\begin{lstlisting}
+Insertion-Sort(A, n)
+    for j = 2 to n
+        key = A[j]
+        i = j - 1
+        while i > 0 and A[i] > key
+            A[i+1] = A[i]
+            i = i - 1
+        A[i+1] = key
+\end{lstlisting}
+
+\subsection{Merge Sort}
+\textbf{Complexity:} $O(n \log n)$ \\n\textbf{Space:} $O(n)$
+
+\begin{lstlisting}
+MERGE-SORT(A,p,r)
+    if p < r
+        q = (p+r)/2
+        MERGE-SORT(A,p,q)
+        MERGE-SORT(A,q+1,r)
+        MERGE(A,p,q,r)
+\end{lstlisting}
+
+\section{Divide and Conquer}
+
+\subsection{Maximum Subarray}
+\textbf{Complexity:} $O(n \log n)$
+
+\begin{lstlisting}
+FIND-MAXIMUM-SUBARRAY(A, low, high)
+    if high == low
+        return A[low]
+    mid = (low + high)/2
+    left = ...
+    right = ...
+    cross = ...
+    return max(left,right,cross)
+\end{lstlisting}
+
+\section{Matrix Multiplication}
+
+\subsection{Naive Recursive Method}
+\textbf{Complexity:} $O(n^3)$
+
+\begin{lstlisting}
+REC-MAT-MULT(A,B,n)
+    if n == 1
+        return A*B
+    split matrices
+    compute subproblems
+\end{lstlisting}
+
+\subsection{Strassen Algorithm}
+\textbf{Complexity:} $O(n^{\log_2 7})$
+
+\section{Karatsuba Multiplication}
+\textbf{Complexity:} $O(n^{\log_2 3})$
+
+Split numbers:
+\[
+x = x_H b^{n/2} + x_L, \quad y = y_H b^{n/2} + y_L
+\]
+
+\section{Heaps}
+
+\subsection{Heapify}
+\textbf{Complexity:} $O(\log n)$
+
+\begin{lstlisting}
+MAX-HEAPIFY(A,i,n)
+    l = LEFT(i)
+    r = RIGHT(i)
+    ...
+\end{lstlisting}
+
+\subsection{Heapsort}
+\textbf{Complexity:} $O(n \log n)$
+
+\section{Priority Queue}
+Operations:
+\begin{itemize}
+    \item Insert: $O(\log n)$
+    \item Extract-Max: $O(\log n)$
+    \item Maximum: $O(1)$
+\end{itemize}
+
+\section{Binary Search Trees}
+
+\textbf{Search Complexity:} $O(h)$
+
+\begin{lstlisting}
+TREE-SEARCH(x,k)
+    if x == NIL or k == x.key
+        return x
+    if k < x.key
+        return left
+    else right
+\end{lstlisting}
+
+\section{Tree Operations}
+\begin{itemize}
+    \item Insert: $O(h)$
+    \item Delete: $O(h)$
+    \item Successor: $O(h)$
+\end{itemize}
+
+\section{Data Structures Comparison}
+
+\begin{itemize}
+    \item Stack: LIFO, $O(1)$
+    \item Queue: FIFO, $O(1)$
+    \item Linked List: $O(n)$ search
+    \item BST: $O(h)$ operations
+\end{itemize}
+
+\chapter{Le quiz d'aujourd'hui}
+Efficient algorithms depend heavily on choosing the correct data structure.
+
+\end{document}
