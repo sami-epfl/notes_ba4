@@ -1,209 +1,352 @@
-\documentclass[11pt,a4paper]{book}
+\documentclass[11pt,a4paper,openany]{book}
 
-% -------------------- Packages --------------------
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{graphicx}
-\usepackage{geometry}
-\usepackage{hyperref}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{tcolorbox}
-\usepackage{fancyhdr}
-\usepackage{tcolorbox}
-\usepackage{multicol}
+\makeatletter\def\input@path{{../_shared/}}\makeatother
+\usepackage{course}
 
-
-\geometry{margin=2.5cm}
-
-% -------------------- Style --------------------
-\definecolor{mainblue}{RGB}{30,60,120}
-\definecolor{lightgray}{RGB}{245,245,245}
-
-\hypersetup{
-    colorlinks=true,
-    linkcolor=mainblue,
-    urlcolor=mainblue
-}
-
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{Algorithms I}
-\fancyhead[R]{Lecture Notes}
-\fancyfoot[C]{\thepage}
-
-% -------------------- Boxes --------------------
-\newtcolorbox{definitionbox}{colback=lightgray,colframe=mainblue,title=Definition}
-\newtcolorbox{theorembox}{colback=white,colframe=mainblue,title=Theorem}
-\newtcolorbox{warningbox}{colback=white,colframe=red!70!black,title=Warning}
-
-% -------------------- Code --------------------
-\lstset{
-    basicstyle=\ttfamily\small,
-    keywordstyle=\color{mainblue},
-    commentstyle=\color{gray},
-    frame=single,
-    breaklines=true
-}
-
-% -------------------- Document --------------------
 \begin{document}
+\raggedbottom
 
-\chapter{Algorithms Fundamentals}
+\coursetitle{Algorithms I}{BA4}{2025--2026}
 
-\section{Definition of an Algorithm}
-\begin{definitionbox}
-An algorithm is a well-defined computational procedure that takes input values and produces output values through a sequence of computational steps.
-\end{definitionbox}
+\tableofcontents
+\bigskip
 
-\section{Asymptotic Complexity}
-
-\begin{itemize}
-    \item $O(g)$ upper bound: $f \leq c \cdot g$ eventually
-    \item $\Omega(g)$ lower bound: $f \geq c \cdot g$ eventually
-    \item $\Theta(g)$ tight bound: $f \in O(g) \cap \Omega(g)$
-    \item $o(g)$ strict upper bound: $f / g \to 0$
-    \item $\omega(g)$ strict lower bound: $f / g \to \infty$
-\end{itemize}
-
-\section{Sorting Algorithms}
-
-\subsection{Insertion Sort}
-\textbf{Complexity:} $O(n^2)$ \\n\textbf{Space:} $O(1)$
-
-\begin{lstlisting}
-Insertion-Sort(A, n)
-    for j = 2 to n
-        key = A[j]
-        i = j - 1
-        while i > 0 and A[i] > key
-            A[i+1] = A[i]
-            i = i - 1
-        A[i+1] = key
-\end{lstlisting}
-
-\subsection{Merge Sort}
-\textbf{Complexity:} $O(n \log n)$ \\n\textbf{Space:} $O(n)$
-
-\begin{lstlisting}
-MERGE-SORT(A,p,r)
-    if p < r
-        q = (p+r)/2
-        MERGE-SORT(A,p,q)
-        MERGE-SORT(A,q+1,r)
-        MERGE(A,p,q,r)
-\end{lstlisting}
-
-\section{Divide and Conquer}
-
-\subsection{Maximum Subarray}
-\textbf{Complexity:} $O(n \log n)$
-
-\begin{lstlisting}
-FIND-MAXIMUM-SUBARRAY(A, low, high)
-    if high == low
-        return A[low]
-    mid = (low + high)/2
-    left = ...
-    right = ...
-    cross = ...
-    return max(left,right,cross)
-\end{lstlisting}
-
-\section{Matrix Multiplication}
-
-\subsection{Naive Recursive Method}
-\textbf{Complexity:} $O(n^3)$
-
-\begin{lstlisting}
-REC-MAT-MULT(A,B,n)
-    if n == 1
-        return A*B
-    split matrices
-    compute subproblems
-\end{lstlisting}
-
-\subsection{Strassen Algorithm}
-\textbf{Complexity:} $O(n^{\log_2 7})$
-
-\section{Karatsuba Multiplication}
-\textbf{Complexity:} $O(n^{\log_2 3})$
-
-Split numbers:
-\[
-x = x_H b^{n/2} + x_L, \quad y = y_H b^{n/2} + y_L
-\]
-
-\section{Heaps}
-
-\subsection{Heapify}
-\textbf{Complexity:} $O(\log n)$
-
-\begin{lstlisting}
-MAX-HEAPIFY(A,i,n)
-    l = LEFT(i)
-    r = RIGHT(i)
-    ...
-\end{lstlisting}
-
-\subsection{Heapsort}
-\textbf{Complexity:} $O(n \log n)$
-
-\section{Priority Queue}
-Operations:
-\begin{itemize}
-    \item Insert: $O(\log n)$
-    \item Extract-Max: $O(\log n)$
-    \item Maximum: $O(1)$
-\end{itemize}
-
-\section{Binary Search Trees}
-
-\textbf{Search Complexity:} $O(h)$
-
-\begin{lstlisting}
-TREE-SEARCH(x,k)
-    if x == NIL or k == x.key
-        return x
-    if k < x.key
-        return left
-    else right
-\end{lstlisting}
-
-\section{Tree Operations}
-\begin{itemize}
-    \item Insert: $O(h)$
-    \item Delete: $O(h)$
-    \item Successor: $O(h)$
-\end{itemize}
-
-\section{Data Structures Comparison}
-
-\begin{itemize}
-    \item Stack: LIFO, $O(1)$
-    \item Queue: FIFO, $O(1)$
-    \item Linked List: $O(n)$ search
-    \item BST: $O(h)$ operations
-\end{itemize}
-
-\chapter{Le quiz d'aujourd'hui}
-
-
-\tcbset{
-    colback=white,
-    colframe=black!70,
-    boxrule=0.6pt,
-    arc=2mm,
-    left=1mm,
-    right=1mm,
-    top=1mm,
-    bottom=1mm
-}
+These notes cover the core algorithmic techniques of the BA4 Algorithms I course:
+asymptotic analysis, sorting, divide-and-conquer, heaps, binary search trees, and
+graph algorithms (max flow, matchings).
 
 % =========================================================
+\chapter{Algorithms Fundamentals}
+% =========================================================
+
+\section{Definition of an Algorithm}
+\begin{defnbox}
+An \textbf{algorithm} is a well-defined computational procedure that takes some value (or
+set of values) as \emph{input} and produces some value (or set of values) as \emph{output}
+in a finite number of steps.
+\end{defnbox}
+
+We analyse algorithms along two axes:
+\begin{itemize}
+  \item \textbf{Correctness} — does it always produce the right answer?
+  \item \textbf{Efficiency} — how many resources (time, space) does it consume?
+\end{itemize}
+
+% ---------------------------------------------------------
+\section{Asymptotic Complexity}
+% ---------------------------------------------------------
+
+\begin{defnbox}[title=Asymptotic notations]
+Let $f, g : \mathbb{N} \to \mathbb{R}^+$.
+\begin{itemize}
+  \item $f \in O(g)$ \textbf{(upper bound)}: $\exists\, c, n_0 > 0$ s.t.\ $f(n) \leq c\,g(n)$ for all $n \geq n_0$
+  \item $f \in \Omega(g)$ \textbf{(lower bound)}: $\exists\, c, n_0 > 0$ s.t.\ $f(n) \geq c\,g(n)$ for all $n \geq n_0$
+  \item $f \in \Theta(g)$ \textbf{(tight bound)}: $f \in O(g)$ and $f \in \Omega(g)$
+  \item $f \in o(g)$ \textbf{(strict upper)}: $\lim_{n\to\infty} f(n)/g(n) = 0$
+  \item $f \in \omega(g)$ \textbf{(strict lower)}: $\lim_{n\to\infty} f(n)/g(n) = \infty$
+\end{itemize}
+\end{defnbox}
+
+\begin{propbox}[title=Common growth rates (slowest to fastest)]
+\[
+  O(1) \subset O(\log n) \subset O(n) \subset O(n\log n) \subset O(n^2)
+  \subset O(n^3) \subset O(2^n) \subset O(n!)
+\]
+\end{propbox}
+
+\begin{rembox}
+For the \textbf{Master Theorem}: given $T(n) = a\,T(n/b) + f(n)$ with $a \geq 1$, $b > 1$:
+\begin{itemize}
+  \item if $f(n) = O(n^{\log_b a - \eps})$ then $T(n) = \Theta(n^{\log_b a})$
+  \item if $f(n) = \Theta(n^{\log_b a})$ then $T(n) = \Theta(n^{\log_b a} \log n)$
+  \item if $f(n) = \Omega(n^{\log_b a + \eps})$ then $T(n) = \Theta(f(n))$
+\end{itemize}
+\end{rembox}
+
+% ---------------------------------------------------------
+\section{Sorting Algorithms}
+% ---------------------------------------------------------
+
+\subsection{Insertion Sort}
+
+\begin{propbox}[title=Complexity]
+Time: $\Theta(n^2)$ worst/average, $\Theta(n)$ best (already sorted). \quad Space: $O(1)$ in-place.
+\end{propbox}
+
+\begin{lstlisting}[language=Python]
+def insertion_sort(A):
+    for j in range(1, len(A)):
+        key = A[j]
+        i = j - 1
+        while i >= 0 and A[i] > key:
+            A[i + 1] = A[i]
+            i -= 1
+        A[i + 1] = key
+\end{lstlisting}
+
+\textbf{Loop invariant:} at the start of each iteration, \texttt{A[0..j-1]} is sorted.
+
+\subsection{Merge Sort}
+
+\begin{propbox}[title=Complexity]
+Time: $\Theta(n \log n)$ in all cases. \quad Space: $O(n)$ auxiliary.
+\end{propbox}
+
+\begin{lstlisting}[language=Python]
+def merge_sort(A, p, r):
+    if p < r:
+        q = (p + r) // 2
+        merge_sort(A, p, q)
+        merge_sort(A, q + 1, r)
+        merge(A, p, q, r)   # merge two sorted halves
+\end{lstlisting}
+
+\textbf{Recurrence:} $T(n) = 2\,T(n/2) + \Theta(n)$ $\Rightarrow$ $T(n) = \Theta(n \log n)$ by Master Theorem (case 2).
+
+% ---------------------------------------------------------
+\section{Divide and Conquer}
+% ---------------------------------------------------------
+
+\begin{defnbox}[title=Paradigm]
+\textbf{Divide} the problem into subproblems, \textbf{conquer} each recursively, then
+\textbf{combine} the results.
+\end{defnbox}
+
+\subsection{Maximum Subarray}
+
+Find indices $i \leq j$ maximising $\sum_{k=i}^{j} A[k]$.
+
+\begin{propbox}[title=Complexity]
+$T(n) = 2\,T(n/2) + \Theta(n)$ $\Rightarrow$ $\Theta(n \log n)$.
+(Kadane's linear algorithm also exists: $\Theta(n)$.)
+\end{propbox}
+
+\begin{lstlisting}
+FIND-MAXIMUM-SUBARRAY(A, low, high):
+    if high == low: return (low, high, A[low])
+    mid = (low + high) / 2
+    left  = FIND-MAXIMUM-SUBARRAY(A, low, mid)
+    right = FIND-MAXIMUM-SUBARRAY(A, mid+1, high)
+    cross = FIND-MAX-CROSSING(A, low, mid, high)
+    return the one with maximum sum
+\end{lstlisting}
+
+\subsection{Matrix Multiplication}
+
+\subsubsection{Naive algorithm}
+Standard $O(n^3)$ triple loop, or the recursive divide-and-conquer that splits each
+$n \times n$ matrix into four $n/2 \times n/2$ blocks: $T(n) = 8\,T(n/2) + \Theta(n^2)$,
+giving the same $\Theta(n^3)$ by Master Theorem (case 1).
+
+\subsubsection{Strassen's algorithm}
+\begin{propbox}[title=Complexity]
+$T(n) = 7\,T(n/2) + \Theta(n^2)$ $\Rightarrow$ $\Theta(n^{\log_2 7}) \approx \Theta(n^{2.807})$.
+\end{propbox}
+
+Key idea: compute only 7 products of submatrices (instead of 8) using the following
+auxiliary matrices $M_1, \ldots, M_7$, each a linear combination of blocks of $A$ and $B$:
+\[
+  M_1 = (A_{11}+A_{22})(B_{11}+B_{22}), \quad
+  M_2 = (A_{21}+A_{22})B_{11}, \quad \ldots
+\]
+Then reconstruct $C_{11}, C_{12}, C_{21}, C_{22}$ from $M_1$--$M_7$.
+
+\subsection{Karatsuba Multiplication}
+
+Multiply two $n$-digit integers faster than the naive $O(n^2)$ schoolbook method.
+
+Split: $x = x_H b^{n/2} + x_L$, $y = y_H b^{n/2} + y_L$.
+
+Compute only 3 multiplications:
+\[
+  p_1 = x_H \cdot y_H, \quad
+  p_2 = x_L \cdot y_L, \quad
+  p_3 = (x_H + x_L)(y_H + y_L)
+\]
+then $x \cdot y = p_1 b^n + (p_3 - p_1 - p_2)\,b^{n/2} + p_2$.
+
+\begin{propbox}[title=Complexity]
+$T(n) = 3\,T(n/2) + \Theta(n)$ $\Rightarrow$ $\Theta(n^{\log_2 3}) \approx \Theta(n^{1.585})$.
+\end{propbox}
+
+% ---------------------------------------------------------
+\section{Heaps}
+% ---------------------------------------------------------
+
+\begin{defnbox}[title=Max-heap property]
+A \textbf{max-heap} is a nearly complete binary tree where every node satisfies
+$A[\text{parent}(i)] \geq A[i]$.
+Stored as an array: $\text{LEFT}(i)=2i$, $\text{RIGHT}(i)=2i+1$, $\text{PARENT}(i)=\lfloor i/2\rfloor$.
+\end{defnbox}
+
+\subsection{Heapify}
+\begin{propbox}[title=Complexity] $O(\log n)$ — tree height. \end{propbox}
+
+\begin{lstlisting}
+MAX-HEAPIFY(A, i, n):
+    l = 2i;  r = 2i + 1;  largest = i
+    if l <= n and A[l] > A[largest]: largest = l
+    if r <= n and A[r] > A[largest]: largest = r
+    if largest != i:
+        swap A[i] and A[largest]
+        MAX-HEAPIFY(A, largest, n)
+\end{lstlisting}
+
+\subsection{Build-Heap}
+Call \texttt{MAX-HEAPIFY} on all internal nodes bottom-up.
+Though each call is $O(\log n)$, a tight analysis gives $O(n)$ total.
+
+\subsection{Heapsort}
+\begin{propbox}[title=Complexity]
+Time: $\Theta(n \log n)$ in all cases. \quad Space: $O(1)$ in-place.
+\end{propbox}
+
+\begin{lstlisting}
+HEAPSORT(A, n):
+    BUILD-MAX-HEAP(A, n)
+    for i = n downto 2:
+        swap A[1] and A[i]
+        MAX-HEAPIFY(A, 1, i - 1)
+\end{lstlisting}
+
+\subsection{Priority Queue}
+\begin{propbox}
+\begin{tabular}{ll}
+\texttt{Maximum}     & $O(1)$ \\
+\texttt{Extract-Max} & $O(\log n)$ \\
+\texttt{Insert}      & $O(\log n)$ \\
+\texttt{Increase-Key}& $O(\log n)$ \\
+\end{tabular}
+\end{propbox}
+
+% ---------------------------------------------------------
+\section{Binary Search Trees}
+% ---------------------------------------------------------
+
+\begin{defnbox}[title=BST property]
+For every node $x$: all keys in the left subtree $\leq x.\mathit{key} \leq$ all keys in
+the right subtree.
+\end{defnbox}
+
+All basic operations run in $O(h)$ where $h$ is the height.
+For a \emph{random} BST, $\mathbb{E}[h] = O(\log n)$; in the worst case $h = n-1$.
+
+\begin{lstlisting}
+TREE-SEARCH(x, k):
+    if x == NIL or k == x.key: return x
+    if k < x.key: return TREE-SEARCH(x.left, k)
+    else:          return TREE-SEARCH(x.right, k)
+\end{lstlisting}
+
+\begin{propbox}[title=Operations — all $O(h)$]
+Search, Minimum, Maximum, Successor, Predecessor, Insert, Delete.
+\end{propbox}
+
+\begin{warnbox}
+A BST is only efficient when \emph{balanced}. For guaranteed $O(\log n)$, use a
+self-balancing variant such as a \textbf{Red-Black tree} (height $\leq 2\log_2(n+1)$).
+\end{warnbox}
+
+% ---------------------------------------------------------
+\section{Data Structures Comparison}
+% ---------------------------------------------------------
+
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+Structure    & Search    & Insert      & Delete      & Notes \\
+\midrule
+Unsorted array & $O(n)$  & $O(1)$      & $O(n)$      & simple \\
+Sorted array   & $O(\log n)$ & $O(n)$  & $O(n)$      & binary search \\
+Linked list    & $O(n)$  & $O(1)$      & $O(1)^*$    & $^*$with pointer \\
+BST            & $O(h)$  & $O(h)$      & $O(h)$      & $h = O(n)$ worst \\
+Red-Black tree & $O(\log n)$ & $O(\log n)$ & $O(\log n)$ & balanced \\
+Heap           & $O(n)$  & $O(\log n)$ & $O(\log n)$ & max/min in $O(1)$ \\
+Hash table     & $O(1)^*$& $O(1)^*$    & $O(1)^*$    & $^*$expected \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =========================================================
+\chapter{Graph Algorithms — Max Flow}
+% =========================================================
+
+\section{Flow Networks}
+
+\begin{defnbox}[title=Flow network]
+A directed graph $G = (V, E)$ with:
+\begin{itemize}
+  \item a \textbf{source} $s$ and a \textbf{sink} $t$,
+  \item a \textbf{capacity function} $c : V \times V \to \mathbb{R}_{\geq 0}$ (0 for non-edges),
+  \item no antiparallel edges (replace $(u,v)$ and $(v,u)$ by splitting with an intermediate node).
+\end{itemize}
+A \textbf{flow} $f$ must satisfy capacity ($0 \leq f(u,v) \leq c(u,v)$) and conservation
+($\sum_v f(v,u) = \sum_v f(u,v)$ for all $u \neq s, t$).
+\end{defnbox}
+
+The \textbf{value} of a flow is $|f| = \sum_v f(s,v) - \sum_v f(v,s)$.
+
+\section{Ford-Fulkerson Method}
+
+\begin{defnbox}[title=Residual network]
+Given flow $f$, the residual network $G_f$ has residual capacity
+$c_f(u,v) = c(u,v) - f(u,v)$ for forward edges and $c_f(v,u) = f(u,v)$ for back edges.
+An \textbf{augmenting path} is any $s$-$t$ path in $G_f$.
+\end{defnbox}
+
+\begin{lstlisting}
+FORD-FULKERSON(G, s, t):
+    initialise f = 0 on all edges
+    while exists augmenting path p in G_f:
+        cf(p) = min capacity along p
+        augment f along p by cf(p)
+    return f
+\end{lstlisting}
+
+\begin{thmbox}[title=Max-flow min-cut theorem]
+The following are equivalent for a flow $f$:
+\begin{enumerate}
+  \item $f$ is a maximum flow.
+  \item There is no augmenting path in $G_f$.
+  \item $|f|$ equals the capacity of some minimum cut $(S, T)$.
+\end{enumerate}
+\end{thmbox}
+
+\section{Applications}
 
 \subsection{Bipartite matching via max flow}
 
+\begin{thmbox}[title=Algorithm]
+\textbf{Goal:} Maximum matching in a bipartite graph $G = (L \cup R, E)$.
+
+\textbf{Reduction:}
+\begin{itemize}
+  \item Add source $s$ with edge $s \to u$ (capacity 1) for each $u \in L$.
+  \item Keep all edges $u \to v$ for $(u,v) \in E$ (capacity 1).
+  \item Add sink $t$ with edge $v \to t$ (capacity 1) for each $v \in R$.
+\end{itemize}
+
+Run max-flow. Each unit of flow corresponds to one matched pair.
+The maximum matching has size $|f^*|$.
+\end{thmbox}
+
+\subsection{Edge-disjoint paths via max flow}
+
+\begin{thmbox}[title=Algorithm]
+\textbf{Goal:} Maximum number of $s$-$t$ paths sharing no edge.
+
+\textbf{Reduction:} Keep the original graph, set every edge capacity to~1.
+Run max-flow from $s$ to $t$.
+
+The value $|f^*|$ equals the maximum number of edge-disjoint paths.
+By the max-flow min-cut theorem, it also equals the minimum number of edges whose
+removal disconnects $s$ from $t$.
+\end{thmbox}
+
+\chapter{Quizzes}
+
+\section{Quiz \#7:}
+\subsection{Bipartite matching via max flow}
 \begin{tcolorbox}[title=Bipartite matching via max flow]
 \small
 \ttfamily

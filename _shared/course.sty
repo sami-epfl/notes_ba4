@@ -1,0 +1,209 @@
+
+
+% ---------- Package options (language) ----------------------
+\newif\ifcn@french
+\cn@frenchfalse
+\DeclareOption{french}{\cn@frenchtrue}
+\DeclareOption{english}{\cn@frenchfalse}
+\DeclareOption*{\PackageWarning{course}{Unknown option `\CurrentOption'}}
+\ProcessOptions\relax
+
+% ---------- Page geometry -----------------------------------
+\RequirePackage[a4paper, top=2.5cm, bottom=2.5cm,
+                left=2.5cm, right=2.5cm, includefoot]{geometry}
+
+% ---------- Encoding & language -----------------------------
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\ifcn@french
+  \RequirePackage[french]{babel}
+\else
+  \RequirePackage[english]{babel}
+\fi
+\RequirePackage{lmodern}
+\RequirePackage{microtype}
+
+% ---------- Layout & typography -----------------------------
+\RequirePackage{enumitem}
+\RequirePackage{titlesec}
+\RequirePackage{array,booktabs,tabularx}
+\RequirePackage{graphicx}
+\RequirePackage{multicol}
+
+% ---------- Math --------------------------------------------
+\RequirePackage{amsmath,amssymb,amsthm,mathtools}
+\RequirePackage{bm}
+\RequirePackage{xfrac}
+
+% ---------- Color & boxes -----------------------------------
+\RequirePackage{xcolor}
+\RequirePackage[most]{tcolorbox}
+
+% ---------- Code listings -----------------------------------
+\RequirePackage{listings}
+
+% ---------- Hyperref (load late) ----------------------------
+\RequirePackage{hyperref}
+
+% ---------- Header / footer ---------------------------------
+\RequirePackage{fancyhdr}
+
+% ============================================================
+%                        STYLE DEFINITIONS
+% ============================================================
+
+% ---------- Color palette (shared with style.sty) -----------
+\definecolor{blueColor}{HTML}{1F4E79}
+\definecolor{greenColor}{HTML}{0B6E4F}
+\definecolor{redColor}{HTML}{B83227}
+\definecolor{soft}{HTML}{F2F2F2}
+
+% ---------- Hyperref setup ----------------------------------
+\hypersetup{colorlinks=true, linkcolor=blueColor, urlcolor=blueColor}
+
+% ---------- Chapter / section styling -----------------------
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{blueColor}}
+  {\chaptertitlename\ \thechapter}{12pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{blueColor}}
+  {\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{14pt}{4pt}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{blueColor!80!black}}
+  {\thesubsection}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{8pt}{2pt}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\itshape\color{greenColor}}
+  {\thesubsubsection}{0.5em}{}
+\titlespacing*{\subsubsection}{0pt}{6pt}{2pt}
+
+% ---------- Custom boxes ------------------------------------
+\newtcolorbox{defnbox}[1][]{
+  enhanced, colback=greenColor!8, colframe=greenColor,
+  boxrule=0.5pt, arc=2pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+  fonttitle=\bfseries\small, coltitle=white,
+  colbacktitle=greenColor,
+  attach boxed title to top left={yshift=-3pt, xshift=4pt},
+  boxed title style={size=small, colback=greenColor, boxrule=0pt, arc=2pt},
+  title=Definition, #1
+}
+\newtcolorbox{thmbox}[1][]{
+  enhanced, colback=redColor!8, colframe=redColor,
+  boxrule=0.5pt, arc=2pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+  fonttitle=\bfseries\small, coltitle=white,
+  colbacktitle=redColor,
+  attach boxed title to top left={yshift=-3pt, xshift=4pt},
+  boxed title style={size=small, colback=redColor, boxrule=0pt, arc=2pt},
+  title=Theorem, #1
+}
+\newtcolorbox{propbox}[1][]{
+  enhanced, colback=soft, colframe=blueColor,
+  boxrule=0.5pt, arc=2pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+  fonttitle=\bfseries\small, coltitle=white,
+  colbacktitle=blueColor,
+  attach boxed title to top left={yshift=-3pt, xshift=4pt},
+  boxed title style={size=small, colback=blueColor, boxrule=0pt, arc=2pt},
+  title=Property, #1
+}
+\newtcolorbox{warnbox}[1][]{
+  enhanced, colback=white, colframe=redColor,
+  boxrule=0.5pt, arc=2pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+  fonttitle=\bfseries\small, coltitle=white,
+  colbacktitle=redColor,
+  attach boxed title to top left={yshift=-3pt, xshift=4pt},
+  boxed title style={size=small, colback=redColor, boxrule=0pt, arc=2pt},
+  title=Warning, #1
+}
+\newtcolorbox{exbox}[1][]{
+  enhanced, colback=white, colframe=black!40,
+  boxrule=0.4pt, arc=2pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+  fonttitle=\bfseries\small, coltitle=black,
+  colbacktitle=black!10,
+  attach boxed title to top left={yshift=-3pt, xshift=4pt},
+  boxed title style={size=small, colback=black!10, boxrule=0pt, arc=2pt},
+  title=Example, #1
+}
+\newtcolorbox{rembox}[1][]{
+  enhanced, colback=white, colframe=black!30,
+  boxrule=0.4pt, arc=2pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+  fonttitle=\bfseries\small\itshape, coltitle=black!70,
+  colbacktitle=black!5,
+  attach boxed title to top left={yshift=-3pt, xshift=4pt},
+  boxed title style={size=small, colback=black!5, boxrule=0pt, arc=2pt},
+  title=Remark, #1
+}
+
+% ---------- Math shortcuts (shared with style.sty) ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\PR}{\mathbb{P}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\inner}[2]{\left\langle #1,\, #2 \right\rangle}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\dd}{\,\mathrm{d}}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% ---------- Listings (code blocks) --------------------------
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blueColor}\bfseries,
+  commentstyle=\color{black!50}\itshape,
+  stringstyle=\color{greenColor},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  frame=single,
+  framesep=4pt,
+  xleftmargin=4pt, xrightmargin=4pt,
+  aboveskip=4pt, belowskip=4pt,
+  numbers=left,
+  numberstyle=\tiny\color{black!40},
+  numbersep=8pt,
+}
+
+% ---------- Title macro -------------------------------------
+% Usage: \coursetitle{Course name}{Author}{Term}
+\def\cn@course{Course Notes}
+\def\cn@author{}
+\def\cn@term{}
+\newcommand{\coursetitle}[3]{%
+  \gdef\cn@course{#1}%
+  \gdef\cn@author{#2}%
+  \gdef\cn@term{#3}%
+  \begin{center}
+    \begin{tcolorbox}[colback=blueColor, colframe=blueColor, arc=2pt,
+      left=6pt, right=6pt, top=6pt, bottom=6pt, boxrule=0pt,
+      width=\textwidth]
+      \color{white}\LARGE\bfseries #1\\[4pt]
+      \color{white!80}\normalsize #2 \textbullet\ #3
+    \end{tcolorbox}
+  \end{center}%
+  \bigskip
+}
+
+% ---------- Header / footer ---------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\color{blueColor}\bfseries\cn@course}
+\fancyhead[R]{\small\color{black!60}Lecture Notes}
+\fancyfoot[C]{\small\color{black!60}\thepage}
+
+\endinput
