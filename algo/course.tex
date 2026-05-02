@@ -59,11 +59,11 @@ An algorithm is a well-defined computational procedure that takes input values a
 \section{Asymptotic Complexity}
 
 \begin{itemize}
-    \item Big-O: upper bound
-    \item Big-Omega: lower bound
-    \item Big-Theta: tight bound
-    \item little-o: strict upper bound
-    \item little-omega: strict lower bound
+    \item $O(g)$ upper bound: $f \leq c \cdot g$ eventually
+    \item $\Omega(g)$ lower bound: $f \geq c \cdot g$ eventually
+    \item $\Theta(g)$ tight bound: $f \in O(g) \cap \Omega(g)$
+    \item $o(g)$ strict upper bound: $f / g \to 0$
+    \item $\omega(g)$ strict lower bound: $f / g \to \infty$
 \end{itemize}
 
 \section{Sorting Algorithms}
