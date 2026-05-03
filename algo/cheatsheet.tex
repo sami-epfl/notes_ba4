@@ -16,6 +16,36 @@
 
 \section{Data Structures}
 \subsection{Disjoint sets}
+Each set is identified by a representative
+
+\begin{defn}[title=Operations]
+\begin{itemize}
+  \item \texttt{MAKE-SET(x)}: $S_i = \{x\}$ and add $S_i$ to the $\mathcal{S}$
+\end{itemize}
+Let $x \in S_x$, $y \in S_y$
+\begin{itemize}
+  \item \texttt{UNION(x, y)}: $\mathcal{S} = \mathcal{S} \setminus \{S_x, S_y\} \cup \{S_x \cup S_y\}$
+  \item \texttt{FIND(x)}: return the representative of $x$ in $S_x$
+\end{itemize}
+\end{defn}
+
+\begin{center}
+    \includegraphics[width=\linewidth]{images/connected_components_before.png}
+\end{center}
+
+\begin{lstlisting}
+CONNECTED-COMPONENTS(G)
+    for each vertex v in G.V
+        MAKE-SET(v)
+    for each edge (u, v) in G.E
+        if FIND(u) != FIND(v)
+            UNION(u, v)
+\end{lstlisting}
+
+\begin{center}
+    \includegraphics[width=\linewidth]{images/connected_components_after.png}
+\end{center}
+
 % To do: Lecture 17
 
 \section{Flow network}
