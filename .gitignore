@@ -6,6 +6,7 @@
 *.synctex.gz
 *.out
 *.toc
-*.pdf
+course.pdf
+cheatsheet.pdf
 # AI assistant files
 .claude/
