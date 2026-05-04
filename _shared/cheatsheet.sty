@@ -114,43 +114,38 @@
 
 % ---------- Custom boxes ------------------------------------
 \newtcolorbox{prop}[1][]{
-  enhanced,colback=soft,colframe=blueColor,
+  enhanced jigsaw,colback=soft,colframe=blueColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
-  colbacktitle=blueColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=blueColor,boxrule=0pt,arc=0pt},
+  colbacktitle=blueColor,titlerule=0pt,
   title=Prop,#1
 }
 \newtcolorbox{defn}[1][]{
-  enhanced,colback=greenColor!8,colframe=greenColor,
+  enhanced jigsaw,colback=greenColor!8,colframe=greenColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
-  colbacktitle=greenColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=greenColor,boxrule=0pt,arc=0pt},
+  colbacktitle=greenColor,titlerule=0pt,
   title=Def,#1
 }
 \newtcolorbox{thm}[1][]{
-  enhanced,colback=redColor!8,colframe=redColor,
+  enhanced jigsaw,colback=redColor!8,colframe=redColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
-  colbacktitle=redColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=redColor,boxrule=0pt,arc=0pt},
+  colbacktitle=redColor,titlerule=0pt,
   title=Thm,#1
 }
 \newtcolorbox{warn}[1][]{
-  enhanced,colback=soft,colframe=blueColor,
+  enhanced jigsaw,colback=soft,colframe=blueColor,
   boxrule=0.4pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=white,
-  colbacktitle=blueColor,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=blueColor,boxrule=0pt,arc=0pt},
+  colbacktitle=blueColor,titlerule=0pt,
   title=!,#1
 }
 \newtcolorbox{ex}[1][]{
-  enhanced,colback=white,colframe=black!50,
+  enhanced jigsaw,colback=white,colframe=black!50,
   boxrule=0.3pt,arc=1pt,left=2pt,right=2pt,top=1pt,bottom=1pt,
   fonttitle=\bfseries\footnotesize,coltitle=black,
-  colbacktitle=black!10,attach boxed title to top left={yshift=-2pt,xshift=2pt},
-  boxed title style={size=small,colback=black!10,boxrule=0pt,arc=0pt},
+  colbacktitle=black!10,titlerule=0pt,
   title=Ex,#1
 }
 
