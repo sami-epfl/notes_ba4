@@ -110,13 +110,21 @@ $\sum_{k=m}^{n} z^{k} = \begin{cases} n-m+1 & z=1 \\ \frac{z^m-z^{n+1}}{1-z} & z
 In both cases, we require vectors to have finite energy
 \end{defn}
 
-\begin{prop}{title=Inner product space}
+\begin{prop}[title=Inner product space]
   \begin{itemize}
     \item $\|x\| = \sqrt{\langle x, x \rangle}$
     \item $\langle x, y \rangle = \langle y, x \rangle^{*}$
     \item $\langle x, \alpha y \rangle = \alpha \langle x, y \rangle$
     \item $\langle \alpha x, y \rangle = \alpha^{*} \langle x, y \rangle$
   \end{itemize}
+\end{prop}
+
+\begin{prop}[title=Orthogonal basis coordinates]
+For orthog.\ basis $B=\{\mathbf{v}_k\}_{k=0}^{N-1}$ with inner product $\langle\cdot,\cdot\rangle$, the coord.\ of $\mathbf{x}$ in $B$ are:
+\[
+  [\mathbf{x}]_B[k] = \frac{\langle \mathbf{v}_k,\, \mathbf{x}\rangle}{\langle \mathbf{v}_k,\, \mathbf{v}_k\rangle}, \quad\text{i.e. } \mathbf{x} = \sum_{k} [\mathbf{x}]_B[k]\,\mathbf{v}_k
+\]
+DFT: basis $\{\mathbf{w}_k\}$, $\|\mathbf{w}_k\|^2=N$, so $X[k]=\langle\mathbf{w}_k,\mathbf{x}\rangle$ (the $N$ factor is absorbed into the synthesis $1/N$).
 \end{prop}
 
 \section{Which Fourier Transform?}
@@ -228,6 +236,38 @@ Basis is orthogonal but \textbf{not} orthonormal (norms $= \sqrt{N}$).
 \]
 \end{defn}
 
+\subsection{Elementary DFT Pairs}
+
+\begin{prop}[title=Impulse \& constant (duality)]
+$\boldsymbol{\delta} \overset{\mathrm{DFT}}{\longleftrightarrow} \mathbf{1}$\quad (most concentrated in time $\Rightarrow$ flat spectrum)\\
+$\mathbf{1} \overset{\mathrm{DFT}}{\longleftrightarrow} N\boldsymbol{\delta}$\quad (most spread in time $\Rightarrow$ single freq.)
+\end{prop}
+
+\begin{prop}[title=Shifted impulse]
+$\delta[n-m] \overset{\mathrm{DFT}}{\longleftrightarrow} e^{-j\frac{2\pi}{N}mk} = \mathbf{w}_m^*[k]$
+\end{prop}
+
+\begin{prop}[title=Harmonic sinusoid]
+$\mathbf{w}_m \overset{\mathrm{DFT}}{\longleftrightarrow} N\boldsymbol{\delta}_m$, \quad where $w_m[n]=e^{j\frac{2\pi}{N}mn}$\\
+Spread in time $\Rightarrow$ single nonzero freq.\ coefficient.
+\end{prop}
+
+\begin{prop}[title=Rectangular ($M$-length rect.)]
+$x[n]=1$ for $0\le n < M$, else $0$:
+\[
+  X[k] = \frac{\sin(\pi Mk/N)}{\sin(\pi k/N)}\,e^{j\frac{\pi}{N}(M-1)k}
+\]
+Zeros at $k=mN/M$ ($m\ne 0$). $M=N$: gives $N\boldsymbol{\delta}$.
+\end{prop}
+
+\begin{warn}[title=Time--frequency concentration duality]
+Most concentrated in time $\Leftrightarrow$ most spread in frequency (and vice versa). Generalizes $\boldsymbol{\delta}\leftrightarrow\mathbf{1}$ and $\mathbf{1}\leftrightarrow N\boldsymbol{\delta}$.
+\end{warn}
+
+\begin{prop}[title=Roots of unity]
+The $N$ solutions of $z^N=1$: $z_k = e^{j\frac{2\pi}{N}k}$, $k=0,\ldots,N-1$. These are the frequencies $\omega_k=\frac{2\pi}{N}k$ satisfying $e^{j\omega_k N}=1$.
+\end{prop}
+
 \subsection{Matrix Form}
 \begin{prop}[title=DFT matrix]
 $\mathbf{X} = \mathbf{W}\mathbf{x}$, \quad $\mathbf{x} = \tfrac{1}{N}\mathbf{W}^H\mathbf{X}$, where $W_N = e^{-j\frac{2\pi}{N}}$:
@@ -257,56 +297,18 @@ $W_N^n = W_N^{n\,\mathrm{mod}\,N}$ (aliasing property). First row and column are
 \[
   \mathbf{W}_4 = \begin{bmatrix}1&1&1&1\\1&-j&-1&j\\1&-1&1&-1\\1&j&-1&-j\end{bmatrix}
 \]
-DFT of size 2 and 4: no multiplications ($\times j$ = swap + sign change).
 
 % ============================================================
-\section{DFT Pairs \& Properties}
-
-\subsection{Elementary DFT Pairs}
-
-\begin{prop}[title=Impulse]
-$\boldsymbol{\delta} \overset{\mathrm{DFT}}{\longleftrightarrow} \mathbf{1}$
-\hfill (delta $\to$ all-ones vector)
-\end{prop}
-
-\begin{prop}[title=Shifted impulse]
-$\boldsymbol{\delta}_m \overset{\mathrm{DFT}}{\longleftrightarrow} \mathbf{w}_m^*$, i.e.\ $\delta[n-m]\overset{\mathrm{DFT}}{\longleftrightarrow} e^{-j\frac{2\pi}{N}mk}$
-\end{prop}
-
-\begin{prop}[title=Constant signal]
-$\mathbf{1} \overset{\mathrm{DFT}}{\longleftrightarrow} N\boldsymbol{\delta}$
-\hfill (constant $\to$ impulse at $k=0$)
-\end{prop}
-
-\begin{prop}[title=Harmonic sinusoid]
-$\mathrm{DFT}\{\mathbf{w}_m\} = N\boldsymbol{\delta}_m$, i.e.:
-$w_m[n]\overset{\mathrm{DFT}}{\longleftrightarrow} N\delta[k-m]$
-\end{prop}
-
-\begin{prop}[title=Rectangular signal ($M$ ones)]
-$x[n]=\begin{cases}1 & 0\le n<M\\0 & M\le n<N\end{cases}$
-\[
-  X[k] = \frac{\sin(\pi Mk/N)}{\sin(\pi k/N)}\,e^{j\frac{\pi}{N}(M-1)k}
-\]
-Zeros at $k=N/M, 2N/M, \ldots$
-\end{prop}
-
-\begin{prop}[title=Cosine (harmonic)]
-$x[n]=\cos\!\left(\tfrac{2\pi}{N}k_0 n\right) = \tfrac{1}{2}\mathbf{w}_{k_0}+\tfrac{1}{2}\mathbf{w}_{N-k_0}$:
-\[
-  X[k] = \tfrac{N}{2}(\delta_{k_0}+\delta_{N-k_0})
-\]
-$x[n]=\cos\!\left(\tfrac{2\pi}{N}k_0 n + \theta\right) \Rightarrow X[k_0]=\tfrac{N}{2}e^{j\theta}$, $X[N-k_0]=\tfrac{N}{2}e^{-j\theta}$
-\end{prop}
-
-\begin{warn}[title=Non-harmonic sinusoid]
-If frequency is \emph{not} a multiple of $2\pi/N$, \textbf{all} DFT coefficients are nonzero (spectral leakage).
-\end{warn}
-
+\section{ Properties}
 \subsection{DFT Properties}
 
 \begin{prop}[title=Linearity]
 $\mathrm{DFT}\{a\mathbf{x}+b\mathbf{y}\} = a\,\mathrm{DFT}\{\mathbf{x}\}+b\,\mathrm{DFT}\{\mathbf{y}\}$, $a,b\in\mathbb{C}$
+\end{prop}
+
+\begin{prop}[title=Signal decomposition (computation trick)]
+Decompose $\mathbf{x}=\sum_i a_i\mathbf{s}_i$ into signals with known DFTs, then use linearity.\\
+\textbf{Ex.:} $\mathbf{x}=a\boldsymbol{\delta}+b\cdot\mathbf{1}$ $\Rightarrow$ $\mathbf{X}=a\cdot\mathbf{1}+bN\boldsymbol{\delta}$
 \end{prop}
 
 \begin{prop}[title=Circular time shift]
@@ -326,25 +328,30 @@ $\mathrm{DFT}\{\mathcal{R}\mathbf{x}\}=\mathcal{R}\mathbf{X}$\\
 $\mathrm{DFT}\{\mathbf{x}^*\}=\mathcal{R}\mathbf{X}^*$
 \end{prop}
 
+\begin{thm}[title=Parseval's theorem (DFT)]
+\[
+  \sum_{n=0}^{N-1}|x[n]|^2 = \frac{1}{N}\sum_{k=0}^{N-1}|X[k]|^2 = \|\mathbf{x}\|_2^2
+\]
+Energy is preserved across the DFT change of basis ($1/N$ from non-normalized basis). $|X[k]|^2/N$ = energy at frequency $\omega_k$. Useful: $\|\mathbf{x}-\mathbf{y}\|_2^2 = \frac{1}{N}\|\mathbf{X}-\mathbf{Y}\|_2^2$.
+\end{thm}
+
 \subsection{Symmetries of the DFT}
 A signal $\mathbf{x}$ is \textbf{symmetric} if $x[n]=x[N-n]$.\\
 A signal is \textbf{Hermitian-symmetric} if $x[n]=x^*[N-n]$.
 
 \begin{thm}[title=DFT symmetries]
+\textbf{Signal $\to$ coefficients} (real-valued $x[n]$):
 \begin{itemize}
-  \item DFT of a symmetric signal is symmetric
-  \item DFT of a \textbf{real-valued} signal is \textbf{Hermitian-symmetric}: $X[k]=X^*[N-k]$
-  \item Magnitude of DFT of real signal is symmetric: $|X[k]|=|X[N-k]|$
-  \item DFT of a real-valued symmetric signal is real and symmetric
+  \item $X[k]=X^*[N-k]$ (Hermitian-symmetric)
+  \item $X_r[k]$ symmetric, $X_i[k]$ antisymmetric, $|X[k]|$ symmetric
+  \item DFT of real \& symmetric signal is real \& symmetric
+\end{itemize}
+\textbf{Coefficients $\to$ signal}:
+\begin{itemize}
+  \item $X_r[k]$ symm., $X_i[k]=0$ $\Rightarrow$ $x[n]$ real \& symmetric
+  \item $X_i[k]$ antisymm., $X_r[k]=0$ $\Rightarrow$ $x[n]$ real \& antisymmetric
 \end{itemize}
 \end{thm}
-
-\begin{prop}[title=Parseval's theorem (DFT)]
-\[
-  \sum_{n=0}^{N-1}|x[n]|^2 = \frac{1}{N}\sum_{k=0}^{N-1}|X[k]|^2
-\]
-Energy is preserved across the change of basis.
-\end{prop}
 
 % ============================================================
 \section{Reading \& Plotting the DFT}
@@ -593,6 +600,32 @@ As $N\to\infty$: $\tilde{x}_N\to\mathbf{x}$ and samples fill $[0,2\pi]$.
 \end{prop}
 
 % ============================================================
+\section{Spectrograms (STFT)}
+
+\begin{defn}[title=Short-Time Fourier Transform]
+Analyse a signal $\mathbf{x}$ of length $L$ time-locally:
+\begin{enumerate}
+  \item Slide a window of size $W$ to get $\lfloor L/W \rfloor$ non-overlapping bins
+  \item Compute a $W$-point DFT in each bin
+  \item Result: 2D time $\times$ frequency representation
+\end{enumerate}
+\end{defn}
+
+\begin{prop}[title=Kronecker delta in spectrogram]
+DFT of a length-$W$ Kronecker delta $\delta[n-m]$ (even shifted): $|X[k]|=1$ for all $k$.\\
+$\Rightarrow$ In a spectrogram with window $W$: the bin containing $m$ has \textbf{constant magnitude} $W$ across all frequencies; all other bins are $\mathbf{0}$.
+\end{prop}
+
+\begin{warn}[title=Window size trade-off]
+\textbf{Large} $W$: good frequency resolution, poor time resolution.\\
+\textbf{Small} $W$: good time resolution, poor frequency resolution.\\
+This is an instance of the time--frequency concentration duality.
+\end{warn}
+
+% ============================================================
+
+\newpage
+
 \section{Discrete-Time Filters (Ch.\ 6)}
 
 \subsection{LTI Systems}
@@ -749,6 +782,21 @@ Used in rectangular DFT derivation; also the orthogonality of Fourier vectors (s
   \item $\cos\theta = \frac{e^{j\theta}+e^{-j\theta}}{2}$, $\sin\theta = \frac{e^{j\theta}-e^{-j\theta}}{2j}$
   \item $e^{j\pi}=-1$, $e^{j\pi/2}=j$, $e^{-j\pi/2}=-j$
   \item $(e^{j\theta})^* = e^{-j\theta}$
+  \item $\cos(a+b)=\cos a\cos b - \sin a\sin b$
+  \item $\sin(a+b)=\sin a\cos b + \cos a\sin b$
+  \item $\sin a\sin b = \tfrac{1}{2}[\cos(a-b)-\cos(a+b)]$
+  \item $\cos a\cos b = \tfrac{1}{2}[\cos(a-b)+\cos(a+b)]$
+  \item $\sin a\cos b = \tfrac{1}{2}[\sin(a+b)+\sin(a-b)]$
+  \item $e^{2\pi j n} = 1$ for all $n\in\mathbb{Z}$
+\end{itemize}
+
+\subsection{Complex number tricks}
+\begin{itemize}
+  \item $z_1 = z_2^* \Rightarrow |z_1|=|z_2|$ \quad ($|z|=|z^*|$ always)
+  \item $z + z^* = 2\,\mathrm{Re}\{z\}$, \quad $z - z^* = 2j\,\mathrm{Im}\{z\}$
+  \item $z = z^* \;\Longleftrightarrow\; z\in\mathbb{R} \;\Longleftrightarrow\; \mathrm{Im}\{z\}=0$
+  \item $|z_1 z_2| = |z_1||z_2|$, \quad $\angle(z_1 z_2) = \angle z_1 + \angle z_2$
+  \item $|z|^2 = z\cdot z^*$
 \end{itemize}
 
 \subsection{\texorpdfstring{Inner product in $\mathbb{C}^N$}{Inner product in CN}}
