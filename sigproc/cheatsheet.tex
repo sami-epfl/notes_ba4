@@ -643,8 +643,13 @@ This is an instance of the time--frequency concentration duality.
 
 \subsection{LTI Systems}
 \begin{defn}[title=Linearity \& time-invariance]
-$\mathcal{H}$ is \textbf{linear} if $\mathcal{H}(\alpha\mathbf{x})=\alpha\mathcal{H}\mathbf{x}$ and $\mathcal{H}(\mathbf{x}+\mathbf{w})=\mathcal{H}\mathbf{x}+\mathcal{H}\mathbf{w}$.\\
-$\mathcal{H}$ is \textbf{time-invariant} if $\mathcal{H}(\mathcal{S}^k\mathbf{x})=\mathcal{S}^k(\mathcal{H}\mathbf{x})\ \forall k\in\Z$.
+\begin{itemize}
+    \item \textbf{Linearity (Superposition):} $\mathcal{H}$ is linear if: 
+    \[ \mathcal{H}\{ a x_1[n] + b x_2[n] \} = a \mathcal{H}\{x_1[n]\} + b \mathcal{H}\{x_2[n]\} \]
+    
+    \item \textbf{Time-Invariance (Shift):} $\mathcal{H}$ is TI if:
+    \[ \text{If } y[n] = \mathcal{H}\{x[n]\}, \text{ then } y[n-k] = \mathcal{H}\{x[n-k]\} \]
+\end{itemize}
 \end{defn}
 
 \begin{defn}[title=Moving Average (MA)]
