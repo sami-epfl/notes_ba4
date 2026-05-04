@@ -1,5 +1,9 @@
 # README
 
+## Task tracking
+
+See [TODO.md](TODO.md) for the list of tasks per course.
+
 ## Setup
 
 Follow this tutorial to set up the environment:
