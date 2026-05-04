@@ -127,43 +127,6 @@ For orthog.\ basis $B=\{\mathbf{v}_k\}_{k=0}^{N-1}$ with inner product $\langle\
 DFT: basis $\{\mathbf{w}_k\}$, $\|\mathbf{w}_k\|^2=N$, so $X[k]=\langle\mathbf{w}_k,\mathbf{x}\rangle$ (the $N$ factor is absorbed into the synthesis $1/N$).
 \end{prop}
 
-\section{Which Fourier Transform?}
-
-\begin{center}
-\begin{tikzpicture}[
-  font=\tiny, >=stealth,
-  node distance=0.42cm and 1.35cm,
-  q/.style={align=center, inner sep=1.5pt, text width=1.25cm},
-  res/.style={font=\tiny\bfseries\color{blueColor!90!black}},
-  yes/.style={->, thick, color=greenColor},
-  no/.style={->, thick, color=redColor},
-]
-  \node[q] (q1) {discr.-time?};
-  \node[q, below=of q1] (q2) {finite len.\ $N$?};
-  \node[q, below=of q2] (q3) {fin.\ energy\\ $\ell^2(\mathbb{Z})$?};
-  \node[q, below=of q3] (q4) {periodic?};
-  \node[q, below=of q4] (q5) {power sig.?};
-  \node[res, below=0.32cm of q5] (r0) {$\nexists$ FT};
-
-  \node[res, right=of q1] (r1) {Continuous time FT (CTFT)};
-  \node[res, right=of q2] (r2) {Discrete FT (DFT)};
-  \node[res, right=of q3] (r3) {Discrete time FT (DTFT)};
-  \node[res, right=of q4] (r4) {Discrete Fourier Series (DFS)};
-  \node[res, right=of q5] (r5) {Generalized DTFT};
-
-  \draw[yes] (q1) -- (q2);
-  \draw[no]  (q2) -- (q3);
-  \draw[no]  (q3) -- (q4);
-  \draw[no]  (q4) -- (q5);
-  \draw[no]  (q5) -- (r0);
-  \draw[no]  (q1) -- (r1);
-  \draw[yes] (q2) -- (r2);
-  \draw[yes] (q3) -- (r3);
-  \draw[yes] (q4) -- (r4);
-  \draw[yes] (q5) -- (r5);
-\end{tikzpicture}
-\end{center}
-
 % ============================================================
 \section{The Complex Exponential}
 
@@ -206,6 +169,46 @@ Adding multiples of $2\pi$ to $\omega$ gives the \textbf{same samples}.
 \end{itemize}
 
 % ============================================================
+
+% \columnbreak
+\pagebreak
+\section{Which Fourier Transform?}
+
+\begin{center}
+\begin{tikzpicture}[
+  font=\tiny, >=stealth,
+  node distance=0.42cm and 1.35cm,
+  q/.style={align=center, inner sep=1.5pt, text width=1.25cm},
+  res/.style={font=\tiny\bfseries\color{blueColor!90!black}},
+  yes/.style={->, thick, color=greenColor},
+  no/.style={->, thick, color=redColor},
+]
+  \node[q] (q1) {discr.-time?};
+  \node[q, below=of q1] (q2) {finite len.\ $N$?};
+  \node[q, below=of q2] (q3) {fin.\ energy\\ $\ell^2(\mathbb{Z})$?};
+  \node[q, below=of q3] (q4) {periodic?};
+  \node[q, below=of q4] (q5) {power sig.?};
+  \node[res, below=0.32cm of q5] (r0) {$\nexists$ FT};
+
+  \node[res, right=of q1] (r1) {Continuous time FT (CTFT)};
+  \node[res, right=of q2] (r2) {Discrete FT (DFT)};
+  \node[res, right=of q3] (r3) {Discrete time FT (DTFT)};
+  \node[res, right=of q4] (r4) {Discrete Fourier Series (DFS)};
+  \node[res, right=of q5] (r5) {Generalized DTFT};
+
+  \draw[yes] (q1) -- (q2);
+  \draw[no]  (q2) -- (q3);
+  \draw[no]  (q3) -- (q4);
+  \draw[no]  (q4) -- (q5);
+  \draw[no]  (q5) -- (r0);
+  \draw[no]  (q1) -- (r1);
+  \draw[yes] (q2) -- (r2);
+  \draw[yes] (q3) -- (r3);
+  \draw[yes] (q4) -- (r4);
+  \draw[yes] (q5) -- (r5);
+\end{tikzpicture}
+\end{center}
+
 \section{The DFT}
 
 \subsection{\texorpdfstring{Fourier Basis for $\mathbb{C}^N$}{Fourier Basis for CN}}
@@ -339,18 +342,19 @@ Energy is preserved across the DFT change of basis ($1/N$ from non-normalized ba
 A signal $\mathbf{x}$ is \textbf{symmetric} if $x[n]=x[N-n]$.\\
 A signal is \textbf{Hermitian-symmetric} if $x[n]=x^*[N-n]$.
 
-\begin{thm}[title=DFT symmetries]
-\textbf{Signal $\to$ coefficients} (real-valued $x[n]$):
-\begin{itemize}
-  \item $X[k]=X^*[N-k]$ (Hermitian-symmetric)
-  \item $X_r[k]$ symmetric, $X_i[k]$ antisymmetric, $|X[k]|$ symmetric
-  \item DFT of real \& symmetric signal is real \& symmetric
-\end{itemize}
-\textbf{Coefficients $\to$ signal}:
-\begin{itemize}
-  \item $X_r[k]$ symm., $X_i[k]=0$ $\Rightarrow$ $x[n]$ real \& symmetric
-  \item $X_i[k]$ antisymm., $X_r[k]=0$ $\Rightarrow$ $x[n]$ real \& antisymmetric
-\end{itemize}
+\begin{thm}[title=Symmetry summary]
+\renewcommand{\arraystretch}{1}
+\begin{tabularx}{\linewidth}{@{}XX@{}}
+\toprule
+\textbf{Time domain} $x[n]$ & \textbf{Freq.\ domain} $X[k]$ \\
+\midrule
+Real & $X[-k]=X^*[k]$ \\
+Real \& even & Real \& even \\
+Real \& odd & Imaginary \& odd \\
+Complex \& even & Complex \& even \\
+Complex \& odd & Complex \& odd \\
+\bottomrule
+\end{tabularx}
 \end{thm}
 
 % ============================================================
@@ -407,43 +411,6 @@ $\tilde{x}[n-n_0] \overset{\mathrm{DFS}}{\longleftrightarrow} e^{-j\frac{2\pi}{N
 
 \begin{warn}[title=Time shifts are circular]
 With finite-length signals, time shifts wrap around modulo $N$. A linear phase multiplication on DFT coefficients computes the \textbf{circular shift} of the signal.
-\end{warn}
-
-% ============================================================
-\section{The FFT}
-
-\begin{prop}[title=Complexity comparison]
-\begin{itemize}
-  \item Naive DFT: $O(N^2)$ multiplications
-  \item FFT: $O(N\log N)$ operations
-  \item For $N=10{,}000$: $\sim\!40{,}000$ vs.\ $>100$ million ops
-\end{itemize}
-\end{prop}
-
-\begin{defn}[title=Decimation in time (Cooley-Tukey)]
-Split $N=2^L$ input into even/odd:
-$x_e[n]=x[2n]$, $x_o[n]=x[2n+1]$, $n=0,\ldots,\tfrac{N}{2}-1$
-
-Output halves:
-$X_a[k]=X[k]$ and $X_b[k]=X[k+\tfrac{N}{2}]$, $k=0,\ldots,\tfrac{N}{2}-1$
-
-\textbf{Butterfly equations:}
-\[
-  X_a[k] = X_e[k] + e^{j\frac{2\pi}{N}k}\,X_o[k]
-\]
-\[
-  X_b[k] = X_e[k] - e^{j\frac{2\pi}{N}k}\,X_o[k]
-\]
-where $X_e$, $X_o$ are the $(N/2)$-point DFTs of $x_e$, $x_o$.
-\end{defn}
-
-\begin{warn}[title=Cost breakdown]
-\begin{itemize}
-  \item $2(N/2)^2 = N^2/2$ mults for $\mathbf{X}_e$ and $\mathbf{X}_o$
-  \item $N/2$ mults by twiddle factors for $\mathbf{X}_o$
-  \item Second half is free (just sign change)
-\end{itemize}
-Recursion gives $O(N\log_2 N)$ total.
 \end{warn}
 
 % ============================================================
@@ -533,14 +500,23 @@ $\mathrm{DTFT}\{\mathcal{R}\mathbf{x}\} = \mathcal{R}\mathbf{X}$\\
 $\mathrm{DTFT}\{\mathbf{x}^*\} = \mathcal{R}\mathbf{X}^*$
 \end{prop}
 
-\begin{thm}[title=DTFT symmetries]
-Same as DFT symmetries (with $N\to\infty$):
-\begin{itemize}
-  \item DTFT of a symmetric signal is symmetric
-  \item DTFT of a \textbf{real} signal is Hermitian-symmetric: $X(-\omega)=X^*(\omega)$
-  \item Magnitude of DTFT of real signal is even: $|X(-\omega)|=|X(\omega)|$
-  \item DTFT of real symmetric signal is real and symmetric
-\end{itemize}
+\subsection{Symmetries of the DTFT}
+A signal is \textbf{even} if $x[n]=x[-n]$, \textbf{odd} if $x[n]=-x[-n]$.\\
+A signal is \textbf{Hermitian-symmetric} if $x[n]=x^*[-n]$.
+
+\begin{thm}[title=Symmetry summary]
+\renewcommand{\arraystretch}{1}
+\begin{tabularx}{\linewidth}{@{}XX@{}}
+\toprule
+\textbf{Time domain} $x[n]$ & \textbf{Freq.\ domain} $X(\omega)$ \\
+\midrule
+Real & $X(-\omega)=X^*(\omega)$ \\
+Real \& even & Real \& even \\
+Real \& odd & Imaginary \& odd \\
+Complex \& even & Complex \& even \\
+Complex \& odd & Complex \& odd \\
+\bottomrule
+\end{tabularx}
 \end{thm}
 
 \begin{thm}[title=Parseval's theorem (DTFT)]
@@ -598,6 +574,43 @@ $\tilde{x}_N[n] = \sum_{p=-\infty}^{\infty} x[n+pN]$ (periodization).\\
 $\tilde{X}_N[k] = X\!\left(\frac{2\pi}{N}k\right)$: DFS samples the DTFT.\\
 As $N\to\infty$: $\tilde{x}_N\to\mathbf{x}$ and samples fill $[0,2\pi]$.
 \end{prop}
+
+% ============================================================
+\section{The FFT}
+
+\begin{prop}[title=Complexity comparison]
+\begin{itemize}
+  \item Naive DFT: $O(N^2)$ multiplications
+  \item FFT: $O(N\log N)$ operations
+  \item For $N=10{,}000$: $\sim\!40{,}000$ vs.\ $>100$ million ops
+\end{itemize}
+\end{prop}
+
+\begin{defn}[title=Decimation in time (Cooley-Tukey)]
+Split $N=2^L$ input into even/odd:
+$x_e[n]=x[2n]$, $x_o[n]=x[2n+1]$, $n=0,\ldots,\tfrac{N}{2}-1$
+
+Output halves:
+$X_a[k]=X[k]$ and $X_b[k]=X[k+\tfrac{N}{2}]$, $k=0,\ldots,\tfrac{N}{2}-1$
+
+\textbf{Butterfly equations:}
+\[
+  X_a[k] = X_e[k] + e^{j\frac{2\pi}{N}k}\,X_o[k]
+\]
+\[
+  X_b[k] = X_e[k] - e^{j\frac{2\pi}{N}k}\,X_o[k]
+\]
+where $X_e$, $X_o$ are the $(N/2)$-point DFTs of $x_e$, $x_o$.
+\end{defn}
+
+\begin{warn}[title=Cost breakdown]
+\begin{itemize}
+  \item $2(N/2)^2 = N^2/2$ mults for $\mathbf{X}_e$ and $\mathbf{X}_o$
+  \item $N/2$ mults by twiddle factors for $\mathbf{X}_o$
+  \item Second half is free (just sign change)
+\end{itemize}
+Recursion gives $O(N\log_2 N)$ total.
+\end{warn}
 
 % ============================================================
 \section{Spectrograms (STFT)}
