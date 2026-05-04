@@ -85,7 +85,7 @@ $y[n] = x_1[n] + x_2[n]$
 $y[n] = x_1[n] \cdot x_2[n]$
 \end{defn}
 \begin{defn}[title=Time shift by k $\in \Z$]
-$y[n] = \mathcal{S}^{-1} x[n] = x[n+k]$
+$y[n] = \mathcal{S}^{k} x[n] = x[n+k]$
 \end{defn}
 \begin{defn}[title=Time reversal]
 $y[n] = \mathcal{R} x[n] = \mathcal{S}^{-n} x[0] = x[-n]$
@@ -172,7 +172,7 @@ Adding multiples of $2\pi$ to $\omega$ gives the \textbf{same samples}.
 
 % \columnbreak
 \pagebreak
-\section{Which Fourier Transform?}
+\section{Signal analysis}
 
 \begin{center}
 \begin{tikzpicture}[
@@ -639,7 +639,7 @@ This is an instance of the time--frequency concentration duality.
 
 \newpage
 
-\section{Discrete-Time Filters (Ch.\ 6)}
+\section{Discrete-Time Filters}
 
 \subsection{LTI Systems}
 \begin{defn}[title=Linearity \& time-invariance]
@@ -780,6 +780,7 @@ $h_F[n]=\begin{cases}2/(n\pi)&n\text{ odd}\\0&n\text{ even}\end{cases}$
 Recursive filters (IIR/leaky integrator) require \emph{zero initial conditions} to be uniquely defined and LTI: the system is off for $n<n_0$, memory cells filled with 0.
 \end{warn}
 
+\newpage
 % ============================================================
 \section{Quick Reference}
 
@@ -791,16 +792,13 @@ Used in rectangular DFT derivation; also the orthogonality of Fourier vectors (s
 
 \subsection{Euler \& trig}
 \begin{itemize}
-  \item $e^{j\theta}=\cos\theta+j\sin\theta$
-  \item $\cos\theta = \frac{e^{j\theta}+e^{-j\theta}}{2}$, $\sin\theta = \frac{e^{j\theta}-e^{-j\theta}}{2j}$
-  \item $e^{j\pi}=-1$, $e^{j\pi/2}=j$, $e^{-j\pi/2}=-j$
+
   \item $(e^{j\theta})^* = e^{-j\theta}$
   \item $\cos(a+b)=\cos a\cos b - \sin a\sin b$
   \item $\sin(a+b)=\sin a\cos b + \cos a\sin b$
   \item $\sin a\sin b = \tfrac{1}{2}[\cos(a-b)-\cos(a+b)]$
   \item $\cos a\cos b = \tfrac{1}{2}[\cos(a-b)+\cos(a+b)]$
   \item $\sin a\cos b = \tfrac{1}{2}[\sin(a+b)+\sin(a-b)]$
-  \item $e^{2\pi j n} = 1$ for all $n\in\mathbb{Z}$
 \end{itemize}
 
 \subsection{Complex number tricks}
@@ -813,7 +811,6 @@ Used in rectangular DFT derivation; also the orthogonality of Fourier vectors (s
 \end{itemize}
 
 \subsection{\texorpdfstring{Inner product in $\mathbb{C}^N$}{Inner product in CN}}
-$\langle\mathbf{x},\mathbf{y}\rangle = \sum_{n=0}^{N-1}x^*[n]\,y[n]$\\
 Coefficients: $X[k]=\langle\mathbf{w}_k,\mathbf{x}\rangle$ (projection onto basis).
 
 \subsection{{DTFT inner product in \texorpdfstring{$L_2([-\pi,\pi])$}{L2([-pi,pi])}}}
