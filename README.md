@@ -1,8 +1,6 @@
 # README
 
-## Task tracking
-
-See [TODO.md](TODO.md) for the list of tasks per course.
+Check the [TODO](_shared/TODO.md) list regularly for pending tasks and updates.
 
 ## Setup
 
