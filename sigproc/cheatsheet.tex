@@ -655,11 +655,17 @@ This is an instance of the time--frequency concentration duality.
 \begin{defn}[title=Moving Average (MA)]
 \[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k]\]
 Causal FIR; $h[n]=\tfrac{1}{M}$ for $0\le n<M$, else $0$.
+\begin{itemize}
+  \item requires: M-1 $+$ and 1 $*$ per output sample
+\end{itemize}
 \end{defn}
 
 \begin{defn}[title=Leaky Integrator (LI)]
 \[y[n]=\lambda\,y[n-1]+(1-\lambda)x[n],\quad |\lambda|<1\]
 Causal IIR; $h[n]=(1-\lambda)\lambda^n$ for $n\ge 0$, else $0$.
+\begin{itemize}
+  \item requires: 2 $+$ and 1 $*$ per output sample
+\end{itemize}
 \end{defn}
 
 \subsection{Impulse Response \& Convolution}
