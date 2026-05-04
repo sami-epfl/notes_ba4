@@ -62,14 +62,14 @@
 \definecolor{greenColor}{HTML}{0B6E4F}     % green
 \definecolor{redColor}{HTML}{B83227}     % red/warning
 \definecolor{soft}{HTML}{F2F2F2}        % light gray bg
-
+\definecolor{darkgray}{HTML}{3b3b3b}        % dark gray
 % ---------- Section headers ---------------------------------
 % Bypass titlesec for \section (nested colorbox+parbox+#1 trips it).
 \newcounter{cheatsec}
 \renewcommand{\section}[1]{%
   \par\addvspace{4pt}%
   \refstepcounter{cheatsec}%
-  \noindent\colorbox{blueColor}{%
+  \noindent\colorbox{darkgray}{%
     \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
       \color{white}\small\bfseries\strut\thecheatsec\ \ #1%
     }%
@@ -78,7 +78,7 @@
 }
 
 \titleformat{\subsection}
-  {\normalfont\footnotesize\bfseries\color{blueColor}}
+  {\normalfont\footnotesize\bfseries\color{darkgray}}
   {\thesubsection}{0.4em}{}
 \titlespacing*{\subsection}{0pt}{3pt}{1pt}
 
