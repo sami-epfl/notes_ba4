@@ -3,9 +3,10 @@
 ## Signal Processing (`sigproc/`)
 
 ### To do
-- [ ] Add everything about DFT
+- [ ] New task
 
 ### Done
+- [X] Add everything about DFT
 
 
 ---
