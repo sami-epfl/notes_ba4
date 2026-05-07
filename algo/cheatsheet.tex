@@ -135,20 +135,16 @@ Max \# edge-disjoint paths from $s$ to $t$ = min edges to remove to disconnect $
 
 \begin{defn}[title=Definition]
 Set $T$ of edges that is acyclic and spanning (connects all vertices of $G$).
-\end{defn}
-
-\begin{defn}[title=Minimum Spanning Trees (MST) problem]
-\textbf{In:} undirected $G=(V,E)$, weights $w(u,v)$ for each $(u,v)\in E$.\\
-\textbf{Out:} spanning tree of minimum total weight.
+\textbf{Goal of MST problem: }Find a spanning tree of min total weight.
 \end{defn}
 
 \begin{thm}[title=Cut property (safe edge)]
-Let $A\subseteq T_\text{MST}$, $(S,V\!\setminus\!S)$ a cut respecting $A$, and $(u,v)$ a light (min-weight) edge crossing the cut. Then $(u,v)$ is \emph{safe} to add to $A$.
+Given any cut, a minimum-weight crossing edge belongs to some MST.
 \end{thm}
 
 \subsection{Prim's algorithm}
 \begin{lstlisting}
-PRIM(G, w, r)                  // w: E -> R weights
+PRIM(G, w, r)    // G undirected ; w: E -> R weights
     Q = {}          // min-priority queue (min-heap)
     for each u in G.V:
         u.key = inf
@@ -169,6 +165,26 @@ T is always a subtree of a MST.
 
 \begin{prop}[title=Prim's runtime]
 $O(E\lg V)$ with binary heap. $O(V\lg V+E)$ with Fibonacci heap.
+\end{prop}
+
+\subsection{Kruskal's algorithm}
+\begin{lstlisting}
+KRUSKAL(G, w)
+    A = {}
+    for v in G.V: MAKE-SET(v)
+    sort G.E by w non-decreasing
+    for (u, v) in G.E (sorted):
+        if FIND(u) != FIND(v)
+            A += {(u,v)}; UNION(u, v)
+    return A
+\end{lstlisting}
+
+\begin{thm}[title=Why does it work?]
+T is always a sub-forest of a MST.
+\end{thm}
+
+\begin{prop}[title=Kruskal's runtime]
+$O(E\lg E) = O(E\lg V)$ (sorting dominates).
 \end{prop}
 
 \newpage
