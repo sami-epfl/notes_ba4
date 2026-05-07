@@ -13,25 +13,22 @@
 % ============================================================
 %                       COURSE OUTLINE
 % ============================================================
+% ============================================================
 
-\section{Data Structures}
-\subsection{Disjoint sets}
-Each set is identified by a representative
+\section{Data Structures for Disjoint Sets}
+\subsection{Disjoint sets (Union-Find)}
+Each set identified by a representative.
 
 \begin{defn}[title=Operations]
 \begin{itemize}
-  \item \texttt{MAKE-SET(x)}: $S_i = \{x\}$ and add $S_i$ to the $\mathcal{S}$
+  \item \texttt{MAKE-SET(x)}: $S_i = \{x\}$, add to $\mathcal{S}$
 \end{itemize}
 Let $x \in S_x$, $y \in S_y$
 \begin{itemize}
   \item \texttt{UNION(x, y)}: $\mathcal{S} = \mathcal{S} \setminus \{S_x, S_y\} \cup \{S_x \cup S_y\}$
-  \item \texttt{FIND(x)}: return the representative of $x$ in $S_x$
+  \item \texttt{FIND(x)}: return representative of $x$ in $S_x$
 \end{itemize}
 \end{defn}
-
-\begin{center}
-    \includegraphics[width=\linewidth]{images/connected_components_before.png}
-\end{center}
 
 \begin{lstlisting}
 CONNECTED-COMPONENTS(G)
@@ -42,11 +39,26 @@ CONNECTED-COMPONENTS(G)
             UNION(u, v)
 \end{lstlisting}
 
+\subsection{Linked list representation}
+
 \begin{center}
-    \includegraphics[width=\linewidth]{images/connected_components_after.png}
+    \includegraphics[width=\linewidth]{images/linkedList_representation.png}
 \end{center}
 
-% To do: Lecture 17
+
+\begin{thm}[title=Weighted-union heuristic]
+Always merge smaller into larger. $m$ ops on $n$ elements: $O(m + n\lg n)$. Each element's representative updated $\leq \lg n$ times (each update at least doubles set size).
+\end{thm}
+
+\subsection{Tree representation}
+\begin{center}
+    \includegraphics[width=\linewidth]{images/tree_representation.png}
+\end{center}
+\begin{thm}[title=Runtime with both heuristics]
+\textbf{Union by rank:} smaller-rank root $\to$ child of larger-rank root (rank $\approx$ height upper bound).\\
+\textbf{Path compression:} all nodes on FIND path become direct children of root.\\
+Union by rank + path compression: $O(m\cdot\alpha(n))$ for $m$ operations on $n$ elements. $\alpha(n)\leq 5$ for any practical $n$. Bound is tight.
+\end{thm}
 
 \section{Flow network}
 \subsection{Definitions}
@@ -63,7 +75,6 @@ CONNECTED-COMPONENTS(G)
 \end{itemize}
 \end{defn}
 
-It satisfies the following properties:
 \begin{thm}[title=Capacity constraint]
 $\forall u,v\in V$, $0\le f(u,v)\le c(u,v)$
 \end{thm}
@@ -73,17 +84,13 @@ $\sum_{v\in V} f(u,v) = \sum_{v\in V} f(v,u)$
 \end{thm}
 
 \begin{defn}[title=Cut]
-A cut of a flow network is a partition of $V$ into two disjoint sets $S$ and $T$ such that $s\in S$ and $t\in T$. The capacity of the cut is defined as $c(S,T)=\sum_{u\in S, v\in T} c(u,v)$.
+Partition of $V$ into two disjoint sets $S$ and $T$ such that $s\in S$ and $t\in T$. $c(S,T)=\sum_{u\in S, v\in T} c(u,v)$.
 \end{defn}
 
 \subsection{Maximum flow problem - Ford-Fulkerson method}
 
 \begin{prop}[title={Residual network $G_f=(V,E_f)$}]
-$\forall (u,v)\in E_f$, $c_f(u,v)$ is the residual capacity:
-\begin{itemize}
-    \item Additional flow possible (forward edge)
-    \item Flow removable (backward edge)
-\end{itemize}
+$c_f(u,v)$: additional flow possible (forward edge) or removable (backward edge).
 \end{prop}
 
 \begin{lstlisting}
@@ -101,15 +108,11 @@ FORD-FULKERSON-METHOD(G, s, t)
 It is a cut where the capacity crossing it is the minimum among all cuts.
 \end{defn}
 
-\begin{prop}[title=Capacity of a cut]
-$c(S,T) = \sum_{u\in S, v\in T} c(u,v)$
-\end{prop}
-
 \begin{prop}[title=Net flow accross cut]
 $f(S,T) = \sum_{u\in S, v\in T} f(u,v) - \sum_{u\in S, v\in T} f(v,u)$
 \end{prop}
 
-\begin{thm}[title=Max-flow min-cut theorem]
+\begin{thm}[title=Max-flow min-cut theorem ($\Leftrightarrow$)]
 \begin{itemize}
   \item f is the maximum flow
   \item $G_f$ has no augmenting path
@@ -118,32 +121,33 @@ $f(S,T) = \sum_{u\in S, v\in T} f(u,v) - \sum_{u\in S, v\in T} f(v,u)$
 \end{thm}
 
 \subsection{Applications of max flow}
-\begin{prop}[title=Bipartite matching as flow problem]
-Goal: find a maximum matching in a bipartite graph $G=(V,E)$ with $V=L\cup R$ (left and right parts).
-\begin{itemize}
-  \item Connect s to $\forall v\in L$ and $\forall v\in R$ to t
-  \item $c(s,u) = 1$ for $u\in L$,
-  \item $c(u,v) = 1$ for $(u,v)\in E$,
-  \item $c(v,t) = 1$ for $v\in R$
-  \item Run the Ford-Fulkerson method
-  \item Matching is complete
-\end{itemize}
+\begin{prop}[title=Bipartite matching as flow]
+$G=(V,E)$, $V=L\cup R$. Connect $s\to\forall u\in L$ and $\forall v\in R\to t$, all capacities 1. Run Ford-Fulkerson.
 \end{prop}
 
-% Pas très clair, à revoir !!!!
 \begin{prop}[title=Edge-disjoint paths]
-Given a directed graph $G=(V,E)$ and two vertices $s,t\in V$, the maximum number of edge-disjoint paths from $s$ to $t$ is equal to the minimum number of edges whose removal disconnects $s$ from $t$.
-\begin{itemize}
-  \item max-flow = max number of edge-disjoint paths
-  \item min-cut = min number of edges to remove to disconnect $s$ from $t$
-\end{itemize}
+Max \# edge-disjoint paths from $s$ to $t$ = min edges to remove to disconnect $s$ from $t$ = max flow (all capacities 1).
 \end{prop}
 
-% ============================================================
-% En haut c'est le plan du cours, il faut maintenant le remplir
-% avec les exemples du bas (à supprimer une fois rempli).
-% ============================================================
 
+% ============================================================
+\section{Spanning Trees}
+
+\begin{defn}[title=Definition]
+Set $T$ of edges that is acyclic and spanning (connects all vertices of $G$).
+\end{defn}
+
+\begin{defn}[title=Minimum Spanning Trees (MST) problem]
+\textbf{In:} undirected $G=(V,E)$, weights $w(u,v)$ for each $(u,v)\in E$.\\
+\textbf{Out:} spanning tree of minimum total weight.
+\end{defn}
+
+\begin{thm}[title=Cut property (safe edge)]
+Let $A\subseteq T_\text{MST}$, $(S,V\!\setminus\!S)$ a cut respecting $A$, and $(u,v)$ a light (min-weight) edge crossing the cut. Then $(u,v)$ is \emph{safe} to add to $A$.
+\end{thm}
+
+
+\newpage
 \section{-----------------}
 
 \subsection{Key definiti2ons}
