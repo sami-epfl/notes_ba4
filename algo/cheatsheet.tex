@@ -146,6 +146,30 @@ Set $T$ of edges that is acyclic and spanning (connects all vertices of $G$).
 Let $A\subseteq T_\text{MST}$, $(S,V\!\setminus\!S)$ a cut respecting $A$, and $(u,v)$ a light (min-weight) edge crossing the cut. Then $(u,v)$ is \emph{safe} to add to $A$.
 \end{thm}
 
+\subsection{Prim's algorithm}
+\begin{lstlisting}
+PRIM(G, w, r)                  // w: E -> R weights
+    Q = {}          // min-priority queue (min-heap)
+    for each u in G.V:
+        u.key = inf
+        u.pi = NIL             // u.pi = parent in T
+        INSERT(Q, u)
+    DECREASE-KEY(Q, r, 0)               // r.key = 0
+    while Q != {}:
+        u = EXTRACT-MIN(Q)
+        for each v in G.Adj[u]:
+            if v in Q and w(u,v) < v.key:
+                v.pi = u
+                DECREASE-KEY(Q, v, w(u,v))
+\end{lstlisting}
+
+\begin{thm}[title=Why does it work?]
+T is always a subtree of a MST.
+\end{thm}
+
+\begin{prop}[title=Prim's runtime]
+$O(E\lg V)$ with binary heap. $O(V\lg V+E)$ with Fibonacci heap.
+\end{prop}
 
 \newpage
 \section{-----------------}
