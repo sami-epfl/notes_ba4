@@ -8,5 +8,11 @@
 *.toc
 course.pdf
 cheatsheet.pdf
+
+# Overview files
+_overview/**
+!_overview/**/
+!_overview/**/*.pdf
+
 # AI assistant files
 .claude/
