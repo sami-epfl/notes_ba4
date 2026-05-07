@@ -642,31 +642,43 @@ This is an instance of the time--frequency concentration duality.
 \section{Discrete-Time Filters}
 
 \subsection{LTI Systems}
+
 \begin{defn}[title=Linearity \& time-invariance]
-\begin{itemize}
-    \item \textbf{Linearity (Superposition):} $\mathcal{H}$ is linear if: 
-    \[ \mathcal{H}\{ a x_1[n] + b x_2[n] \} = a \mathcal{H}\{x_1[n]\} + b \mathcal{H}\{x_2[n]\} \]
-    
-    \item \textbf{Time-Invariance (Shift):} $\mathcal{H}$ is TI if:
-    \[ \text{If } y[n] = \mathcal{H}\{x[n]\}, \text{ then } y[n-k] = \mathcal{H}\{x[n-k]\} \]
-\end{itemize}
+Let $y[n] = \mathcal{H}\{x[n]\}$. \\
+\textbf{Linearity} ($\forall\, \alpha,\beta \in\mathbb{C}$, $\forall\, x_1, x_2$):
+\[
+    \mathcal{H}\{\alpha\, x_1[n] + \beta\, x_2[n]\} \stackrel{?}{=} \alpha\, \mathcal{H}\{x_1[n]\} + \beta\, \mathcal{H}\{x_2[n]\}.
+\]
+
+\textbf{Time-Invariance} ($\forall\, n_0 \in \mathbb{Z},\ \forall\, x$):
+\[
+    \underbrace{\mathcal{H}\{x[n - n_0]\}}_{x[\cdot] \,\leftarrow\, x[\cdot - n_0]} \stackrel{?}{=} \underbrace{y[n - n_0]}_{n \,\leftarrow\, n - n_0}.
+\]
 \end{defn}
 
 \begin{defn}[title=Moving Average (MA)]
 \[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k]\]
-Causal FIR; $h[n]=\tfrac{1}{M}$ for $0\le n<M$, else $0$.
-\begin{itemize}
-  \item requires: M-1 $+$ and 1 $*$ per output sample
-\end{itemize}
+Causal FIR; $h[n]=\tfrac{1}{M}$ for $0\le n<M$, else $0$.\\
+Requires $M-1$ additions and $1$ multiplication per output sample.
 \end{defn}
+
+\begin{prop}[title=Zero-centered (noncausal) MA]
+\[y[n]=\frac{1}{2L+1}\sum_{k=-L}^{L}x[n-k]\]
+Noncausal; eliminates the processing lag of the causal version. Causal implementation: delay output by $L$ samples. Causal up to a delay $\Rightarrow$ always FIR, always BIBO stable.
+\end{prop}
 
 \begin{defn}[title=Leaky Integrator (LI)]
 \[y[n]=\lambda\,y[n-1]+(1-\lambda)x[n],\quad |\lambda|<1\]
-Causal IIR; $h[n]=(1-\lambda)\lambda^n$ for $n\ge 0$, else $0$.
-\begin{itemize}
-  \item requires: 2 $+$ and 1 $*$ per output sample
-\end{itemize}
+Causal IIR; $h[n]=(1-\lambda)\lambda^n\,u[n]$.\\
+Approximates MA of length $M$ with $\lambda=\frac{M-1}{M}$.\\
+Requires $2$ multiplications and $1$ addition per sample (constant cost).
 \end{defn}
+
+\begin{thm}[title=LI BIBO stability]
+LI is BIBO stable $\Longleftrightarrow$ $|\lambda|<1$.\\
+\emph{Proof:} $\displaystyle\sum_{n=0}^{\infty}|h[n]| = |1-\lambda|\sum_{n=0}^{\infty}|\lambda|^n = \frac{|1-\lambda|}{1-|\lambda|} < \infty$ iff $|\lambda|<1$.\\
+As $\lambda\to 1$: smoothing power $\uparrow$ but output diverges at $\lambda=1$.
+\end{thm}
 
 \subsection{Impulse Response \& Convolution}
 \begin{defn}[title=Impulse response]
@@ -675,9 +687,16 @@ $\mathbf{h}=\mathcal{H}\boldsymbol{\delta}$. An LTI system is \emph{fully} descr
 
 \begin{defn}[title={Convolution $y=x*h$}]
 \[y[n]=\sum_{k=-\infty}^{\infty}x[k]\,h[n-k]\]
-\textbf{Comm.:} $x*h=h*x$.\quad \textbf{Assoc.:} $(x*h)*w=x*(h*w)$.\\
-Cascade of stable filters: $\mathbf{h}=\mathbf{h}_1*\mathbf{h}_2$ (order irrelevant).
+Well-defined when $\sum_k x[k]y[n-k]$ is finite $\forall n$ (e.g., both abs.\ summable, or one abs.\ summable and one bounded).
 \end{defn}
+
+\begin{prop}[title=Convolution properties]
+\textbf{Linearity:} $\mathbf{x}*(\alpha\mathbf{y}+\beta\mathbf{w})=\alpha(\mathbf{x}*\mathbf{y})+\beta(\mathbf{x}*\mathbf{w})$\\
+\textbf{Time-shift:} $\mathbf{x}*(\mathcal{S}^k\mathbf{y})=\mathcal{S}^k(\mathbf{x}*\mathbf{y})=(\mathcal{S}^k\mathbf{x})*\mathbf{y}$\\
+\textbf{Commutativity:} $\mathbf{x}*\mathbf{h}=\mathbf{h}*\mathbf{x}$\\
+\textbf{Associativity:} $(\mathbf{x}*\mathbf{h})*\mathbf{w}=\mathbf{x}*(\mathbf{h}*\mathbf{w})$ (abs.\ summable)\\
+\textbf{Cascade:} two stable filters in series $\equiv$ one filter with $\mathbf{h}=\mathbf{h}_1*\mathbf{h}_2$; order is irrelevant.
+\end{prop}
 
 \begin{prop}[title={Computing $y[n]$ algorithmically}]
 \textbf{1.}~Time-reverse $h$: $h[k]\to h[-k]$\\
@@ -695,13 +714,25 @@ Cascade of stable filters: $\mathbf{h}=\mathbf{h}_1*\mathbf{h}_2$ (order irrelev
 \end{defn}
 
 \begin{defn}[title=Causality]
-$\mathcal{H}$ is \textbf{causal} iff $h[n]=0$ for $n<n_0$ (some $n_0\ge 0$). Output depends only on past/present inputs. An FIR is always causal up to a delay.
+$\mathcal{H}$ is \textbf{(strictly) causal} iff $h[n]=0$ for $n<n_0$, some $n_0\ge 0$. Output depends only on past/present inputs. When $\mathbf{h}$ is not strictly causal:
+\begin{enumerate}
+  \item \textbf{Causal up to a delay}: $h[n]=0$ for $n<n_0$, $n_0<0$ (FIR is always this).
+  \item \textbf{Anticausal}: $h[n]=0$ for $n>0$; offline applications only.
+  \item \textbf{Ideal}: infinite two-sided support — \emph{not realizable} in practice; used as theoretical benchmark.
+\end{enumerate}
 \end{defn}
 
 \begin{thm}[title=BIBO Stability]
-LTI is BIBO stable $\Longleftrightarrow$ $\displaystyle\sum_{k}|h[k]|<\infty$.\\
-Sufficient condition proves: $|y[n]|\le L\sum_k|h[k]|$ when $|x|\le L$.
+Bounded Input $\Rightarrow$ Bounded Output. LTI is BIBO stable $\Longleftrightarrow$ $\mathbf{h}$ abs.\ summable:
+\[\sum_{k=-\infty}^{\infty}|h[k]|<\infty\]
+\textbf{($\Leftarrow$) Suff.:} Let $|x[n]|\le L$. By triangle inequality then bounded input:
+\[|y[n]| \le \sum_k |h[k]|\,\underbrace{|x[n-k]|}_{\le\, L} \le L\sum_k|h[k]| < \infty\]
+\textbf{($\Rightarrow$) Nec.:} If $\sum|h[k]|=\infty$, take bounded $x[n]=\mathrm{sgn}(h[-n])$; then $y[0]=\sum_k|h[k]|=\infty$.
 \end{thm}
+
+\begin{prop}[title=FIR always BIBO stable]
+FIR impulse response has finite support $\Rightarrow$ $\sum|h[k]|<\infty$ always holds $\Rightarrow$ FIR filters are \textbf{unconditionally BIBO stable}.
+\end{prop}
 
 \subsection{Frequency Response}
 
@@ -787,9 +818,15 @@ $h_F[n]=\begin{cases}2/(n\pi)&n\text{ odd}\\0&n\text{ even}\end{cases}$
 \textbf{FIR}: $a_k=0$ for $k\ge 1$.\quad \textbf{IIR}: some $a_k\ne 0$ ($k\ge 1$, feedback).
 \end{defn}
 
-\begin{warn}[title=Zero initial conditions]
-Recursive filters (IIR/leaky integrator) require \emph{zero initial conditions} to be uniquely defined and LTI: the system is off for $n<n_0$, memory cells filled with 0.
-\end{warn}
+\begin{defn}[title=Zero initial conditions]
+For a recursive filter to be uniquely defined and LTI, $\exists\, n_0$ such that:
+\begin{itemize}
+  \item $x[n]=0$ for all $n<n_0$ (input off before start)
+  \item $y[n]=0$ for all $n<n_0$ (output zero before start)
+  \item all memory elements $=0$ at $n=n_0$
+\end{itemize}
+Nonzero initial memory breaks uniqueness and time-invariance.
+\end{defn}
 
 \newpage
 % ============================================================
