@@ -647,147 +647,148 @@ This is an instance of the time--frequency concentration duality.
 Let $y[n] = \mathcal{H}\{x[n]\}$. \\
 \textbf{Linearity} ($\forall\, \alpha,\beta \in\mathbb{C}$, $\forall\, x_1, x_2$):
 \[
-    \mathcal{H}\{\alpha\, x_1[n] + \beta\, x_2[n]\} \stackrel{?}{=} \alpha\, \mathcal{H}\{x_1[n]\} + \beta\, \mathcal{H}\{x_2[n]\}.
+    \mathcal{H}\{\alpha\, x_1[n] + \beta\, x_2[n]\} \stackrel{?}{=} \alpha\, \mathcal{H}\{x_1[n]\} + \beta\, \mathcal{H}\{x_2[n]\}
 \]
 
 \textbf{Time-Invariance} ($\forall\, n_0 \in \mathbb{Z},\ \forall\, x$):
 \[
-    \underbrace{\mathcal{H}\{x[n - n_0]\}}_{x[\cdot] \,\leftarrow\, x[\cdot - n_0]} \stackrel{?}{=} \underbrace{y[n - n_0]}_{n \,\leftarrow\, n - n_0}.
+    \underbrace{\mathcal{H}\{x[n - n_0]\}}_{x[\cdot] \,\leftarrow\, x[\cdot - n_0]} \stackrel{?}{=} \underbrace{y[n - n_0]}_{n \,\leftarrow\, n - n_0}
 \]
+\emph{Key consequence:} an LTI system cannot create new frequency content.
+
 \end{defn}
 
-\begin{defn}[title=Moving Average (MA)]
-\[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k]\]
-Causal FIR; $h[n]=\tfrac{1}{M}$ for $0\le n<M$, else $0$.\\
-Requires $M-1$ additions and $1$ multiplication per output sample.
+\begin{defn}[title=Zero initial conditions]
+A recursive filter is LTI and has a \emph{unique} output only if $\exists\, n_0$ such that for $n<n_0$: input is zero, output is zero, and all memory cells are zero. Nonzero initial memory breaks both uniqueness and time-invariance.
 \end{defn}
-
-\begin{prop}[title=Zero-centered (noncausal) MA]
-\[y[n]=\frac{1}{2L+1}\sum_{k=-L}^{L}x[n-k]\]
-Noncausal; eliminates the processing lag of the causal version. Causal implementation: delay output by $L$ samples. Causal up to a delay $\Rightarrow$ always FIR, always BIBO stable.
-\end{prop}
-
-\begin{defn}[title=Leaky Integrator (LI)]
-\[y[n]=\lambda\,y[n-1]+(1-\lambda)x[n],\quad |\lambda|<1\]
-Causal IIR; $h[n]=(1-\lambda)\lambda^n\,u[n]$.\\
-Approximates MA of length $M$ with $\lambda=\frac{M-1}{M}$.\\
-Requires $2$ multiplications and $1$ addition per sample (constant cost).
-\end{defn}
-
-\begin{thm}[title=LI BIBO stability]
-LI is BIBO stable $\Longleftrightarrow$ $|\lambda|<1$.\\
-\emph{Proof:} $\displaystyle\sum_{n=0}^{\infty}|h[n]| = |1-\lambda|\sum_{n=0}^{\infty}|\lambda|^n = \frac{|1-\lambda|}{1-|\lambda|} < \infty$ iff $|\lambda|<1$.\\
-As $\lambda\to 1$: smoothing power $\uparrow$ but output diverges at $\lambda=1$.
-\end{thm}
 
 \subsection{Impulse Response \& Convolution}
+
 \begin{defn}[title=Impulse response]
 $\mathbf{h}=\mathcal{H}\boldsymbol{\delta}$. An LTI system is \emph{fully} described by $\mathbf{h}$.
 \end{defn}
 
-\begin{defn}[title={Convolution $y=x*h$}]
+\begin{defn}[title={Convolution $\mathbf{y}=\mathbf{x}*\mathbf{h}$}]
 \[y[n]=\sum_{k=-\infty}^{\infty}x[k]\,h[n-k]\]
-Well-defined when $\sum_k x[k]y[n-k]$ is finite $\forall n$ (e.g., both abs.\ summable, or one abs.\ summable and one bounded).
+Well-defined when one sequence is abs.\ summable and the other is bounded (or both abs.\ summable).\\[2pt]
+\textbf{To compute $y[n]$ sample by sample:}
+time-reverse $h$, slide it to position $n$, multiply element-wise with $x$, sum.
 \end{defn}
 
 \begin{prop}[title=Convolution properties]
-\textbf{Linearity:} $\mathbf{x}*(\alpha\mathbf{y}+\beta\mathbf{w})=\alpha(\mathbf{x}*\mathbf{y})+\beta(\mathbf{x}*\mathbf{w})$\\
-\textbf{Time-shift:} $\mathbf{x}*(\mathcal{S}^k\mathbf{y})=\mathcal{S}^k(\mathbf{x}*\mathbf{y})=(\mathcal{S}^k\mathbf{x})*\mathbf{y}$\\
 \textbf{Commutativity:} $\mathbf{x}*\mathbf{h}=\mathbf{h}*\mathbf{x}$\\
-\textbf{Associativity:} $(\mathbf{x}*\mathbf{h})*\mathbf{w}=\mathbf{x}*(\mathbf{h}*\mathbf{w})$ (abs.\ summable)\\
-\textbf{Cascade:} two stable filters in series $\equiv$ one filter with $\mathbf{h}=\mathbf{h}_1*\mathbf{h}_2$; order is irrelevant.
+\textbf{Linearity:} $\mathbf{x}*(\alpha\mathbf{y}+\beta\mathbf{w})=\alpha(\mathbf{x}*\mathbf{y})+\beta(\mathbf{x}*\mathbf{w})$\\
+\textbf{Time-shift:} $\mathbf{x}*(\mathcal{S}^k\mathbf{y})=\mathcal{S}^k(\mathbf{x}*\mathbf{y})$\\
+\textbf{Associativity:} $(\mathbf{x}*\mathbf{h})*\mathbf{w}=\mathbf{x}*(\mathbf{h}*\mathbf{w})$ \emph{(abs.\ summable)}\\
+\textbf{Cascade:} filters in series $\equiv$ single filter with $\mathbf{h}=\mathbf{h}_1*\mathbf{h}_2$; order is irrelevant.
 \end{prop}
 
-\begin{prop}[title={Computing $y[n]$ algorithmically}]
-\textbf{1.}~Time-reverse $h$: $h[k]\to h[-k]$\\
-\textbf{2.}~Shift by $n$: $h[-k]\to h[n-k]$\\
-\textbf{3.}~Multiply element-wise with $x[k]$ and sum.
-\end{prop}
-
-\subsection{Filter Classification (Time Domain)}
+% --- 3. FILTER PROPERTIES FROM h ---
+\subsection{\texorpdfstring{Filter Properties (from $\mathbf{h}$)}{Filter Properties (from h)}}
 
 \begin{defn}[title=FIR vs IIR]
 \begin{itemize}
-  \item \textbf{FIR}: finite-support $\mathbf{h}$; no feedback; \emph{always} BIBO stable.
-  \item \textbf{IIR}: infinite-support $\mathbf{h}$; realizable IIRs have one-sided $\mathbf{h}$ via feedback paths.
+  \item \textbf{FIR} (Finite Impulse Response): $\mathbf{h}$ has finite support. No feedback; \emph{always} BIBO stable.
+  \item \textbf{IIR} (Infinite Impulse Response): $\mathbf{h}$ has infinite support. Realizable IIRs use feedback and have a one-sided $\mathbf{h}$.
 \end{itemize}
 \end{defn}
 
 \begin{defn}[title=Causality]
-$\mathcal{H}$ is \textbf{(strictly) causal} iff $h[n]=0$ for $n<n_0$, some $n_0\ge 0$. Output depends only on past/present inputs. When $\mathbf{h}$ is not strictly causal:
-\begin{enumerate}
-  \item \textbf{Causal up to a delay}: $h[n]=0$ for $n<n_0$, $n_0<0$ (FIR is always this).
-  \item \textbf{Anticausal}: $h[n]=0$ for $n>0$; offline applications only.
-  \item \textbf{Ideal}: infinite two-sided support — \emph{not realizable} in practice; used as theoretical benchmark.
-\end{enumerate}
+Output at time $n$ depends only on $x[n], x[n-1],\ldots$ (past/present). Equivalently, $h[n]=0$ for $n<n_0$ with some $n_0\ge 0$.
+\begin{itemize}
+  \item \textbf{Causal up to a delay}: $h[n]=0$ for $n<n_0<0$ — FIR filters always satisfy this.
+  \item \textbf{Anticausal}: $h[n]=0$ for $n>0$; offline use only.
+  \item \textbf{Ideal}: $h$ has infinite two-sided support — \emph{not realizable}, used as theoretical benchmark.
+\end{itemize}
 \end{defn}
 
 \begin{thm}[title=BIBO Stability]
-Bounded Input $\Rightarrow$ Bounded Output. LTI is BIBO stable $\Longleftrightarrow$ $\mathbf{h}$ abs.\ summable:
+LTI is BIBO stable $\Longleftrightarrow$ $\mathbf{h}$ is absolutely summable:
 \[\sum_{k=-\infty}^{\infty}|h[k]|<\infty\]
-\textbf{($\Leftarrow$) Suff.:} Let $|x[n]|\le L$. By triangle inequality then bounded input:
-\[|y[n]| \le \sum_k |h[k]|\,\underbrace{|x[n-k]|}_{\le\, L} \le L\sum_k|h[k]| < \infty\]
-\textbf{($\Rightarrow$) Nec.:} If $\sum|h[k]|=\infty$, take bounded $x[n]=\mathrm{sgn}(h[-n])$; then $y[0]=\sum_k|h[k]|=\infty$.
+\textbf{($\Leftarrow$)} If $|x[n]|\le L$ then $|y[n]| \le L\sum_k|h[k]| < \infty$. \textbf{($\Rightarrow$)} If $\sum|h[k]|=\infty$, take $x[n]=\mathrm{sgn}(h[-n])$; then $y[0]=\infty$.\\
+\textbf{FIR is always BIBO stable} (finite sum is always finite).
 \end{thm}
 
-\begin{prop}[title=FIR always BIBO stable]
-FIR impulse response has finite support $\Rightarrow$ $\sum|h[k]|<\infty$ always holds $\Rightarrow$ FIR filters are \textbf{unconditionally BIBO stable}.
-\end{prop}
+\subsection{Realizable Filters: CCDE}
 
+\begin{defn}[title=Constant-Coefficient Difference Equation]
+\[y[n]=\underbrace{\sum_{k=0}^{M-1}b_k\,x[n-k]}_{\text{feedforward (FIR part)}}-\underbrace{\sum_{k=1}^{N-1}a_k\,y[n-k]}_{\text{feedback (IIR part)}}\]
+\textbf{FIR}: all $a_k=0$ for $k\ge 1$.\\
+\textbf{IIR}: at least one $a_k\ne 0$ for $k\ge 1$ — recursion introduces a feedback loop.
+\end{defn}
+
+% --- 5. FREQUENCY RESPONSE ---
 \subsection{Frequency Response}
 
 \begin{thm}[title=Eigensequence property]
-For $w[n]=e^{j\omega_0 n}$:\; $\mathcal{H}\mathbf{w}=H(\omega_0)\,\mathbf{w}$, where
-\[H(\omega)=\mathrm{DTFT}\{h\}=\sum_{k=-\infty}^{\infty}h[k]\,e^{-j\omega k}\]
-$H(\omega_0)=A_0 e^{j\theta_0}$: $A_0=|H(\omega_0)|$ scales amplitude, $\theta_0=\angle H(\omega_0)$ shifts phase.\\
-\textbf{LTI cannot create new frequency content.}
+Complex exponentials are eigenfunctions of any LTI system:
+\[\mathcal{H}\{e^{j\omega_0 n}\} = H(\omega_0)\cdot e^{j\omega_0 n}\]
+\[H(\omega)=\sum_{k=-\infty}^{\infty}h[k]\,e^{-j\omega k}\]
+$|H(\omega_0)|$ scales the amplitude; $\angle H(\omega_0)$ shifts the phase. $H(\omega)$ is the DTFT of $\mathbf{h}$.
 \end{thm}
 
-\begin{thm}[title=Convolution Theorem]
+\begin{thm}[title=Convolution theorem]
 \[y=x*h \;\Longleftrightarrow\; Y(\omega)=X(\omega)\cdot H(\omega)\]
-Filtering $=$ pointwise multiplication in frequency domain.
+Filtering in time $=$ pointwise multiplication in frequency. $H(\omega)$ acts as a \emph{spectral mask}.
 \end{thm}
 
-\subsubsection{Filter Categories}
+\begin{defn}[title=Filter types by magnitude response]
 \begin{itemize}
-  \item \textbf{Lowpass}: $|H(\omega)|$ large near $\omega=0$, small near $\pm\pi$
-  \item \textbf{Highpass}: $|H(\omega)|$ large near $\omega=\pm\pi$, small near $0$
-  \item \textbf{Bandpass}: $|H(\omega)|$ large near $\omega=\pm\omega_c$
-  \item \textbf{Allpass}: $|H(\omega)|=\mathrm{const}$ (phase only)
+  \item \textbf{Lowpass}: passes low freqs ($\omega\approx 0$), blocks high ($\omega\approx\pm\pi$)
+  \item \textbf{Highpass}: passes high freqs, blocks low
+  \item \textbf{Bandpass}: passes freqs near $\pm\omega_c$
+  \item \textbf{Allpass}: $|H(\omega)|=\text{const}$ — modifies phase only
 \end{itemize}
-\textbf{Passband}: where $|H|\approx 1$;\quad \textbf{Stopband}: where $|H|\approx 0$.
-
-\subsubsection{Phase Response \& Group Delay}
-\begin{defn}[title=Linear phase]
-$\angle H(\omega)=-\omega d$, $d\in\R$: uniform delay $d$ samples for all frequencies. All realizable linear-phase filters are FIR.\\
-\textbf{Generalized:} $H(\omega)=A(\omega)e^{-j(\omega d+\phi)}$, $A(\omega)\in\R$.
-\end{defn}
-\begin{defn}[title=Group delay]
-\[\mathrm{grd}\{H(\omega)\}=-\frac{d\,\angle H(\omega)}{d\omega}\]
-Constant for linear-phase filters. For a group of freqs around $\omega_0$, the group delay gives the time delay.
+\textbf{Passband}: $|H|\approx 1$;\quad \textbf{Stopband}: $|H|\approx 0$.
 \end{defn}
 
-\subsection{Key Filter Frequency Responses}
+\begin{defn}[title=Linear phase \& group delay]
+\textbf{Linear phase:} $\angle H(\omega)=-\omega d$ — all frequencies delayed by exactly $d$ samples. Generalized: $H(\omega)=A(\omega)e^{-j(\omega d+\phi)}$, $A(\omega)\in\mathbb{R}$.\\[2pt]
+\textbf{Group delay:} $\mathrm{grd}\{H(\omega)\}=-\dfrac{d\,\angle H(\omega)}{d\omega}$
 
-\begin{prop}[title=Moving Average $H(\omega)$]
+Constant group delay $\Leftrightarrow$ linear phase. All realizable linear-phase filters are FIR.
+\end{defn}
+
+
+% --- 6. EXAMPLES: MA and LI side by side ---
+\subsection{Running Examples}
+
+\begin{defn}[title=Moving Average (MA)]
+\[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k], \quad h[n]=\begin{cases}\tfrac{1}{M} & 0\le n < M \\ 0 & \text{else}\end{cases}\]
+Causal FIR $\Rightarrow$ always BIBO stable. Cost: $M{-}1$ additions $+$ 1 mult per sample.\\
+\textbf{Zero-centered} (noncausal): $y[n]=\frac{1}{2L+1}\sum_{k=-L}^{L}x[n-k]$ — no lag; causal up to delay $L$.
+\end{defn}
+
+\begin{prop}[title=MA frequency response]
 \[H(\omega)=\frac{1}{M}\,\frac{\sin(\omega M/2)}{\sin(\omega/2)}\,e^{-j\frac{M-1}{2}\omega}\]
-Lowpass; $M-1$ zero crossings at $\omega=2\pi m/M$ ($m\ne 0$). Generalized linear phase with delay $(M-1)/2$.
+Lowpass; $M{-}1$ nulls at $\omega=2\pi m/M$ ($m\ne 0$). Generalized linear phase, delay $\frac{M-1}{2}$.\\
+Larger $M$ $\Rightarrow$ narrower passband, stronger smoothing.
 \end{prop}
 
-\begin{prop}[title=Leaky Integrator $H(\omega)$]
-\[H(\omega)=\frac{1-\lambda}{1-\lambda e^{-j\omega}}\]
-\[|H(\omega)|^2=\frac{(1-\lambda)^2}{1+\lambda^2-2\lambda\cos\omega}\]
-\[\angle H(\omega)=\arctan\!\left[\frac{-\lambda\sin\omega}{1-\lambda\cos\omega}\right]\]
-\[\mathrm{grd}\{H(\omega)\}=\frac{\lambda\cos\omega-\lambda^2}{1+\lambda^2-2\lambda\cos\omega}\]
-Lowpass; bandwidth decreases as $\lambda\to 1$.
+\begin{defn}[title=Leaky Integrator (LI)]
+\[y[n]=\lambda\,y[n-1]+(1-\lambda)\,x[n], \quad |\lambda|<1\]
+\[h[n]=(1-\lambda)\lambda^n\,u[n]\quad\text{(causal, exponential decay)}\]
+Causal IIR. Constant cost: 2 mult $+$ 1 add per sample regardless of smoothing power.\\
+Approximates MA of length $M$ with $\lambda=\frac{M-1}{M}$.
+\end{defn}
+
+\begin{prop}[title=LI frequency response \& stability]
+\[H(\omega)=\frac{1-\lambda}{1-\lambda e^{-j\omega}}, \quad |H(\omega)|^2=\frac{(1-\lambda)^2}{1+\lambda^2-2\lambda\cos\omega}\]
+Lowpass; bandwidth $\downarrow$ as $\lambda\to 1$. BIBO stable $\Leftrightarrow$ $|\lambda|<1$:
+\[\textstyle\sum_{n\ge 0}|h[n]| = \tfrac{|1-\lambda|}{1-|\lambda|} < \infty \;\Leftrightarrow\; |\lambda|<1\]
+At $\lambda=1$: perfect integrator — output diverges.
 \end{prop}
 
+% --- 7. IDEAL FILTERS ---
 \subsection{Ideal Filters}
 
 \begin{defn}[title=sinc \& rect]
-$\mathrm{sinc}(x)=\dfrac{\sin(\pi x)}{\pi x}$,\; $\mathrm{sinc}(0)=1$.\quad
+$\mathrm{sinc}(x)=\dfrac{\sin(\pi x)}{\pi x}$,\; $\mathrm{sinc}(0)=1$.\qquad
 $\mathrm{rect}(x)=\begin{cases}1&|x|\le\tfrac{1}{2}\\0&|x|>\tfrac{1}{2}\end{cases}$
+
+DTFT pair: $\dfrac{\omega_p}{\pi}\,\mathrm{sinc}\!\left(\dfrac{\omega_p}{\pi}n\right)\overset{\mathrm{DTFT}}{\longleftrightarrow}\mathrm{rect}\!\left(\dfrac{\omega}{2\omega_p}\right)$
 \end{defn}
+
 
 \begin{prop}[title=Fundamental sinc/rect DTFT pair]
 \[\frac{\omega_p}{\pi}\,\mathrm{sinc}\!\left(\frac{\omega_p}{\pi}n\right)\overset{\mathrm{DTFT}}{\longleftrightarrow}\mathrm{rect}\!\left(\frac{\omega}{2\omega_p}\right)\]
@@ -809,24 +810,6 @@ $h_B[n]=2\cos(\omega_c n)\,\dfrac{\omega_p}{\pi}\,\mathrm{sinc}\!\left(\dfrac{\o
 $H_F(\omega)=\begin{cases}-j&0\le\omega<\pi\\+j&-\pi\le\omega<0\end{cases}$,\quad $|H_F|=1$\\
 $h_F[n]=\begin{cases}2/(n\pi)&n\text{ odd}\\0&n\text{ even}\end{cases}$
 \end{prop}
-
-\subsection{Realizable Filters: CCDE}
-
-\begin{defn}[title=Constant-Coefficient Difference Equation]
-\[\sum_{k=0}^{N-1}a_k\,y[n-k]=\sum_{k=0}^{M-1}b_k\,x[n-k],\quad a_0=1\]
-\[y[n]=\sum_{k=0}^{M-1}b_k\,x[n-k]-\sum_{k=1}^{N-1}a_k\,y[n-k]\]
-\textbf{FIR}: $a_k=0$ for $k\ge 1$.\quad \textbf{IIR}: some $a_k\ne 0$ ($k\ge 1$, feedback).
-\end{defn}
-
-\begin{defn}[title=Zero initial conditions]
-For a recursive filter to be uniquely defined and LTI, $\exists\, n_0$ such that:
-\begin{itemize}
-  \item $x[n]=0$ for all $n<n_0$ (input off before start)
-  \item $y[n]=0$ for all $n<n_0$ (output zero before start)
-  \item all memory elements $=0$ at $n=n_0$
-\end{itemize}
-Nonzero initial memory breaks uniqueness and time-invariance.
-\end{defn}
 
 \newpage
 % ============================================================
