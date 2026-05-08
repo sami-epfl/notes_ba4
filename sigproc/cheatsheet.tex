@@ -813,6 +813,231 @@ $h_F[n]=\begin{cases}2/(n\pi)&n\text{ odd}\\0&n\text{ even}\end{cases}$
 
 \newpage
 % ============================================================
+\section{Z-Transform \& Filter Design}
+
+% --- 1. Z-TRANSFORM ---
+\subsection{Z-Transform}
+
+\begin{defn}[title=Z-Transform]
+\[\mathcal{Z}\{\mathbf{x}\}(z) = X(z) = \sum_{n=-\infty}^{\infty} x[n]\,z^{-n}, \quad z\in\mathbb{C}\]
+A formal power series in $z^{-1}$; existence requires the sum to converge absolutely for a given $z$.
+\end{defn}
+
+\begin{prop}[title=Fundamental properties]
+\textbf{Linearity:} $\mathcal{Z}\{\alpha\mathbf{x}+\beta\mathbf{y}\} = \alpha X(z)+\beta Y(z)$\\
+\textbf{Time-shift:} $\mathcal{Z}\{x[n-N]\} = z^{-N}X(z)$ \quad (delay by $N$ multiplies by $z^{-N}$)\\
+\textbf{Convolution:} $\mathcal{Z}\{\mathbf{h}*\mathbf{x}\} = H(z)\cdot X(z)$
+\end{prop}
+
+\begin{prop}[title=Link to DTFT]
+Evaluating on the unit circle $z=e^{j\omega}$ recovers the DTFT:
+\[X(e^{j\omega}) = \sum_{n=-\infty}^{\infty} x[n]\,e^{-j\omega n} = \mathrm{DTFT}\{\mathbf{x}\}\]
+The DTFT is the z-transform restricted to $|z|=1$ (when the unit circle is inside the ROC).
+\end{prop}
+
+% --- 2. TRANSFER FUNCTION ---
+\subsection{Transfer Function}
+
+\begin{defn}[title=Transfer function $H(z)$]
+The z-transform of the impulse response $\mathbf{h}$:
+\[H(z) = \mathcal{Z}\{\mathbf{h}\} = \frac{Y(z)}{X(z)}\]
+For a CCDE (apply z-transform to both sides):
+\[H(z) = \frac{\displaystyle\sum_{k=0}^{M}b_k z^{-k}}{\displaystyle 1+\sum_{k=1}^{N}a_k z^{-k}} = \frac{B(z)}{A(z)}\]
+$B(z)$: feedforward (FIR part). $A(z)$: feedback (IIR part). FIR: $A(z)=1$.
+\end{defn}
+
+\begin{defn}[title=Zeros \& poles — factored form]
+\[H(z) = b_0\,\frac{\displaystyle\prod_{k=0}^{M-1}(1-z_k z^{-1})}{\displaystyle\prod_{k=0}^{N-1}(1-p_k z^{-1})}\]
+\textbf{Zeros} $z_k$: roots of $B(z)$, where $|H|=0$.\\
+\textbf{Poles} $p_k$: roots of $A(z)$, where $|H|\to\infty$.\\
+Coinciding pole and zero cancel (reduce order).
+\end{defn}
+
+% --- 3. REGION OF CONVERGENCE ---
+\subsection{Region of Convergence (ROC)}
+
+\begin{defn}[title=ROC definition]
+The set of $z\in\mathbb{C}$ for which $X(z)$ converges absolutely. Always circularly symmetric (depends only on $|z|$).
+\end{defn}
+
+\begin{prop}[title=ROC shapes]
+\begin{itemize}
+  \item \textbf{FIR} (finite support): entire $\mathbb{C}$, possibly except $z=0$ or $z=\infty$.
+  \item \textbf{Causal IIR}: exterior of disk, $|z|>R$, where $R=\max_k|p_k|$.
+  \item \textbf{Anticausal IIR}: interior of disk, $|z|<r$, where $r=\min_k|p_k|$.
+  \item \textbf{Two-sided}: annular region $r<|z|<R$. Can be empty.
+\end{itemize}
+\emph{ROC shape encodes causality.} Same $H(z)$ expression with different ROC = different causal nature.
+\end{prop}
+
+% --- 4. STABILITY VIA POLES ---
+\subsection{Stability via Poles}
+
+\begin{thm}[title=BIBO stability $\Leftrightarrow$ unit circle in ROC]
+LTI is BIBO stable iff unit circle $|z|=1$ lies inside the ROC of $H(z)$:
+\[1\in\mathrm{ROC}\{H(z)\} \Longleftrightarrow \sum_n |h[n]|<\infty\]
+\textbf{For causal systems:} BIBO stable $\Longleftrightarrow$ \textbf{all poles inside the unit circle} ($|p_k|<1$).
+\end{thm}
+
+\begin{prop}[title=Pole-zero cancellation in cascades]
+In $H(z)=H_1(z)\cdot H_2(z)$: a zero of $H_1$ at the same location as a pole of $H_2$ formally cancels. \textbf{Caution:} cancellation is never exact in finite precision — an unstable pole cannot be reliably eliminated this way.
+\end{prop}
+
+% --- 5. POLE-ZERO PLOT & MAGNITUDE RESPONSE ---
+\subsection{Pole-Zero Plot \& Magnitude Response}
+
+\begin{defn}[title=Pole-zero plot]
+Plot poles ($\times$) and zeros ($\bullet$) on the complex plane. Unit circle $|z|=1$ as reference — frequency response read off along it ($\omega\in[0,\pi]$ = upper half).
+\end{defn}
+
+\begin{prop}[title=Symmetry patterns]
+\textbf{Real-valued filter:} complex poles/zeros appear in conjugate pairs $(p, p^*)$. Plot symmetric about real axis.\\[2pt]
+\textbf{Linear-phase FIR:} zeros appear in reciprocal pairs: if $z_0$ is a zero, so is $1/z_0^*$. Real coefficients: zero $z_0$ generates quadruple $\{z_0,\,z_0^*,\,1/z_0,\,1/z_0^*\}$.
+\end{prop}
+
+\begin{prop}[title={Sketching $|H(\omega)|$ from pole-zero plot}]
+\begin{itemize}
+  \item \textbf{Zero on unit circle} $\Rightarrow$ exact null at that $\omega$.
+  \item \textbf{Pole near unit circle} $\Rightarrow$ $|H(\omega)|$ peaks nearby.
+  \item \textbf{Zero near unit circle} $\Rightarrow$ $|H(\omega)|$ dips nearby.
+\end{itemize}
+\end{prop}
+
+% --- 6. RUNNING EXAMPLES IN Z-DOMAIN ---
+\subsection{Running Examples in Z-Domain}
+
+\begin{prop}[title=Moving Average — z-domain]
+\[H(z)=\frac{1}{N}\cdot\frac{1-z^{-N}}{1-z^{-1}}=\frac{1}{N}\prod_{k=1}^{N-1}(1-e^{j\frac{2\pi}{N}k}z^{-1})\]
+$N{-}1$ zeros at $N$-th roots of unity (all except $z=1$); no poles. ROC: all $\mathbb{C}$ except $z=0$. Always stable (FIR).
+\end{prop}
+
+\begin{prop}[title=Leaky Integrator — z-domain]
+\[H(z)=\frac{1-\lambda}{1-\lambda z^{-1}}, \quad \text{pole at } z=\lambda\]
+ROC: $|z|>\lambda$ (causal). Stable $\Leftrightarrow$ $|\lambda|<1$ (pole inside unit circle). As $\lambda\to 1$: pole approaches unit circle, bandwidth narrows.
+\end{prop}
+
+% --- 7. FILTER REALIZATIONS ---
+\subsection{Filter Realizations}
+
+\begin{defn}[title=Direct Form I \& II]
+\textbf{Direct Form I}: implement CCDE directly — separate delay lines for $x$ and $y$; $M+N$ total delays.\\[2pt]
+\textbf{Direct Form II}: shared single delay line, $\max(M,N)$ elements. Same transfer function, fewer memory cells.\\[2pt]
+\textbf{Second-order sections (SOS / biquads)}: factor $H(z)=b_0\prod_k H_k(z)$ into 2nd-order real-coefficient sections, each as Direct Form II. Prevents pole drift in finite-precision arithmetic — \emph{required for high-order IIRs}. (\texttt{output='sos'} in SciPy.)
+\end{defn}
+
+% --- 8. INTUITIVE DESIGN (POLE-ZERO PLACEMENT) ---
+\subsection{Intuitive Design (Pole-Zero Placement)}
+
+\begin{prop}[title=Design principle]
+Place \textbf{zeros on the unit circle} to create exact nulls. Place \textbf{poles near the unit circle} to boost gain. Response at $\omega$ = product of distances from zeros / product of distances from poles.
+\end{prop}
+
+\begin{prop}[title=DC notch \& hum removal]
+\textbf{DC removal}: $H(z)=1-z^{-1}$ — zero at $z=1$ ($\omega=0$), but over-attenuates nearby freqs.\\[2pt]
+\textbf{DC notch} (improved): add compensating pole near $z=1$:
+\[H(z)=\frac{1-z^{-1}}{1-rz^{-1}},\quad r\lesssim 1\]
+As $r\to 1$: notch narrows. Stable iff $r<1$.\\[2pt]
+\textbf{Hum removal}: zeros at $e^{\pm j\omega_0}$ with $\omega_0=2\pi f_0/f_s$. Add poles nearby at $re^{\pm j\omega_0}$ to control notch width.
+\end{prop}
+
+\begin{prop}[title=Resonator]
+\textbf{Simple resonator} — poles at $z=re^{\pm j\omega_0}$:
+\[H(z)=\frac{1}{1-2r\cos\omega_0\cdot z^{-1}+r^2 z^{-2}}\]
+Gain peaks at $\omega_0$; bandwidth narrows as $r\to 1$. Stable iff $r<1$.
+\end{prop}
+
+% --- 9. IIR FILTER FAMILIES ---
+\subsection{IIR Filter Families}
+
+\begin{defn}[title=dB scale]
+$|H(\omega)|_{\mathrm{dB}}=20\log_{10}|H(\omega)|$ (reference: passband $= 0\,\mathrm{dB}$).\\
+$-6\,\mathrm{dB}$: half amplitude;\quad $-20\,\mathrm{dB}$: one-tenth amplitude;\quad $A_s=-20\log_{10}\delta_s$.
+\end{defn}
+
+\begin{prop}[title=Classic IIR lowpass designs]
+\textbf{Butterworth}: all-pole, monotone (maximally flat) in both bands. Best phase linearity; gradual roll-off. Design: order $N$, cutoff $\omega_c$ at $-3\,\mathrm{dB}$.\\[2pt]
+\textbf{Chebyshev}: equiripple in passband, monotone in stopband. Narrower transition band than Butterworth for same $N$.\\[2pt]
+\textbf{Elliptic}: equiripple in \emph{both} bands — most order-efficient (narrowest transition band for given $N$). Design: $N$, $\omega_c$, $\delta_p$, $\delta_s$.
+\end{prop}
+
+\begin{prop}[title={IIR comparison (same order $N$)}]
+\textbf{Narrowest trans.\ band}: Elliptic $>$ Chebyshev $>$ Butterworth\\
+\textbf{Passband flatness}: Butterworth $>$ Chebyshev $>$ Elliptic\\
+\textbf{Phase linearity}: Butterworth $>$ Chebyshev $>$ Elliptic
+\end{prop}
+
+\begin{prop}[title=IIR vs FIR]
+\textbf{IIR} pros: efficient (low order); strong attenuation\\
+\textbf{IIR} cons: stability issues; always nonlinear phase\\
+\textbf{FIR} pros: always stable; numerically robust; linear phase\\
+\textbf{FIR} cons: high order (long delay); no analog equivalent
+\end{prop}
+
+% --- 10. FIR FILTER DESIGN ---
+\subsection{FIR Filter Design}
+
+\begin{defn}[title=Filter specifications]
+\textbf{Passband} $|\omega|\le\omega_p$: $1-\delta_p\le|H|\le 1+\delta_p$\quad
+\textbf{Stopband} $|\omega|\ge\omega_s$: $|H|\le\delta_s$\\
+\textbf{Transition band} $[\omega_p,\omega_s]$: unconstrained; $\Delta\omega=\omega_s-\omega_p$.\quad $A_s=-20\log_{10}\delta_s$ (dB).
+\end{defn}
+
+\begin{defn}[title=Windowing method]
+Truncate ideal (infinite, non-causal) impulse response $h_d[n]$ with a length-$M$ window:
+\[h[n]=h_d\!\left[n-\tfrac{M-1}{2}\right]\cdot w[n],\quad n=0,\ldots,M-1\]
+Shifting by $\frac{M-1}{2}$ makes the filter causal with linear phase (group delay $\frac{M-1}{2}$). In frequency: $H=H_d*W$ — ideal cutoff smeared by window's main lobe.\\
+\textbf{Gibbs phenomenon}: rectangular window gives $\approx\!9\%$ ripple near cutoff regardless of $M$. Tapering windows reduce ripple at the cost of wider transition band.
+\end{defn}
+
+\begin{prop}[title={Window functions (length $M$)}]
+\begin{tabular}{@{}l@{~~}r@{~~}r@{}}
+\textbf{Window} & \textbf{Atten.} & \textbf{Trans.\ BW}\\
+\hline
+Rectangular & 13 dB & $4\pi/M$\\
+Hanning     & 44 dB & $8\pi/M$\\
+Hamming     & 41 dB & $8\pi/M$\\
+Blackman    & 74 dB & $12\pi/M$\\
+\end{tabular}\\[2pt]
+\textbf{Hanning:} $w[n]=\tfrac{1}{2}(1-\cos\tfrac{2\pi n}{M-1})$\quad
+\textbf{Hamming:} $w[n]=0.54-0.46\cos\tfrac{2\pi n}{M-1}$\\
+\textbf{Blackman:} $w[n]=0.42-0.5\cos\tfrac{2\pi n}{M-1}+0.08\cos\tfrac{4\pi n}{M-1}$
+\end{prop}
+
+\begin{prop}[title=Windowing design procedure (lowpass)]
+\begin{enumerate}
+  \item Specify $\omega_p$, $\omega_s$, $A_s$ (dB). Compute $\Delta\omega=\omega_s-\omega_p$.
+  \item Choose window with attenuation $\ge A_s$; note its BW formula $C\pi/M$.
+  \item Length: $M\approx C\pi/\Delta\omega$ (round up to odd for Type I).
+  \item Ideal cutoff at midpoint: $\omega_c=(\omega_p+\omega_s)/2$.
+  \item Ideal response: $h_d[n]=\tfrac{\omega_c}{\pi}\mathrm{sinc}(\tfrac{\omega_c}{\pi}n)$.
+  \item Apply: $h[n]=h_d[n-\tfrac{M-1}{2}]\cdot w[n]$.
+\end{enumerate}
+HP: $h_H[n]=(\delta[n]-h_d[n-\tfrac{M-1}{2}])\cdot w[n]$.\\
+BP: $h_B[n]=2\cos(\omega_c n)\,h_d[n-\tfrac{M-1}{2}]\cdot w[n]$.
+\end{prop}
+
+\begin{prop}[title={Linear-phase FIR types}]
+Linear phase requires symmetric (S) or antisymmetric (A) coefficients. Delay $C=\tfrac{M-1}{2}$.\\[2pt]
+\begin{tabular}{@{}c@{~~}c@{~~}c@{~~}c@{~~}l@{}}
+\textbf{Type} & \textbf{$M$} & \textbf{Sym} & \textbf{Delay} & \textbf{Forced zeros at}\\
+\hline
+I   & odd  & S & integer  & none — most general\\
+II  & even & S & half-int & $\omega=\pi$\\
+III & odd  & A & integer  & $\omega=0$ and $\omega=\pm\pi$\\
+IV  & even & A & half-int & $\omega=0$\\
+\end{tabular}\\[2pt]
+Type I/II: LP and HP ok. Type III: bandpass only (zeros at DC and Nyquist). Type IV: no LP.
+\end{prop}
+
+\begin{prop}[title=Parks-McClellan (optimal equiripple FIR)]
+Minimizes the \emph{maximum} error (minimax, $L_\infty$ norm) in passband and stopband — error is \textbf{equiripple}. Contrast windowing: no control over max error.\\[2pt]
+\textbf{Inputs}: filter length $M$, $\omega_p$, $\omega_s$, tolerance ratio $\delta_s/\delta_p$.\\
+\textbf{Output}: $M$ optimal coefficients. Increase $M$ and retry if specs not met.\\
+\emph{Result}: shorter filter than windowing for same specs; works for HP/BP/Hilbert/differentiator.
+\end{prop}
+
+\newpage
+% ============================================================
 \section{Quick Reference}
 
 \subsection{Geometric sum}
