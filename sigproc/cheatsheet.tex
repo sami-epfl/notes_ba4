@@ -13,6 +13,7 @@
 \cheattitle{Signal Processing}{}{BA4}
 
 % ============================================================
+\iffalse
 
 \section{Course outline}
 \begin{itemize}
@@ -1038,6 +1039,7 @@ Minimizes the \emph{maximum} error (minimax, $L_\infty$ norm) in passband and st
 \end{prop}
 
 \newpage
+\fi
 % ============================================================
 \section{Interpolation \& Sampling}
 
@@ -1057,6 +1059,24 @@ Minimizes the \emph{maximum} error (minimax, $L_\infty$ norm) in passband and st
 \end{itemize}
 \end{prop}
 
+\begin{prop}[title=Real-world frequency]
+f = $\#$rep/s = $Hz$ ; $\Omega = 2\pi f$
+\end{prop}
+
+\begin{thm}[title=CTFT (more info in cs)]
+\begin{itemize}
+  \item NOT PERIODIC
+  \item NO LIMIT FREQUENCY
+\end{itemize}
+\end{thm}
+
+\begin{defn}[title=BandLimited (BL) functions]
+A CT signal is $F_S$-BL $\Leftrightarrow$ X(f) for $|f|>F_S/2$
+\end{defn}
+
+\begin{prop}[title=Support of a function]
+The interval where the function is non-trivially zero
+\end{prop}
 
 \newpage
 % ============================================================
