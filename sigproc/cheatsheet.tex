@@ -3,6 +3,7 @@
 \def\input@path{{../_shared/}}
 \makeatother
 \usepackage{cheatsheet}
+\usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{positioning}
 
@@ -754,7 +755,7 @@ Constant group delay $\Leftrightarrow$ linear phase. All realizable linear-phase
 \subsection{Running Examples}
 
 \begin{defn}[title=Moving Average (MA)]
-\[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k], \quad h[n]=\begin{cases}\tfrac{1}{M} & 0\le n < M \\ 0 & \text{else}\end{cases}\]
+\[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k],\quad h[n]=\begin{cases}\tfrac{1}{M}&0\le n<M\\0&\text{else}\end{cases}\]
 Causal FIR $\Rightarrow$ always BIBO stable. Cost: $M{-}1$ additions $+$ 1 mult per sample.\\
 \textbf{Zero-centered} (noncausal): $y[n]=\frac{1}{2L+1}\sum_{k=-L}^{L}x[n-k]$ — no lag; causal up to delay $L$.
 \end{defn}
@@ -1035,6 +1036,27 @@ Minimizes the \emph{maximum} error (minimax, $L_\infty$ norm) in passband and st
 \textbf{Output}: $M$ optimal coefficients. Increase $M$ and retry if specs not met.\\
 \emph{Result}: shorter filter than windowing for same specs; works for HP/BP/Hilbert/differentiator.
 \end{prop}
+
+\newpage
+% ============================================================
+\section{Interpolation \& Sampling}
+
+% -------------------------------------------------------
+\subsection{The Continuous-Time World}
+
+\begin{defn}[title=CT vs.\ DT paradigm]
+\textbf{D:} $x_d[n]\in\ell_2(\mathbb{Z})$, $n\in\mathbb{Z}$, $\omega\in[-\pi,\pi]$, DTFT \newline
+\textbf{A:} $x_c(t)\in L_2(\mathbb{R})$, $t$ $\in\mathbb{R}$ [s], \ $f\in\mathbb{R}$ [Hz], CTFT
+\end{defn}
+
+\begin{prop}[title=Use cases]
+\begin{itemize}
+  \item x(t) → $\textbf{[processing]}$ → y(t)
+  \item x[n] → $\textbf{[processing for synthesis]}$ → y(t)
+  \item x(t) → $\textbf{[processing for analysis]}$ → y[n]
+\end{itemize}
+\end{prop}
+
 
 \newpage
 % ============================================================
