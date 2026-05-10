@@ -5,341 +5,238 @@
 \usepackage{cheatsheet}
 
 \begin{document}
-\begin{multicols*}{3}
+\begin{multicols*}{4}
 
-\cheattitle{Intro To Machine Learning}{}{BA4}
-
-% ============================================================
-%                       COURSE OUTLINE
-% ============================================================
-
-\section{Introduction}
-\subsection{ML Basics}
-
-\section{Linear Supervised ML}
-\subsection{Linear regression}
-\subsection{Linear models for classification}
-
-\section{Non linear Supervised ML}
-\subsection{k-Nearest Neighbors}
-\subsection{Feature expansion}
-\subsection{Kernel methods}
-\subsection{Artificial neural networks (deep learning)}
-
-\section{Unsupervised ML}
-\subsection{Dimensionality reduction}
-\subsection{k-Means Clustering}
+\cheattitle{Intro to Machine Learning}{Cheat Sheet}{BA4 · 2025--2026}
 
 % ============================================================
-% En haut c'est le plan du cours, il faut maintenant le remplir
-% avec les exemples du bas (à supprimer une fois rempli).
+\section{Core Concepts}
 % ============================================================
 
-\section{-----------------}
-
-\subsection{Key definiti2ons}
-\begin{defn}[title=Linear map]
-$T:V\to W$ is linear if $T(\alpha x+\beta y)=\alpha T(x)+\beta T(y)$
-for all $x,y\in V$, $\alpha,\beta\in\R$.
+\subsection{Empirical Risk}
+\begin{defn}[title=Empirical Risk]
+\[ R(w) = \frac{1}{N}\sum_{i=1}^{N} \ell(\hat{y}_i,\, y_i) \]
+Training $\Leftrightarrow$ $\min_w R(w)$
 \end{defn}
 
-\begin{thm}[title=Rank--nullity]
-For $T:V\to W$ with $\dim V<\infty$:
-\[ \dim\ker T + \dim\operatorname{im}T \;=\; \dim V. \]
-\end{thm}
+\subsection{Gradient Descent}
+\begin{prop}[title=Gradient Descent Update]
+\[ w_k \leftarrow w_{k-1} - \eta\,\nabla_w R(w_{k-1}) \]
+$\eta$ = learning rate. Converges when $\nabla_w R(w)=0$.
+\end{prop}
 
-\subsection{Formulas to remember}
+\begin{defn}[title=Convergence Criteria]
 \begin{itemize}
-  \item \kv{Quadratic}{$x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$}
-  \item \kv{Euler}{$e^{i\theta}=\cos\theta+i\sin\theta$}
-  \item \kv{Geom.\ sum}{$\sum_{k=0}^{n}r^k=\dfrac{1-r^{n+1}}{1-r}$, $r\neq 1$}
-  \item \kv{Taylor}{$f(x)=\sum_{k\ge0}\dfrac{f^{(k)}(a)}{k!}(x-a)^k$}
+  \item $|R(w_k)-R(w_{k-1})|<\delta_R$
+  \item $\|w_k - w_{k-1}\| < \delta_w$
+  \item or fixed number of iterations
 \end{itemize}
-
-\begin{warn}[title=Pitfall]
-$\log(ab)=\log a+\log b$ \emph{only} when $a,b>0$.
-\end{warn}
-
-\subsection{Useful identities}
-\begin{align*}
- \sin^2\theta+\cos^2\theta &= 1 \\
- \cos(2\theta) &= \cos^2\theta-\sin^2\theta \\
- \sin(2\theta) &= 2\sin\theta\cos\theta
-\end{align*}
-
-% ============================================================
-\section{Topic 2 --- Probability}
-
-\subsection{Basics}
-\begin{itemize}
-  \item $\PR(A\cup B)=\PR(A)+\PR(B)-\PR(A\cap B)$
-  \item $\PR(A\mid B)=\dfrac{\PR(A\cap B)}{\PR(B)}$
-  \item Bayes: $\PR(A\mid B)=\dfrac{\PR(B\mid A)\PR(A)}{\PR(B)}$
-\end{itemize}
-
-\subsection{Common distributions}
-\renewcommand{\arraystretch}{1.05}
-\begin{tabularx}{\linewidth}{@{}lXl@{}}
-\toprule
-Dist. & PMF/PDF & $\E[X]$ \\
-\midrule
-Bern$(p)$  & $p^x(1-p)^{1-x}$           & $p$ \\
-Bin$(n,p)$ & $\binom{n}{x}p^x(1-p)^{n-x}$ & $np$ \\
-Poiss$(\lambda)$ & $e^{-\lambda}\lambda^x/x!$ & $\lambda$ \\
-$\mathcal{N}(\mu,\sigma^2)$ & $\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$ & $\mu$ \\
-\bottomrule
-\end{tabularx}
-
-\begin{ex}[title=Worked]
-$X\sim \mathcal{N}(0,1)$. Then $\PR(|X|<1)\approx 0.6827$.
-\end{ex}
-
-% ============================================================
-\section{Topic 3 --- Algorithms}
-
-\subsection{Complexity cheat}
-\begin{tabularx}{\linewidth}{@{}lX@{}}
-\toprule
-Op & Cost \\
-\midrule
-Sort (comparison) & $\Theta(n\log n)$ \\
-Hash lookup (avg) & $\Theta(1)$ \\
-BFS / DFS         & $\Theta(V+E)$ \\
-Dijkstra (heap)   & $\Theta((V+E)\log V)$ \\
-\bottomrule
-\end{tabularx}
-
-\subsection{Code snippet}
-\begin{lstlisting}[language=Python]
-def bsearch(a, x):
-    lo, hi = 0, len(a)-1
-    while lo <= hi:
-        m = (lo+hi)//2
-        if a[m] == x: return m
-        if a[m] <  x: lo = m+1
-        else:         hi = m-1
-    return -1
-\end{lstlisting}
-
-% ============================================================
-\section{Quick reference}
-
-\textbf{Greek:} $\alpha\,\beta\,\gamma\,\delta\,\eps\,\zeta\,\eta\,\theta\,
-\iota\,\kappa\,\lambda\,\mu\,\nu\,\xi\,\pi\,\rho\,\sigma\,\tau\,\phi\,\chi\,\psi\,\omega$
-
-\textbf{Sets:} $\R\;\N\;\Z\;\Q\;\C$ \quad
-\textbf{Logic:} $\forall\;\exists\;\Rightarrow\;\Leftrightarrow\;\neg$
-
-\textbf{Derivatives:}
-$(\sin x)'=\cos x$,\ $(\cos x)'=-\sin x$,\ $(\ln x)'=1/x$,\
-$(e^x)'=e^x$,\ $(x^n)'=nx^{n-1}$.
-
-\textbf{Integrals:}
-$\int x^n\dd x=\tfrac{x^{n+1}}{n+1}$,\
-$\int \tfrac{1}{x}\dd x=\ln|x|$,\
-$\int e^x\dd x=e^x$.
-
-\section{-----------------}
-
-\subsection{Key definitions}
-\begin{defn}[title=Linear map]
-$T:V\to W$ is linear if $T(\alpha x+\beta y)=\alpha T(x)+\beta T(y)$
-for all $x,y\in V$, $\alpha,\beta\in\R$.
 \end{defn}
 
-\begin{thm}[title=Rank--nullity]
-For $T:V\to W$ with $\dim V<\infty$:
-\[ \dim\ker T + \dim\operatorname{im}T \;=\; \dim V. \]
+\subsection{Useful Identities}
+\begin{itemize}
+  \item $\nabla_b(a^T b)=a$
+  \item $\|a\|^2 = a^T a$
+  \item $\nabla_a\|a\|^2 = 2a$
+\end{itemize}
+
+% ============================================================
+\section{Linear Regression}
+% ============================================================
+
+\subsection{Model \& Training}
+\begin{defn}[title=Prediction]
+\[ \hat{y}_i = w^T x_i \]
+\end{defn}
+
+\begin{defn}[title=MSE Risk]
+\[ R(w) = \frac{1}{N}\sum_{i=1}^{N}(w^T x_i - y_i)^2 \]
+\end{defn}
+
+\begin{thm}[title=Closed-Form Solution]
+\[ w^\star = (X^T X)^{-1} X^T y \]
+If $X^TX$ not invertible: $w^\star = X^\dagger y$.\\
+\textbf{Multi-output:} $W^\star = X^\dagger Y$
 \end{thm}
 
-\subsection{Formulas to remember}
+\subsection{Evaluation Metrics}
 \begin{itemize}
-  \item \kv{Quadratic}{$x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$}
-  \item \kv{Euler}{$e^{i\theta}=\cos\theta+i\sin\theta$}
-  \item \kv{Geom.\ sum}{$\sum_{k=0}^{n}r^k=\dfrac{1-r^{n+1}}{1-r}$, $r\neq 1$}
-  \item \kv{Taylor}{$f(x)=\sum_{k\ge0}\dfrac{f^{(k)}(a)}{k!}(x-a)^k$}
+  \item \kv{MSE}{$\frac{1}{N}\sum(y_i-\hat{y}_i)^2$}
+  \item \kv{RMSE}{$\frac{1}{N}\sum\sqrt{(y_i-\hat{y}_i)^2}$}
+  \item \kv{MAE}{$\frac{1}{N}\sum|\hat{y}_i - y_i|$}
+  \item \kv{MAPE}{$\frac{1}{N}\sum\left|\frac{\hat{y}_i - y_i}{y_i}\right|$}
 \end{itemize}
 
-\begin{warn}[title=Pitfall]
-$\log(ab)=\log a+\log b$ \emph{only} when $a,b>0$.
+% ============================================================
+\section{Logistic Regression (Binary)}
+% ============================================================
+
+\subsection{Model}
+\begin{defn}[title=Sigmoid]
+\[ \sigma(z) = \frac{1}{1+e^{-z}}, \qquad \hat{y}_i = \sigma(w^T x_i) \]
+\end{defn}
+
+\subsection{Training}
+\begin{defn}[title=Cross-Entropy Loss]
+\[ R(w) = -\sum_{i=1}^{N}\!\Big[y_i\ln\hat{y}_i + (1-y_i)\ln(1-\hat{y}_i)\Big] \]
+\end{defn}
+
+\begin{prop}[title=Gradient]
+\[ \nabla_w R(w) = \sum_{i=1}^{N}(\hat{y}_i - y_i)\,x_i \]
+No closed form $\Rightarrow$ use \textbf{gradient descent}.
+\end{prop}
+
+\subsection{Prediction}
+\[ \hat{y} = \begin{cases} 1 & \text{if } \sigma(w^{\star T}x) \geq 0.5 \\ 0 & \text{otherwise} \end{cases} \]
+
+% ============================================================
+\section{Classification Evaluation}
+% ============================================================
+
+\subsection{Confusion Matrix}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabularx}{\linewidth}{@{}lXX@{}}
+\toprule
+ & \textbf{True Pos} & \textbf{True Neg} \\
+\midrule
+\textbf{Pred Pos} & TP & FP \\
+\textbf{Pred Neg} & FN & TN \\
+\bottomrule
+\end{tabularx}
+
+\vspace{2pt}
+$P = TP+FN$, \quad $N = FP+TN$
+
+\subsection{Metrics}
+\begin{itemize}
+  \item \kv{Accuracy}{$\frac{TP+TN}{TP+TN+FP+FN}$}
+  \item \kv{Precision}{$\frac{TP}{TP+FP}$}
+  \item \kv{Recall}{$\frac{TP}{TP+FN}$}
+  \item \kv{FPR}{$\frac{FP}{FP+TN}$}
+  \item \kv{F1}{$2\cdot\frac{\mathrm{Precision}\cdot\mathrm{Recall}}{\mathrm{Precision}+\mathrm{Recall}}$}
+\end{itemize}
+
+\begin{warn}[title=Multi-class]
+Use \textbf{confusion matrix} (rows = predicted, cols = actual).
+Accuracy = sum of diagonal / total.
+Precision/Recall/F1: compute per class then average.
 \end{warn}
 
-\subsection{Useful identities}
-\begin{align*}
- \sin^2\theta+\cos^2\theta &= 1 \\
- \cos(2\theta) &= \cos^2\theta-\sin^2\theta \\
- \sin(2\theta) &= 2\sin\theta\cos\theta
-\end{align*}
+% ============================================================
+\section{Multi-Class Classification}
+% ============================================================
+
+\subsection{One-Hot Encoding}
+$y_i \in \{0,1\}^C$: one entry is 1, rest are 0.
+
+\subsection{Softmax (Logistic)}
+\begin{defn}[title=Softmax]
+\[ \hat{y}^{(k)}(x) = \frac{\exp(w^{(k)T}x)}{\sum_{j=1}^{C}\exp(w^{(j)T}x)} \]
+\end{defn}
+
+\begin{defn}[title=Multi-Class Cross-Entropy]
+\[ R(W) = -\sum_{i=1}^{N}\sum_{k=1}^{C} y_i^{(k)}\ln\hat{y}_i^{(k)} \]
+\end{defn}
+
+\begin{prop}[title=Gradient]
+\[ \nabla_W R(W) = \sum_{i=1}^{N} x_i\,(\hat{y}_i - y_i)^T \]
+\end{prop}
+
+\textbf{Prediction:} $k = \argmax_j\; \hat{y}^{(j)}$
 
 % ============================================================
-\section{Topic 2 --- Probability}
+\section{k-Nearest Neighbors}
+% ============================================================
 
-\subsection{Basics}
+\subsection{Distances}
 \begin{itemize}
-  \item $\PR(A\cup B)=\PR(A)+\PR(B)-\PR(A\cap B)$
-  \item $\PR(A\mid B)=\dfrac{\PR(A\cap B)}{\PR(B)}$
-  \item Bayes: $\PR(A\mid B)=\dfrac{\PR(B\mid A)\PR(A)}{\PR(B)}$
+  \item \kv{Euclidean}{$\sqrt{\sum_{k}(x_i^{(k)}-x_j^{(k)})^2}$}
+  \item \kv{Chi-square}{$\sqrt{\sum_{k}\frac{(x_i^{(k)}-x_j^{(k)})^2}{x_i^{(k)}+x_j^{(k)}}}$}
 \end{itemize}
 
-\subsection{Common distributions}
-\renewcommand{\arraystretch}{1.05}
-\begin{tabularx}{\linewidth}{@{}lXl@{}}
-\toprule
-Dist. & PMF/PDF & $\E[X]$ \\
-\midrule
-Bern$(p)$  & $p^x(1-p)^{1-x}$           & $p$ \\
-Bin$(n,p)$ & $\binom{n}{x}p^x(1-p)^{n-x}$ & $np$ \\
-Poiss$(\lambda)$ & $e^{-\lambda}\lambda^x/x!$ & $\lambda$ \\
-$\mathcal{N}(\mu,\sigma^2)$ & $\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$ & $\mu$ \\
-\bottomrule
-\end{tabularx}
+\subsection{Classification}
+Find $k$ nearest neighbors $\Rightarrow$ majority vote.
 
-\begin{ex}[title=Worked]
-$X\sim \mathcal{N}(0,1)$. Then $\PR(|X|<1)\approx 0.6827$.
-\end{ex}
+\subsection{Regression}
+Find $k$ nearest $\Rightarrow$ (weighted) average:
+\[ \hat{y} = \frac{\sum_i w_i y_i}{\sum_i w_i}, \quad w_i = \frac{1}{d_i} \]
 
 % ============================================================
-\section{Topic 3 --- Algorithms}
-
-\subsection{Complexity cheat}
-\begin{tabularx}{\linewidth}{@{}lX@{}}
-\toprule
-Op & Cost \\
-\midrule
-Sort (comparison) & $\Theta(n\log n)$ \\
-Hash lookup (avg) & $\Theta(1)$ \\
-BFS / DFS         & $\Theta(V+E)$ \\
-Dijkstra (heap)   & $\Theta((V+E)\log V)$ \\
-\bottomrule
-\end{tabularx}
-
-\subsection{Code snippet}
-\begin{lstlisting}[language=Python]
-def bsearch(a, x):
-    lo, hi = 0, len(a)-1
-    while lo <= hi:
-        m = (lo+hi)//2
-        if a[m] == x: return m
-        if a[m] <  x: lo = m+1
-        else:         hi = m-1
-    return -1
-\end{lstlisting}
-
+\section{Feature Expansion \& Regularization}
 % ============================================================
-\section{Quick reference}
 
-\textbf{Greek:} $\alpha\,\beta\,\gamma\,\delta\,\eps\,\zeta\,\eta\,\theta\,
-\iota\,\kappa\,\lambda\,\mu\,\nu\,\xi\,\pi\,\rho\,\sigma\,\tau\,\phi\,\chi\,\psi\,\omega$
+\subsection{Polynomial Feature Expansion}
+\begin{defn}[title=Expansion]
+$\phi: \R^D \to \R^F$ maps $x$ to higher-dim features.\\
+$\hat{y}_i = w^T\phi(x_i)$
+\end{defn}
 
-\textbf{Sets:} $\R\;\N\;\Z\;\Q\;\C$ \quad
-\textbf{Logic:} $\forall\;\exists\;\Rightarrow\;\Leftrightarrow\;\neg$
-
-\textbf{Derivatives:}
-$(\sin x)'=\cos x$,\ $(\cos x)'=-\sin x$,\ $(\ln x)'=1/x$,\
-$(e^x)'=e^x$,\ $(x^n)'=nx^{n-1}$.
-
-\textbf{Integrals:}
-$\int x^n\dd x=\tfrac{x^{n+1}}{n+1}$,\
-$\int \tfrac{1}{x}\dd x=\ln|x|$,\
-$\int e^x\dd x=e^x$.
-\section{-----------------}
-
-\begin{thm}[title=Rank--nullity]
-For $T:V\to W$ with $\dim V<\infty$:
-\[ \dim\ker T + \dim\operatorname{im}T \;=\; \dim V. \]
+\begin{thm}[title=Closed-Form with Expansion]
+\[ w^\star = (\Phi^T\Phi)^{-1}\Phi^T y \]
 \end{thm}
 
-\subsection{Formulas to remember}
+\begin{thm}[title=Cover's Theorem]
+A complex classification problem is more likely linearly separable in high-dimensional space (if not densely populated).
+\end{thm}
+
+\subsection{Overfitting \& Underfitting}
 \begin{itemize}
-  \item \kv{Quadratic}{$x=\dfrac{-b\pm\sqrt{b^2-4ac}}{2a}$}
-  \item \kv{Euler}{$e^{i\theta}=\cos\theta+i\sin\theta$}
-  \item \kv{Geom.\ sum}{$\sum_{k=0}^{n}r^k=\dfrac{1-r^{n+1}}{1-r}$, $r\neq 1$}
-  \item \kv{Taylor}{$f(x)=\sum_{k\ge0}\dfrac{f^{(k)}(a)}{k!}(x-a)^k$}
+  \item \kv{Overfitting}{low train error, high test error}
+  \item \kv{Underfitting}{high error on both}
 \end{itemize}
 
-\begin{warn}[title=Pitfall]
-$\log(ab)=\log a+\log b$ \emph{only} when $a,b>0$.
+\subsection{Cross-Validation}
+\begin{itemize}
+  \item \kv{Val.\ set}{80/20 split — cheap, wastes data}
+  \item \kv{LOOCV}{train on $N{-}1$, test on 1, repeat — exact, expensive}
+  \item \kv{K-fold}{split into $k$ parts, rotate — best compromise}
+\end{itemize}
+
+\subsection{L2 Regularization (Ridge)}
+\begin{defn}[title=Regularized Objective]
+\[ E(w) = R(w) + \lambda\,w^T w \]
+$\lambda>0$ controls regularization strength.
+\end{defn}
+
+\begin{thm}[title=Ridge Regression Solution]
+\[ w^\star = (\Phi^T\Phi + \lambda I_F)^{-1}\Phi^T y \]
+\textbf{Multi-output:} $W^\star = (\Phi^T\Phi + \lambda I_F)^{-1}\Phi^T Y$
+\end{thm}
+
+% ============================================================
+\section{Kernel Methods}
+% ============================================================
+
+\subsection{Kernel Function}
+\begin{defn}[title=Kernel]
+\[ k(x_i, x_j) = \phi(x_i)^T\phi(x_j) \]
+Measures similarity without computing $\phi$ explicitly.
+\end{defn}
+
+\begin{itemize}
+  \item \kv{Polynomial}{$(x_i^T x_j + c)^d$}
+  \item \kv{Gaussian}{$\exp\!\left(-\frac{\|x_i-x_j\|^2}{2\sigma^2}\right)$}
+\end{itemize}
+
+\subsection{Kernel Matrix}
+\[ K_{ij} = k(x_i, x_j) \in \R^{N\times N} \]
+
+\subsection{Kernel Ridge Regression}
+\begin{thm}[title=Kernel Ridge Solution]
+\[ \alpha^\star = (K + \lambda I_N)^{-1} y \]
+\end{thm}
+
+\begin{thm}[title=Prediction]
+\[ \hat{y} = y^T(K+\lambda I)^{-1}\,k(X,x) \]
+where $k(X,x) = \bigl(k(x_1,x),\ldots,k(x_N,x)\bigr)^T$
+\end{thm}
+
+\textbf{Multi-output:}
+\[ W^\star = \Phi^T(K+\lambda I)^{-1}Y, \quad \hat{y} = Y^T(K+\lambda I)^{-1}k(X,x) \]
+
+\begin{warn}[title=Kernel selection]
+Choose kernel by \textbf{cross-validation}. No general best choice.
 \end{warn}
-
-\subsection{Useful identities}
-\begin{align*}
- \sin^2\theta+\cos^2\theta &= 1 \\
- \cos(2\theta) &= \cos^2\theta-\sin^2\theta \\
- \sin(2\theta) &= 2\sin\theta\cos\theta
-\end{align*}
-
-% ============================================================
-\section{Topic 2 --- Probability}
-
-\subsection{Basics}
-\begin{itemize}
-  \item $\PR(A\cup B)=\PR(A)+\PR(B)-\PR(A\cap B)$
-  \item $\PR(A\mid B)=\dfrac{\PR(A\cap B)}{\PR(B)}$
-  \item Bayes: $\PR(A\mid B)=\dfrac{\PR(B\mid A)\PR(A)}{\PR(B)}$
-\end{itemize}
-
-\subsection{Common distributions}
-\renewcommand{\arraystretch}{1.05}
-\begin{tabularx}{\linewidth}{@{}lXl@{}}
-\toprule
-Dist. & PMF/PDF & $\E[X]$ \\
-\midrule
-Bern$(p)$  & $p^x(1-p)^{1-x}$           & $p$ \\
-Bin$(n,p)$ & $\binom{n}{x}p^x(1-p)^{n-x}$ & $np$ \\
-Poiss$(\lambda)$ & $e^{-\lambda}\lambda^x/x!$ & $\lambda$ \\
-$\mathcal{N}(\mu,\sigma^2)$ & $\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$ & $\mu$ \\
-\bottomrule
-\end{tabularx}
-
-\begin{ex}[title=Worked]
-$X\sim \mathcal{N}(0,1)$. Then $\PR(|X|<1)\approx 0.6827$.
-\end{ex}
-
-% ============================================================
-\section{Topic 3 --- Algorithms}
-
-\subsection{Complexity cheat}
-\begin{tabularx}{\linewidth}{@{}lX@{}}
-\toprule
-Op & Cost \\
-\midrule
-Sort (comparison) & $\Theta(n\log n)$ \\
-Hash lookup (avg) & $\Theta(1)$ \\
-BFS / DFS         & $\Theta(V+E)$ \\
-Dijkstra (heap)   & $\Theta((V+E)\log V)$ \\
-\bottomrule
-\end{tabularx}
-
-\subsection{Code snippet}
-\begin{lstlisting}[language=Python]
-def bsearch(a, x):
-    lo, hi = 0, len(a)-1
-    while lo <= hi:
-        m = (lo+hi)//2
-        if a[m] == x: return m
-        if a[m] <  x: lo = m+1
-        else:         hi = m-1
-    return -1
-\end{lstlisting}
-
-% ============================================================
-\section{Quick2 reference}
-
-\textbf{Greek:} $\alpha\,\beta\,\gamma\,\delta\,\eps\,\zeta\,\eta\,\theta\,
-\iota\,\kappa\,\lambda\,\mu\,\nu\,\xi\,\pi\,\rho\,\sigma\,\tau\,\phi\,\chi\,\psi\,\omega$
-
-\textbf{Sets:} $\R\;\N\;\Z\;\Q\;\C$ \quad
-\textbf{Logic:} $\forall\;\exists\;\Rightarrow\;\Leftrightarrow\;\neg$
-
-\textbf{Derivatives:}
-$(\sin x)'=\cos x$,\ $(\cos x)'=-\sin x$,\ $(\ln x)'=1/x$,\
-$(e^x)'=e^x$,\ $(x^n)'=nx^{n-1}$.
-
-\textbf{Integrals:}
-$\int x^n\dd x=\tfrac{x^{n+1}}{n+1}$,\
-$\int \tfrac{1}{x}\dd x=\ln|x|$,\
-$\int e^x\dd x=e^x$.
-
 
 \end{multicols*}
 \end{document}
