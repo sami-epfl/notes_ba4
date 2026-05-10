@@ -16,30 +16,33 @@ Follow this tutorial to set up the LaTeX environment:
 
 ### Algorithms I — `algo/`
 
-[Overview PDF](_overview/algo/cheatsheet.pdf)
+- [Cheat sheet](_overview/algo/cheatsheet.pdf)
+- [Long notes](_overview/algo/course.pdf)
 
 ### Intro to Machine Learning — `iml/`
 
-[Overview PDF](_overview/iml/cheatsheet.pdf)
+- [Cheat sheet](_overview/iml/cheatsheet.pdf)
+- [Long notes](_overview/iml/course.pdf)
 
 ### Signal Processing — `sigproc/`
 
-[Overview PDF](_overview/sigproc/cheatsheet.pdf)
+- [Cheat sheet](_overview/sigproc/cheatsheet.pdf)
 
 ---
 
 ## Repository Structure
 
 ```
-cheat_sheet_ba4/
+notes_ba4/
 ├── _overview/          # Compiled PDF overviews for each subject
+│   ├── iml/
 │   ├── algo/
 │   └── sigproc/
 ├── _shared/            # Shared LaTeX style files
 │   ├── cheatsheet.sty
 │   └── course.sty
-├── algo/
 ├── iml/
+├── algo/
 └── sigproc/
 ```
 
