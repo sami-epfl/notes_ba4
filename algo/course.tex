@@ -9,7 +9,7 @@
 \coursetitle{Algorithms I}{BA4}{2025--2026}
 
 \tableofcontents
-\bigskip
+\clearpage
 
 These notes cover the core algorithmic techniques of the BA4 Algorithms I course:
 asymptotic analysis, sorting, divide-and-conquer, heaps, binary search trees, and
@@ -345,55 +345,51 @@ removal disconnects $s$ from $t$.
 
 \chapter{Quizzes}
 
-\section{Quiz \#7:}
+\section{Quiz \#7}
+
 \subsection{Bipartite matching via max flow}
-\begin{tcolorbox}[title=Bipartite matching via max flow]
-\small
-\ttfamily
-\raggedright
 
-Alors pour cet algorithme, c'est une application de l'algorithme max flow donc c'est le même code en soit mais le contexte et les règles du graphe vont changer. \\
-Le but de ce problema esta de donc dde faire un bipartite matching.¿MAIS QUE ES UN BIPARTITE MATCHING? Alors, on va avoir deux set d'éléments et le but c'est de faire le maximum de paires possibles sachant que chaque élément ne peut faire qu'une paire qu'une fois avec un seul élément de l'autre team et que on sait que chaque élément ne peut se pairer que avec certains. \\
+\begin{exbox}[title=Bipartite matching via max flow — student notes]
+\small\raggedright
+Cet algorithme est une application de max flow : même code en substance, mais le
+contexte et les règles du graphe changent.
 
-\vspace{2mm}
+\textbf{Qu'est-ce que le bipartite matching ?} On a deux sets d'éléments et le but
+est de faire le maximum de paires possibles, sachant que chaque élément ne peut être
+apparié qu'une seule fois avec un élément de l'autre set, et uniquement avec certains.
+
 \textbf{Modélisation du graphe :}
 \begin{center}
-\begin{tabular}{c}
-src $\rightarrow$ tous les éléments du premier set \\
-éléments set 1 $\rightarrow$ éléments set 2 compatibles \\
-éléments set 2 $\rightarrow$ end
+\begin{tabular}{l}
+$\text{src} \to$ tous les éléments du premier set (capacité 1) \\
+éléments set 1 $\to$ éléments set 2 compatibles (capacité 1) \\
+éléments set 2 $\to \text{end}$ (capacité 1)
 \end{tabular}
 \end{center}
 
-\vspace{2mm}
-et ensuite le max flow possible sur chaque branche est de 1 \\
-Ainsi, chaque branche ne pourra être traversée que 1 fois et on ne va pas construire des doublons de paires ou des mauvaises paires.
-
-\end{tcolorbox}
-
-% =========================================================
+La capacité 1 sur chaque branche garantit qu'elle n'est traversée qu'une fois, évitant
+ainsi les doublons ou les mauvais appariements.
+\end{exbox}
 
 \subsection{Edge disjoint paths via max flow}
 
-\begin{tcolorbox}[title=Edge disjoint paths via max flow]
-\small
-\ttfamily
-\raggedright
+\begin{exbox}[title=Edge disjoint paths via max flow — student notes]
+\small\raggedright
+On utilise max flow pour trouver le maximum de chemins de $s$ à $t$ sans intersection.
 
-Alors pour ce second algorithme, c'est un peu différend mais c'est sur la même base, on va utiliser le max flow algorithm pour solver edge disjoint paths. ¿MAIS QUE ES UN EDGE DISJOINT PATHS? On cherche à trouver le maximum de chemins de A à B (de src to end) qui n'ont pas d'intersections entre eux donc qui passent par des passages uniques. \\
+\textbf{Qu'est-ce que edge disjoint paths ?} On cherche le maximum de chemins de $A$
+à $B$ qui ne partagent aucune arête.
 
-\vspace{2mm}
-\textbf{Idée : modélisation en graphe}
+\textbf{Modélisation du graphe :}
 \begin{center}
-\begin{tabular}{c}
+\begin{tabular}{l}
 chaque chemin = arêtes du graphe \\
 capacité de chaque arête = 1
 \end{tabular}
 \end{center}
 
-\vspace{2mm}
-Pour cela, on va modéliser en graphe notre réseau de chemins ect et par contre, comme précédemment, on va faire en sorte que le le max flow possible sur chaque branche est de 1. Ainsi, chaque branche ne pourra être traversée que 1 fois et on ne va pas l'utiliser en doublon et au final, le max flow sera le nombre de chemins que l'on a construits au maximum et qui sont disjoints.
-
-\end{tcolorbox}
+La capacité 1 force chaque arête à n'être empruntée qu'une fois. Le max flow donne
+alors directement le nombre maximum de chemins arête-disjoints.
+\end{exbox}
 
 \end{document}

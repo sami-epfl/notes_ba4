@@ -1,63 +1,36 @@
-\documentclass[11pt]{article}
+\documentclass[11pt,a4paper,openany]{book}
 
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{amsmath,amssymb}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern}
-\usepackage[most]{tcolorbox}
-\usepackage{xcolor}
-\usepackage[dvipsnames]{xcolor}
-\usepackage[most]{tcolorbox}
-\usepackage{xcolor}
-
-\definecolor{mygray}{RGB}{245,245,245}
-
-\title{Intro to ml}
-\author{}
-\date{}
+\PassOptionsToPackage{dvipsnames}{xcolor}
+\makeatletter\def\input@path{{../_shared/}}\makeatother
+\usepackage{course}
 
 \begin{document}
-\maketitle
-\newpage
-\tableofcontents
-\newpage
+\raggedbottom
 
-\noindent\rule{0.9\textwidth}{0.4pt}
+\coursetitle{Intro to Machine Learning}{BA4}{2025--2026}
+
+\tableofcontents
+\clearpage
+
+% ============================================================
+\chapter{Introduction}
+% ============================================================
 
 \section{Introduction}
 
-\begin{tcolorbox}[
-    colback=mygray,
-    colframe=NavyBlue,
-    title=Definitions,
-    sharp corners,
-    boxrule=0.8pt
-]
-
+\begin{defnbox}[title=Definitions]
 \begin{itemize}
     \item \textbf{Data sample}: an individual observation.
-    
+
     \item \textbf{Data set}: a collection of multiple data samples.
-    
+
     \item \textbf{Regression}: task on continuous values.
-    
+
     \item \textbf{Classification}: task on discrete labels.
 \end{itemize}
+\end{defnbox}
 
-\end{tcolorbox}
-
-\vspace{0.5cm}
-
-
-\begin{tcolorbox}[
-    colback=mygray,
-    colframe=BrickRed,
-    title=Notations,
-    sharp corners,
-    boxrule=0.8pt
-]
-
+\begin{defnbox}[title=Notations]
 \[
 x_i \in \mathbb{R}^{D}
 \]
@@ -71,19 +44,9 @@ y_i \in \mathbb{R}^{C}
 \]
 
 It is a column vector of dimension $C$.
+\end{defnbox}
 
-\end{tcolorbox}
-
-\vspace{0.5cm}
-
-\begin{tcolorbox}[
-    colback=mygray,
-    colframe=BrickRed,
-    title=Rappels,
-    sharp corners,
-    boxrule=0.8pt
-]
-
+\begin{rembox}[title=Rappels]
 Si on a $R(w)$ une fonction.
 
 \vspace{0.3cm}
@@ -121,19 +84,9 @@ La solution à partir d'une telle équation, donc le $w$ optimisé, sera dénot�
 \[
 w^\star
 \]
+\end{rembox}
 
-\end{tcolorbox}
-
-\vspace{0.5cm}
-
-\begin{tcolorbox}[
-    colback=mygray,
-    colframe=NavyBlue,
-    title=Gradient,
-    sharp corners,
-    boxrule=0.8pt
-]
-
+\begin{defnbox}[title=Gradient]
 \[
 \nabla_{w} R(w)
 =
@@ -154,19 +107,9 @@ Si le gradient est égal au vecteur nul :
 \]
 
 alors on obtient un \textit{stationary point} lorsque l'on recherche $w^\star$.
+\end{defnbox}
 
-\end{tcolorbox}
-
-\vspace{0.5cm}
-
-\begin{tcolorbox}[
-    colback=mygray,
-    colframe=ForestGreen,
-    title=Useful Identities,
-    sharp corners,
-    boxrule=0.8pt
-]
-
+\begin{propbox}[title=Useful Identities]
 \[
 \nabla_b (a^T b) = a
 \]
@@ -182,27 +125,15 @@ alors on obtient un \textit{stationary point} lorsque l'on recherche $w^\star$.
 \[
 \nabla_B (a^T B) = a
 \]
+\end{propbox}
 
-\end{tcolorbox}
-
-\vspace{5cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
+% ============================================================
+\chapter{Regression}
+% ============================================================
 
 \section{Linear Regression}
 
-Le principe de la régression linéaire est d’essayer de fitter une droite, un plan, etc. sur les données que nous avons afin de pouvoir en faire des approximations.
+Le principe de la régression linéaire est d'essayer de fitter une droite, un plan, etc. sur les données que nous avons afin de pouvoir en faire des approximations.
 
 \vspace{0.4cm}
 
@@ -218,14 +149,7 @@ Pour trouver ce $w$, on cherche le $w$ optimal noté $w^\star$, tel que les pré
 
 \vspace{0.6cm}
 
-\begin{tcolorbox}[
-    colback=gray!5,
-    colframe=NavyBlue,
-    title=Measure of closeness,
-    sharp corners,
-    boxrule=0.8pt
-]
-
+\begin{defnbox}[title=Measure of closeness]
 Pour mesurer la distance entre la prédiction et la réalité, on utilise la distance euclidienne :
 
 \[
@@ -241,8 +165,7 @@ d^2(\hat{y}_i, y_i) = (\hat{y}_i - y_i)^2
 Comme la racine carrée est monotone croissante sur les réels positifs, minimiser la distance ou son carré revient au même.
 
 \vspace{0.4cm}
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
@@ -261,28 +184,19 @@ Le problème de training devient donc :
 
 \vspace{0.6cm}
 
-\begin{tcolorbox}[
-    colback=gray!5,
-    colframe=Purple,
-    title=Empirical Risk,
-    sharp corners,
-    boxrule=0.9pt
-]
-
-C'est ce que l'on va appeler ici la fonction de \textbf{\textcolor{BrickRed}{EMPPIRICAL RISK}} $R(w)$ dont la forme générale est :
+\begin{defnbox}[title=Empirical Risk]
+C'est ce que l'on va appeler ici la fonction de \textbf{\textcolor{redColor}{EMPPIRICAL RISK}} $R(w)$ dont la forme générale est :
 
 \[
 R(\{x_i\}, \{y_i\}, w)
 =
 \frac{1}{N} \sum_{i=1}^{N} \ell(\hat{y}_i, y_i)
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{1.0cm}
 
-
-Mais comment va-t-on réduire une telle somme facilement ? Grâce au gradient !!! 
+Mais comment va-t-on réduire une telle somme facilement ? Grâce au gradient !!!
 On calcule ensuite le gradient en appliquant la dérivation terme à terme :
 
 \[
@@ -317,7 +231,7 @@ Donc finalement :
 \frac{2}{N} \sum_{i=1}^{N} (w^T x_i - y_i)x_i
 \]
 
-On impose la condition d’optimalité :
+On impose la condition d'optimalité :
 
 \[
 \nabla_w R(w) = 0
@@ -387,7 +301,7 @@ W^\star = X^\dagger Y
 
 \textbf{Conclusion :}
 
-La régression linéaire permet d’obtenir une solution fermée exacte grâce à l’optimisation d’une fonction de coût quadratique convexe. Cela garantit que le minimum trouvé correspond à l’optimum global.
+La régression linéaire permet d'obtenir une solution fermée exacte grâce à l'optimisation d'une fonction de coût quadratique convexe. Cela garantit que le minimum trouvé correspond à l'optimum global.
 
 Ainsi, une fois $W^\star$ calculé, la phase de test consiste simplement à appliquer :
 
@@ -397,123 +311,59 @@ Ainsi, une fois $W^\star$ calculé, la phase de test consiste simplement à appl
 
 \vspace{0.4cm}
 
-Le modèle est donc entièrement déterminé par la 
-solution analytique 
-du problème d’optimisation.
-
-
-
-
-
-
-
-
-\vspace{3cm}
-
-
-
-
-
-
-
-
-
-
-
-\tcbset{
-    mybubble/.style={
-        colback=gray!5,
-        colframe=white,
-        arc=6mm,
-        boxrule=0pt,
-        enhanced,
-        drop shadow={black!20},
-        left=3mm,
-        right=3mm,
-        top=2mm,
-        bottom=2mm
-    }
-}
-
+Le modèle est donc entièrement déterminé par la
+solution analytique
+du problème d'optimisation.
 
 \section{Model evaluation on test sample}
 
-C'est bien de faire des modèles, mais il faut quand même vérifier s'ils sont bons.  
+C'est bien de faire des modèles, mais il faut quand même vérifier s'ils sont bons.
 C'est pour cela qu'on utilise des métriques permettant d'évaluer les performances des modèles.
 
 \vspace{0.6cm}
 
-\begin{tcolorbox}[mybubble, colframe=ForestGreen, title=Mean Squared Error (MSE)]
-
+\begin{defnbox}[title=Mean Squared Error (MSE)]
 Le \textbf{Mean Squared Error} mesure la moyenne des erreurs au carré :
 
 \[
 \mathrm{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[mybubble, colframe=RoyalBlue, title=Root Mean Squared Error (RMSE)]
-
+\begin{defnbox}[title=Root Mean Squared Error (RMSE)]
 Le \textbf{Root Mean Squared Error} est la racine du MSE :
 
 \[
 \mathrm{RMSE} =
 \frac{1}{N} \sum_{i=1}^{N} \sqrt{(y_i - \hat{y}_i)^2}
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[mybubble, colframe=OrangeRed, title=Mean Absolute Error (MAE)]
-
+\begin{defnbox}[title=Mean Absolute Error (MAE)]
 Le \textbf{Mean Absolute Error} mesure la moyenne des erreurs absolues :
 
 \[
 \mathrm{MAE} = \frac{1}{N} \sum_{i=1}^{N} |\hat{y}_i - y_i|
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[mybubble, colframe=Purple, title=Mean Absolute Percentage Error (MAPE)]
-
+\begin{defnbox}[title=Mean Absolute Percentage Error (MAPE)]
 Le \textbf{Mean Absolute Percentage Error} mesure l'erreur relative en pourcentage :
 
 \[
 \mathrm{MAPE} = \frac{1}{N} \sum_{i=1}^{N} \left| \frac{\hat{y}_i - y_i}{y_i} \right|
 \]
+\end{defnbox}
 
-\end{tcolorbox}
-
-
-
-
-
-
-
-
-
-
-
-\vspace{3cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
+% ============================================================
+\chapter{Classification}
+% ============================================================
 
 \section{Logistic Regression}
 
@@ -543,21 +393,13 @@ On va rester sur le même principe mais utiliser une fonction spéciale qui perm
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[
-    colback=gray!5,
-    colframe=Purple,
-    title=Sigmoid function,
-    sharp corners,
-    boxrule=0.8pt
-]
-
+\begin{defnbox}[title=Sigmoid function]
 Définition de la sigmoid function :
 
 \[
 \sigma(z) = \frac{1}{1 + e^{-z}}
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
@@ -571,7 +413,7 @@ Dans notre cas :
 
 \subsection{Training}
 
-Ici on doit trouver le $w$ optimal noté $w^\star$.  
+Ici on doit trouver le $w$ optimal noté $w^\star$.
 Pour cela, on utilise les probabilités et on définit une loss function :
 
 \[
@@ -601,7 +443,7 @@ R(w)
 
 \vspace{0.8cm}
 
-Mais voilà ici, on ne sait pas exactement bien le résoudre facilement et pratiquement, on va donc utiliser un algorithme, le gradient descent.  
+Mais voilà ici, on ne sait pas exactement bien le résoudre facilement et pratiquement, on va donc utiliser un algorithme, le gradient descent.
 Mais d'abord calculer le gradient :
 
 \vspace{0.4cm}
@@ -642,13 +484,7 @@ Mais d'abord calculer le gradient :
 
 \vspace{0.8cm}
 
-
-\begin{tcolorbox}[
-    mybubble,
-    colframe=NavyBlue,
-    title=Gradient Descent Algorithm
-]
-
+\begin{algbox}[title=Gradient Descent Algorithm]
 1. Initialize $w_0$ randomly
 
 2. While not converged:
@@ -664,22 +500,15 @@ w_k \leftarrow w_{k-1} - \eta \frac{dR}{dw}(w_{k-1})
     \item on converge vers le minimum
     \item $\frac{dR}{dw}$ si on a multi-output sera remplacé par le gradient $\nabla_w R(w_{k-1})$
 \end{itemize}
+\end{algbox}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=RoyalBlue,
-    title=Convergence criteria
-]
-
+\begin{rembox}[title=Convergence criteria]
 \begin{itemize}
     \item $|R(w_k) - R(w_{k-1})| < \delta_R$
     \item $\|w_k - w_{k-1}\| < \delta_w$
-    \item ou nombre fixe d’itérations
+    \item ou nombre fixe d'itérations
 \end{itemize}
-
-\end{tcolorbox}
-
-\end{tcolorbox}
+\end{rembox}
 
 \vspace{0.8cm}
 
@@ -700,35 +529,6 @@ Puis classification :
 0 & \text{otherwise}
 \end{cases}
 \]
-
-
-
-
-
-
-
-
-
-\vspace{8cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \section{Classification evaluation}
 
@@ -759,76 +559,48 @@ N = FP + TN
 \]
 
 \vspace{0.8cm}
-\begin{tcolorbox}[
-    mybubble,
-    colframe=ForestGreen,
-    title=Accuracy
-]
 
+\begin{defnbox}[title=Accuracy]
 \textbf{Definition:} \% of correctly classified samples
 
 \[
 \mathrm{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=RoyalBlue,
-    title=Precision
-]
-
+\begin{defnbox}[title=Precision]
 \textbf{Definition:} \% of positives that are really positives on the said positives
 
 \[
 \mathrm{Precision} = \frac{TP}{TP + FP}
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=OrangeRed,
-    title=Recall
-]
-
+\begin{defnbox}[title=Recall]
 \textbf{Definition:} \% of positives correctly detected
 
 \[
 \mathrm{Recall} = \frac{TP}{TP + FN}
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=Purple,
-    title=False Positive Rate (FPR)
-]
-
+\begin{defnbox}[title=False Positive Rate (FPR)]
 \textbf{Definition:} \% of negatives incorrectly classified as positive
 
 \[
 \mathrm{FPR} = \frac{FP}{FP + TN}
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=NavyBlue,
-    title=F1 Score
-]
-
+\begin{defnbox}[title=F1 Score]
 \[
 \mathrm{F1} = 2 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
 \]
@@ -847,45 +619,16 @@ In practice:
     \item $F1 \approx 0.5$ : medium performance, imbalance between precision and recall
     \item $F1 \approx 0$ : very poor model
 \end{itemize}
-
-\end{tcolorbox}
-
-
-
-
-
-
-
-
-
-
-
-\vspace{4cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\end{defnbox}
 
 \section{Dealing with multi class}
 
-Maintenant, ce qu'on a fait pour la classification marchait seulement si on devait choisir entre 2 classes, par exemple $0$ et $1$.  
+Maintenant, ce qu'on a fait pour la classification marchait seulement si on devait choisir entre 2 classes, par exemple $0$ et $1$.
 Mais comment fait-on lorsque l'on a plusieurs classes ?
 
 \vspace{0.5cm}
 
-On représente alors les données différemment :  
+On représente alors les données différemment :
 $y_i$ devient un vecteur multidimensionnel contenant des $0$ et un unique $1$ à la position correspondant au label.
 
 \vspace{0.3cm}
@@ -1013,37 +756,6 @@ k =
 \hat{y}^{(j)}
 \]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\vspace{4cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \section{Evaluation metrics on multi-class classification}
 
 Etant donnée qu'on a plusieurs classes, les éléments qu'on avait définis (\textit{Accuracy, Recall, Precision...}) pour évaluer les modèles de classification ne marchent plus vraiment.
@@ -1052,12 +764,7 @@ Pour ce faire, on change déjà le tableau pour construire la \textbf{CONFUSION 
 
 \vspace{0.6cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=NavyBlue,
-    title=Example with 3 labels
-]
-
+\begin{exbox}[title=Example with 3 labels]
 \[
 \begin{array}{c|c|c|c}
 & A & B & C \\
@@ -1073,18 +780,17 @@ C & \cdots & \cdots & \cdots \\
 \vspace{0.4cm}
 
 \[
-\text{Predicted c'est le ABC en ligne} 
+\text{Predicted c'est le ABC en ligne}
 \]
 
 \[
 \text{Actual c'est le ABC en colonne (à gauche)}
 \]
-
-\end{tcolorbox}
+\end{exbox}
 
 \vspace{0.8cm}
 
-Par exemple, pour l’Accuracy, la formule devient :
+Par exemple, pour l'Accuracy, la formule devient :
 
 \[
 \mathrm{Accuracy}
@@ -1108,57 +814,13 @@ Pour Precision, Recall, FPrate et F1-score, on peut :
 
 But that solution does not account for \textbf{class imbalance}.
 
-
-
-
-
-
-\vspace{4cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \section{SVM}
 
 ça j'ai pas bien compris du coup je préfère te laisser remplir
 
-
-
-
-
-
-
-
-
-
-
-\vspace{4cm}
-\noindent\rule{0.9\textwidth}{0.4pt}
-\vspace{4cm}
-
-
-
-
-
-
-
-
-
-
-
-
+% ============================================================
+\chapter{Non-parametric Methods}
+% ============================================================
 
 \section{Nonlinear machine models: KNN}
 
@@ -1174,12 +836,7 @@ Pour déterminer les éléments à côté il faut savoir à quelle distance on e
 
 \vspace{0.5cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=RoyalBlue,
-    title=Euclidian distance
-]
-
+\begin{defnbox}[title=Euclidian distance]
 \textbf{Definition:} mesure de la distance géométrique entre deux points.
 
 \vspace{0.3cm}
@@ -1192,17 +849,11 @@ d(x_i, x_j)
 (x_i^{(k)} - x_j^{(k)})^2
 }
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.5cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=Purple,
-    title=Chi-square distance
-]
-
+\begin{defnbox}[title=Chi-square distance]
 \textbf{Definition:} distance souvent utilisée pour comparer des distributions ou histogrammes.
 
 \vspace{0.3cm}
@@ -1221,8 +872,7 @@ x_i^{(k)} + x_j^{(k)}
 }
 }
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.8cm}
 
@@ -1232,23 +882,17 @@ Pour la classification, c'est plutôt simple : on va prendre les $k$ neighbors l
 
 \vspace{0.5cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=ForestGreen,
-    title=KNN classification algorithm
-]
-
+\begin{algbox}[title=KNN classification algorithm]
 \begin{enumerate}
     \item Compute distance between $x$ and all $x_i$
-    
+
     \item Find $k$ samples with minimum distances
-    
+
     \item Find the most common label among these $k$ nearest neighbors
-    
+
     \item Assign the result
 \end{enumerate}
-
-\end{tcolorbox}
+\end{algbox}
 
 \vspace{0.8cm}
 
@@ -1262,27 +906,22 @@ Pour faire ladite moyenne, on peut utiliser différentes méthodes : weighted ou
 
 \vspace{0.5cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=OrangeRed,
-    title=KNN regression algorithm
-]
-
+\begin{algbox}[title=KNN regression algorithm]
 \begin{enumerate}
     \item Compute distance between $x$ and all $x_i$
-    
+
     \item Find $k$ samples with minimum distances
-    
+
     \item Compute the value based on the test sample using the K-NN:
-    
+
     \begin{itemize}
         \item average
-        
+
         \item weighted average
-        
+
         \begin{itemize}
             \item probability weighting
-            
+
             \item inverse distance weighting
         \end{itemize}
     \end{itemize}
@@ -1304,33 +943,11 @@ w_i = \frac{1}{d_i}
 \]
 
 \end{enumerate}
+\end{algbox}
 
-\end{tcolorbox}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\vspace{7cm}
-
-
-
-
-
-
-
-
-
+% ============================================================
+\chapter{Feature Engineering and Regularization}
+% ============================================================
 
 \section{Polynomial curve fitting}
 
@@ -1401,7 +1018,7 @@ Avec :
 
 \begin{itemize}
     \item $\phi(x_i) \in \mathbb{R}^{F}$
-    
+
     \item $w \in \mathbb{R}^{F}$
 \end{itemize}
 
@@ -1450,92 +1067,23 @@ w^\star
 (\Phi^T \Phi)^{-1}\Phi^T y
 \]
 
-
-
-
-
-
-
-
-
-
-
-
-\vspace{4cm}
-
-
-
-
-
-
-
-
-
-
-
-
-\begin{tcolorbox}[
-    mybubble,
-    colframe=Purple,
-    title=Cover's theorem
-]
-
+\begin{thmbox}[title=Cover's theorem]
 \textit{
 A complex pattern classification problem cast in a high-dimensional space non-linearly is more likely to be linearly separable than in a low-dimensional space, provided that the space is not densely populated.
 }
-
-\end{tcolorbox}
-
-
-
-
-
-
-
-
-
-
-
-
-\vspace{4cm}
-
-
-
-
-
-
-
-
-
-
+\end{thmbox}
 
 \section{Fitting and regularization - Cross validation}
 
-\begin{tcolorbox}[
-    colback=gray!10,
-    colframe=black,
-    sharp corners,
-    boxrule=0.8pt,
-    title=Definition: Overfitting
-]
-
+\begin{defnbox}[title=Definition: Overfitting]
 Error low on training data but large on test data.
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.5cm}
 
-\begin{tcolorbox}[
-    colback=gray!10,
-    colframe=black,
-    sharp corners,
-    boxrule=0.8pt,
-    title=Definition: Underfitting
-]
-
+\begin{defnbox}[title=Definition: Underfitting]
 Error large on both training and testing data.
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.8cm}
 
@@ -1551,12 +1099,7 @@ Pour cela, on va simuler training et test uniquement sur les training data puisq
 
 \vspace{0.8cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=RoyalBlue,
-    title=Validation set
-]
-
+\begin{propbox}[title=Validation set]
 Principe simple :
 
 \vspace{0.3cm}
@@ -1572,45 +1115,33 @@ We usually use ratios such as:
 \qquad \text{or} \qquad
 70/30
 \]
-
-\end{tcolorbox}
+\end{propbox}
 
 \vspace{0.6cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=ForestGreen,
-    title=Leave-one-out cross validation (LOOCV)
-]
-
+\begin{propbox}[title=Leave-one-out cross validation (LOOCV)]
 \[
 \text{For } i = 1 \dots N
 \]
 
 \begin{enumerate}
     \item $(x_i, y_i)$ be the $i$-th sample
-    
+
     \item Temporarily remove $(x_i, y_i)$ from the training set
-    
+
     \item Perform regression on the remaining $N-1$ samples
-    
+
     \item Compute the error on $(x_i, y_i)$
 \end{enumerate}
 
 \vspace{0.4cm}
 
 When all points have been processed, report the average error.
-
-\end{tcolorbox}
+\end{propbox}
 
 \vspace{0.6cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=OrangeRed,
-    title=K-fold cross validation
-]
-
+\begin{propbox}[title=K-fold cross validation]
 We split the data into $k$ partitions.
 
 \vspace{0.3cm}
@@ -1619,17 +1150,16 @@ Then, for each partition:
 
 \begin{itemize}
     \item train on the other partitions
-    
+
     \item test on the selected partition
-    
+
     \item compute the error
 \end{itemize}
 
 \vspace{0.3cm}
 
 Finally, report the average error over all points.
-
-\end{tcolorbox}
+\end{propbox}
 
 \vspace{0.8cm}
 
@@ -1637,42 +1167,15 @@ Finally, report the average error over all points.
 
 \vspace{0.3cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=Purple,
-    title=Comparison
-]
-
+\begin{rembox}[title=Comparison]
 \begin{itemize}
     \item \textbf{Validation set:} cheap but may waste data
-    
+
     \item \textbf{LOOCV:} expensive but does not waste data
-    
+
     \item \textbf{K-fold:} good compromise between both methods
 \end{itemize}
-
-\end{tcolorbox}
-
-
-
-
-
-
-
-
-
-\vspace{4cm}
-
-
-
-
-
-
-
-
-
-
-
+\end{rembox}
 
 \section{Penalizing overfitting}
 
@@ -1700,7 +1203,7 @@ Avec :
 
 \begin{itemize}
     \item $\lambda > 0$ : hyperparameter controlling the influence of the regularizer
-    
+
     \item $E_w(w)$ : regularizer
 \end{itemize}
 
@@ -1710,19 +1213,13 @@ Avec :
 
 \vspace{0.3cm}
 
-\begin{tcolorbox}[
-    mybubble,
-    colframe=RoyalBlue,
-    title=L2 regularization
-]
-
+\begin{defnbox}[title=L2 regularization]
 \[
 E_w(w)
 =
 w^T w
 \]
-
-\end{tcolorbox}
+\end{defnbox}
 
 \vspace{0.6cm}
 
@@ -1784,7 +1281,6 @@ w^\star
 
 \vspace{0.5cm}
 
-
 \textbf{This is a RIDGE REGRESSION}
 
 \vspace{0.3cm}
@@ -1843,26 +1339,11 @@ Pour les SVM, pas besoin d'ajouter explicitement de régularisation.
 
 \vspace{0.3cm}
 
-
 La régularisation est déjà préincluse dans la formulation initiale du SVM.
 
-
-
-
-
-
-
-
-
-\vspace{4cm}
-
-
-
-
-
-
-
-
+% ============================================================
+\chapter{Kernel Methods}
+% ============================================================
 
 \section{Kernel function}
 
@@ -1870,7 +1351,7 @@ Jusque-là on a pu voir comment améliorer nos algos, comment les différencier,
 
 Pendant cela, on a vu comment faire de la polynomial curve expansion et définir $\phi$.
 
-Mais le problème est que cela reste complexe, et assez arbitraire lorsqu’il faut définir $\phi$ et tester de nombreuses combinaisons.
+Mais le problème est que cela reste complexe, et assez arbitraire lorsqu'il faut définir $\phi$ et tester de nombreuses combinaisons.
 
 C'est pourquoi on introduit un nouvel outil : \textbf{the KERNEL FUNCTION}.
 
@@ -2092,7 +1573,7 @@ Solution:
 
 \vspace{1cm}
 
-\subsection{How to find a good $k(\cdot,\cdot)$ ?}
+\subsection{How to find a good \texorpdfstring{$k(\cdot,\cdot)$\,?}{k(.,.) ?}}
 
 By cross validation (no miracle solution exists).
 
@@ -2129,70 +1610,5 @@ W^{\star T} \phi(x)
 =
 Y^T (K + \lambda I)^{-1} k(X,x)
 \]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \end{document}
