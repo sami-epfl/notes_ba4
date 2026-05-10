@@ -16,7 +16,7 @@
 \chapter{Introduction}
 % ============================================================
 
-\section{Introduction}
+\section{ML Basics}
 
 \begin{defnbox}[title=Definitions]
 \begin{itemize}
@@ -45,6 +45,8 @@ y_i \in \mathbb{R}^{C}
 
 It is a column vector of dimension $C$.
 \end{defnbox}
+
+\subsection{Rappels mathématiques}
 
 \begin{rembox}[title=Rappels]
 Si on a $R(w)$ une fonction.
@@ -128,10 +130,10 @@ alors on obtient un \textit{stationary point} lorsque l'on recherche $w^\star$.
 \end{propbox}
 
 % ============================================================
-\chapter{Regression}
+\chapter{Linear Supervised ML}
 % ============================================================
 
-\section{Linear Regression}
+\section{Linear regression}
 
 Le principe de la régression linéaire est d'essayer de fitter une droite, un plan, etc. sur les données que nous avons afin de pouvoir en faire des approximations.
 
@@ -315,7 +317,7 @@ Le modèle est donc entièrement déterminé par la
 solution analytique
 du problème d'optimisation.
 
-\section{Model evaluation on test sample}
+\subsection{Model evaluation on test sample}
 
 C'est bien de faire des modèles, mais il faut quand même vérifier s'ils sont bons.
 C'est pour cela qu'on utilise des métriques permettant d'évaluer les performances des modèles.
@@ -361,17 +363,17 @@ Le \textbf{Mean Absolute Percentage Error} mesure l'erreur relative en pourcenta
 \]
 \end{defnbox}
 
-% ============================================================
-\chapter{Classification}
-% ============================================================
+% ------------------------------------------------------------
+\section{Linear models for classification}
+% ------------------------------------------------------------
 
-\section{Logistic Regression}
+\subsection{Logistic Regression}
 
 Maintenant on veut un premier élément, une première méthode pour faire face aux problèmes de classification. C'est pour ça que l'on utilise la logistic regression.
 
 \vspace{0.6cm}
 
-\subsection{Linear classification}
+\subsubsection{Linear classification}
 
 On peut d'abord, avant de parler de logistic regression, utiliser la linear regression pour un problème de classification puis séparer les résultats en disant :
 
@@ -387,7 +389,7 @@ Mais cette méthode n'est pas fiable.
 
 \vspace{0.8cm}
 
-\subsection{LSF}
+\subsubsection{LSF}
 
 On va rester sur le même principe mais utiliser une fonction spéciale qui permet de séparer les différentes classes : la \textbf{sigmoid function}.
 
@@ -411,7 +413,7 @@ Dans notre cas :
 
 \vspace{0.8cm}
 
-\subsection{Training}
+\subsubsection{Training}
 
 Ici on doit trouver le $w$ optimal noté $w^\star$.
 Pour cela, on utilise les probabilités et on définit une loss function :
@@ -512,7 +514,7 @@ w_k \leftarrow w_{k-1} - \eta \frac{dR}{dw}(w_{k-1})
 
 \vspace{0.8cm}
 
-\subsection{Test}
+\subsubsection{Test}
 
 Une fois $w^\star$ trouvé :
 
@@ -530,7 +532,7 @@ Puis classification :
 \end{cases}
 \]
 
-\section{Classification evaluation}
+\subsection{Classification evaluation}
 
 Ok c'est sympa de pouvoir faire de la classification maintenant mais on devrait quand même pouvoir évaluer comment on a fait si c'est bien ou pas. On utilise alors un tableau :
 
@@ -621,7 +623,7 @@ In practice:
 \end{itemize}
 \end{defnbox}
 
-\section{Dealing with multi class}
+\subsection{Dealing with multi class}
 
 Maintenant, ce qu'on a fait pour la classification marchait seulement si on devait choisir entre 2 classes, par exemple $0$ et $1$.
 Mais comment fait-on lorsque l'on a plusieurs classes ?
@@ -656,7 +658,7 @@ In this case, we are of the label $3$.
 
 \vspace{0.8cm}
 
-\subsection{Linear classification}
+\subsubsection{Linear classification}
 
 La méthode de train devient :
 
@@ -695,7 +697,7 @@ k =
 
 \vspace{0.8cm}
 
-\subsection{Logistic regression}
+\subsubsection{Logistic regression}
 
 On utilise maintenant la fonction \textbf{Softmax} :
 
@@ -756,7 +758,7 @@ k =
 \hat{y}^{(j)}
 \]
 
-\section{Evaluation metrics on multi-class classification}
+\subsection{Evaluation metrics on multi-class classification}
 
 Etant donnée qu'on a plusieurs classes, les éléments qu'on avait définis (\textit{Accuracy, Recall, Precision...}) pour évaluer les modèles de classification ne marchent plus vraiment.
 
@@ -814,15 +816,15 @@ Pour Precision, Recall, FPrate et F1-score, on peut :
 
 But that solution does not account for \textbf{class imbalance}.
 
-\section{SVM}
+\subsection{SVM}
 
 ça j'ai pas bien compris du coup je préfère te laisser remplir
 
 % ============================================================
-\chapter{Non-parametric Methods}
+\chapter{Non-linear Supervised ML}
 % ============================================================
 
-\section{Nonlinear machine models: KNN}
+\section{k-Nearest Neighbors}
 
 KNN va chercher à déterminer la valeur en fonction des éléments à côté, des neighbors, pour pouvoir déterminer la valeur dudit point.
 
@@ -945,11 +947,11 @@ w_i = \frac{1}{d_i}
 \end{enumerate}
 \end{algbox}
 
-% ============================================================
-\chapter{Feature Engineering and Regularization}
-% ============================================================
+% ------------------------------------------------------------
+\section{Feature expansion}
+% ------------------------------------------------------------
 
-\section{Polynomial curve fitting}
+\subsection{Polynomial curve fitting}
 
 On arrive à un nouveau défi.
 
@@ -963,7 +965,7 @@ Pour cela, on utilise la \textbf{POLYNOMIAL CURVE FITTING} par \textbf{POLYNOMIA
 
 \vspace{0.8cm}
 
-\subsection{Base}
+\subsubsection{Base}
 
 En quoi cela consiste ?
 
@@ -1024,7 +1026,7 @@ Avec :
 
 \vspace{0.8cm}
 
-\subsection{Application}
+\subsubsection{Application}
 
 On obtient alors :
 
@@ -1073,7 +1075,7 @@ A complex pattern classification problem cast in a high-dimensional space non-li
 }
 \end{thmbox}
 
-\section{Fitting and regularization - Cross validation}
+\subsection{Fitting and regularization -- Cross validation}
 
 \begin{defnbox}[title=Definition: Overfitting]
 Error low on training data but large on test data.
@@ -1163,7 +1165,7 @@ Finally, report the average error over all points.
 
 \vspace{0.8cm}
 
-\subsection{Pros and cons}
+\subsubsection{Pros and cons}
 
 \vspace{0.3cm}
 
@@ -1177,7 +1179,7 @@ Finally, report the average error over all points.
 \end{itemize}
 \end{rembox}
 
-\section{Penalizing overfitting}
+\subsection{Penalizing overfitting}
 
 On va ajouter des regularisateurs pour avoir moins de chances d'obtenir des problèmes dans nos simulations, nos trainings et nos predictions.
 
@@ -1209,7 +1211,7 @@ Avec :
 
 \vspace{0.8cm}
 
-\subsection{Common regularizer}
+\subsubsection{Common regularizer}
 
 \vspace{0.3cm}
 
@@ -1289,7 +1291,7 @@ $I_F$ is the identity matrix of dimension $F$.
 
 \vspace{0.9cm}
 
-\subsection{Multi-output ridge regression}
+\subsubsection{Multi-output ridge regression}
 
 \vspace{0.3cm}
 
@@ -1331,7 +1333,7 @@ W^\star
 
 \vspace{0.9cm}
 
-\subsection{What about SVM}
+\subsubsection{What about SVM}
 
 \vspace{0.3cm}
 
@@ -1341,11 +1343,9 @@ Pour les SVM, pas besoin d'ajouter explicitement de régularisation.
 
 La régularisation est déjà préincluse dans la formulation initiale du SVM.
 
-% ============================================================
-\chapter{Kernel Methods}
-% ============================================================
-
-\section{Kernel function}
+% ------------------------------------------------------------
+\section{Kernel methods}
+% ------------------------------------------------------------
 
 Jusque-là on a pu voir comment améliorer nos algos, comment les différencier, les tester, et déterminer le meilleur.
 
@@ -1610,5 +1610,29 @@ W^{\star T} \phi(x)
 =
 Y^T (K + \lambda I)^{-1} k(X,x)
 \]
+
+% ------------------------------------------------------------
+\section{Artificial neural networks (deep learning)}
+% ------------------------------------------------------------
+
+\begin{rembox}[title=Section à compléter]
+Cette section sera complétée ultérieurement.
+\end{rembox}
+
+% ============================================================
+\chapter{Unsupervised ML}
+% ============================================================
+
+\section{Dimensionality reduction}
+
+\begin{rembox}[title=Section à compléter]
+Cette section sera complétée ultérieurement.
+\end{rembox}
+
+\section{k-Means Clustering}
+
+\begin{rembox}[title=Section à compléter]
+Cette section sera complétée ultérieurement.
+\end{rembox}
 
 \end{document}
