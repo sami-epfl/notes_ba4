@@ -13,7 +13,6 @@
 \cheattitle{Signal Processing}{}{BA4}
 
 % ============================================================
-\iffalse
 
 \section{Course outline}
 \begin{itemize}
@@ -1039,11 +1038,10 @@ Minimizes the \emph{maximum} error (minimax, $L_\infty$ norm) in passband and st
 \end{prop}
 
 \newpage
-\fi
+
 % ============================================================
 \section{Interpolation \& Sampling}
 
-% -------------------------------------------------------
 \subsection{The Continuous-Time World}
 
 \begin{defn}[title=CT vs.\ DT paradigm]
@@ -1076,6 +1074,15 @@ A CT signal is $F_S$-BL $\Leftrightarrow$ X(f) for $|f|>F_S/2$
 
 \begin{prop}[title=Support of a function]
 The interval where the function is non-trivially zero
+\end{prop}
+
+\subsection{Interpolation x[n] → x(t)}
+\begin{prop}[title=Interpolation requirement]
+\begin{itemize}
+  \item decide on $T_s$ (sampling period)
+  \item make sure x(n$T_s$) = x[n]
+  \item make sure x(t) is smooth
+\end{itemize}
 \end{prop}
 
 \newpage
