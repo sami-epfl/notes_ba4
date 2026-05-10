@@ -1,0 +1,2198 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+
+\definecolor{mygray}{RGB}{245,245,245}
+
+\title{Intro to ml}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\noindent\rule{0.9\textwidth}{0.4pt}
+
+\section{Introduction}
+
+\begin{tcolorbox}[
+    colback=mygray,
+    colframe=NavyBlue,
+    title=Definitions,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+\begin{itemize}
+    \item \textbf{Data sample}: an individual observation.
+    
+    \item \textbf{Data set}: a collection of multiple data samples.
+    
+    \item \textbf{Regression}: task on continuous values.
+    
+    \item \textbf{Classification}: task on discrete labels.
+\end{itemize}
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+
+\begin{tcolorbox}[
+    colback=mygray,
+    colframe=BrickRed,
+    title=Notations,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+\[
+x_i \in \mathbb{R}^{D}
+\]
+
+It is a column vector of dimension $D$.
+
+\vspace{0.4cm}
+
+\[
+y_i \in \mathbb{R}^{C}
+\]
+
+It is a column vector of dimension $C$.
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    colback=mygray,
+    colframe=BrickRed,
+    title=Rappels,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+Si on a $R(w)$ une fonction.
+
+\vspace{0.3cm}
+
+\[
+R'(\bar{w})
+=
+\frac{dR}{dw}(\bar{w})
+=
+\lim_{w \to 0}
+\frac{R(\bar{w} + w) - R(\bar{w})}{w}
+\]
+
+\vspace{0.3cm}
+
+Si
+
+\[
+R'(\bar{w}) = 0
+\]
+
+alors cela peut être :
+\begin{itemize}
+    \item un minimum,
+    \item un maximum,
+    \item ou un point de selle.
+\end{itemize}
+
+On assumera dans la majorité des cas que la solution trouvée sera un minimum.
+
+\vspace{0.3cm}
+
+La solution à partir d'une telle équation, donc le $w$ optimisé, sera dénoté
+
+\[
+w^\star
+\]
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    colback=mygray,
+    colframe=NavyBlue,
+    title=Gradient,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+\[
+\nabla_{w} R(w)
+=
+\begin{pmatrix}
+\frac{\partial R}{\partial w_1} \\
+\frac{\partial R}{\partial w_2} \\
+\vdots \\
+\frac{\partial R}{\partial w_n}
+\end{pmatrix}
+\]
+
+\vspace{0.3cm}
+
+Si le gradient est égal au vecteur nul :
+
+\[
+\nabla_w R(w) = 0
+\]
+
+alors on obtient un \textit{stationary point} lorsque l'on recherche $w^\star$.
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    colback=mygray,
+    colframe=ForestGreen,
+    title=Useful Identities,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+\[
+\nabla_b (a^T b) = a
+\]
+
+\[
+\|a\|^2 = a^T a
+\]
+
+\[
+\nabla_a \|a\|^2 = 2a
+\]
+
+\[
+\nabla_B (a^T B) = a
+\]
+
+\end{tcolorbox}
+
+\vspace{5cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Linear Regression}
+
+Le principe de la régression linéaire est d’essayer de fitter une droite, un plan, etc. sur les données que nous avons afin de pouvoir en faire des approximations.
+
+\vspace{0.4cm}
+
+\subsection{Train}
+
+On cherche à trouver le vecteur $w$ optimal tel que :
+
+\[
+\hat{y}_i = w^T x_i
+\]
+
+Pour trouver ce $w$, on cherche le $w$ optimal noté $w^\star$, tel que les prédictions soient les plus proches des vraies valeurs.
+
+\vspace{0.6cm}
+
+\begin{tcolorbox}[
+    colback=gray!5,
+    colframe=NavyBlue,
+    title=Measure of closeness,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+Pour mesurer la distance entre la prédiction et la réalité, on utilise la distance euclidienne :
+
+\[
+d(\hat{y}_i, y_i) = \sqrt{(\hat{y}_i - y_i)^2}
+\]
+
+En pratique, on utilise la squared Euclidean distance :
+
+\[
+d^2(\hat{y}_i, y_i) = (\hat{y}_i - y_i)^2
+\]
+
+Comme la racine carrée est monotone croissante sur les réels positifs, minimiser la distance ou son carré revient au même.
+
+\vspace{0.4cm}
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+On va alors chercher donc à minimiser cette distance, pour être le plus proche possible des vrais résultats. *
+Le training devient donc un minimization problem où on va tenter de minimiser ce que l'on définit alors la fonction de coût (empirical risk) :
+
+\[
+R(w) = \frac{1}{N} \sum_{i=1}^{N} (w^T x_i - y_i)^2
+\]
+
+Le problème de training devient donc :
+
+\[
+\min_w R(w)
+\]
+
+\vspace{0.6cm}
+
+\begin{tcolorbox}[
+    colback=gray!5,
+    colframe=Purple,
+    title=Empirical Risk,
+    sharp corners,
+    boxrule=0.9pt
+]
+
+C'est ce que l'on va appeler ici la fonction de \textbf{\textcolor{BrickRed}{EMPPIRICAL RISK}} $R(w)$ dont la forme générale est :
+
+\[
+R(\{x_i\}, \{y_i\}, w)
+=
+\frac{1}{N} \sum_{i=1}^{N} \ell(\hat{y}_i, y_i)
+\]
+
+\end{tcolorbox}
+
+\vspace{1.0cm}
+
+
+Mais comment va-t-on réduire une telle somme facilement ? Grâce au gradient !!! 
+On calcule ensuite le gradient en appliquant la dérivation terme à terme :
+
+\[
+\nabla_w R(w)
+=
+\frac{1}{N} \sum_{i=1}^{N} \nabla_w \big( (w^T x_i - y_i)^2 \big)
+\]
+
+\vspace{0.4cm}
+
+En utilisant la règle de dérivation (chaîne) :
+
+\[
+\nabla_w (u^2) = 2u \, \nabla_w u
+\]
+
+avec \( u = w^T x_i - y_i \), et en notant que \( \nabla_w (w^T x_i) = x_i \), on obtient :
+
+\[
+\nabla_w R(w)
+=
+\frac{1}{N} \sum_{i=1}^{N} 2 (w^T x_i - y_i) \nabla_w (w^T x_i)
+\]
+
+\vspace{0.4cm}
+
+Donc finalement :
+
+\[
+\nabla_w R(w)
+=
+\frac{2}{N} \sum_{i=1}^{N} (w^T x_i - y_i)x_i
+\]
+
+On impose la condition d’optimalité :
+
+\[
+\nabla_w R(w) = 0
+\]
+
+Ce qui donne :
+
+\[
+\sum_{i=1}^{N} x_i x_i^T w^\star = \sum_{i=1}^{N} x_i y_i
+\]
+
+\vspace{0.4cm}
+
+\textbf{Forme matricielle :}
+
+\[
+X^T X w^\star = X^T y
+\]
+
+\vspace{0.4cm}
+
+Si $X^T X$ est inversible :
+
+\[
+w^\star = (X^T X)^{-1} X^T y
+\]
+
+Sinon :
+
+\[
+w^\star = X^\dagger y
+\]
+
+\vspace{0.8cm}
+
+\subsection{Test}
+
+Une fois le modèle entraîné :
+
+\[
+\hat{y} = w^{\star T} x
+\]
+
+\vspace{0.8cm}
+
+\subsection{Complement: multiple outputs}
+
+On généralise à plusieurs sorties :
+
+\[
+\min_W \sum_{i=1}^{N} \|W^T x_i - y_i\|^2
+\]
+
+avec :
+
+\[
+W = [w_1 \; w_2 \; \dots \; w_D]
+\]
+
+La solution devient :
+
+\[
+W^\star = X^\dagger Y
+\]
+
+\vspace{0.8cm}
+
+\textbf{Conclusion :}
+
+La régression linéaire permet d’obtenir une solution fermée exacte grâce à l’optimisation d’une fonction de coût quadratique convexe. Cela garantit que le minimum trouvé correspond à l’optimum global.
+
+Ainsi, une fois $W^\star$ calculé, la phase de test consiste simplement à appliquer :
+
+\[
+\hat{y} = W^{\star T} x
+\]
+
+\vspace{0.4cm}
+
+Le modèle est donc entièrement déterminé par la 
+solution analytique 
+du problème d’optimisation.
+
+
+
+
+
+
+
+
+\vspace{3cm}
+
+
+
+
+
+
+
+
+
+
+
+\tcbset{
+    mybubble/.style={
+        colback=gray!5,
+        colframe=white,
+        arc=6mm,
+        boxrule=0pt,
+        enhanced,
+        drop shadow={black!20},
+        left=3mm,
+        right=3mm,
+        top=2mm,
+        bottom=2mm
+    }
+}
+
+
+\section{Model evaluation on test sample}
+
+C'est bien de faire des modèles, mais il faut quand même vérifier s'ils sont bons.  
+C'est pour cela qu'on utilise des métriques permettant d'évaluer les performances des modèles.
+
+\vspace{0.6cm}
+
+\begin{tcolorbox}[mybubble, colframe=ForestGreen, title=Mean Squared Error (MSE)]
+
+Le \textbf{Mean Squared Error} mesure la moyenne des erreurs au carré :
+
+\[
+\mathrm{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[mybubble, colframe=RoyalBlue, title=Root Mean Squared Error (RMSE)]
+
+Le \textbf{Root Mean Squared Error} est la racine du MSE :
+
+\[
+\mathrm{RMSE} =
+\frac{1}{N} \sum_{i=1}^{N} \sqrt{(y_i - \hat{y}_i)^2}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[mybubble, colframe=OrangeRed, title=Mean Absolute Error (MAE)]
+
+Le \textbf{Mean Absolute Error} mesure la moyenne des erreurs absolues :
+
+\[
+\mathrm{MAE} = \frac{1}{N} \sum_{i=1}^{N} |\hat{y}_i - y_i|
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[mybubble, colframe=Purple, title=Mean Absolute Percentage Error (MAPE)]
+
+Le \textbf{Mean Absolute Percentage Error} mesure l'erreur relative en pourcentage :
+
+\[
+\mathrm{MAPE} = \frac{1}{N} \sum_{i=1}^{N} \left| \frac{\hat{y}_i - y_i}{y_i} \right|
+\]
+
+\end{tcolorbox}
+
+
+
+
+
+
+
+
+
+
+
+\vspace{3cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Logistic Regression}
+
+Maintenant on veut un premier élément, une première méthode pour faire face aux problèmes de classification. C'est pour ça que l'on utilise la logistic regression.
+
+\vspace{0.6cm}
+
+\subsection{Linear classification}
+
+On peut d'abord, avant de parler de logistic regression, utiliser la linear regression pour un problème de classification puis séparer les résultats en disant :
+
+\[
+\hat{y} =
+\begin{cases}
+1 & \text{if } y \geq 0.5 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+
+Mais cette méthode n'est pas fiable.
+
+\vspace{0.8cm}
+
+\subsection{LSF}
+
+On va rester sur le même principe mais utiliser une fonction spéciale qui permet de séparer les différentes classes : la \textbf{sigmoid function}.
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    colback=gray!5,
+    colframe=Purple,
+    title=Sigmoid function,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+Définition de la sigmoid function :
+
+\[
+\sigma(z) = \frac{1}{1 + e^{-z}}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+Dans notre cas :
+
+\[
+\hat{y}_i = \frac{1}{1 + \exp(-w^T x_i)} = \sigma(w^T x_i)
+\]
+
+\vspace{0.8cm}
+
+\subsection{Training}
+
+Ici on doit trouver le $w$ optimal noté $w^\star$.  
+Pour cela, on utilise les probabilités et on définit une loss function :
+
+\[
+p(y|w) = \prod_{i=1}^{N} \hat{y}_i^{y_i} (1 - \hat{y}_i)^{1 - y_i}
+\]
+
+\vspace{0.4cm}
+
+En prenant le log, on obtient la empirical loss function :
+
+\[
+R(w) =
+- \sum_{i=1}^{N} \Big( y_i \ln(\hat{y}_i) + (1 - y_i)\ln(1 - \hat{y}_i) \Big)
+\]
+
+\vspace{0.4cm}
+
+On peut aussi écrire :
+
+\[
+R(w)
+=
+- \sum_{i \in \text{positive}} \ln(\hat{y}_i)
+-
+\sum_{i \in \text{negative}} \ln(1 - \hat{y}_i)
+\]
+
+\vspace{0.8cm}
+
+Mais voilà ici, on ne sait pas exactement bien le résoudre facilement et pratiquement, on va donc utiliser un algorithme, le gradient descent.  
+Mais d'abord calculer le gradient :
+
+\vspace{0.4cm}
+
+\textbf{Gradient sur les positive samples :}
+
+\[
+\nabla_w \left( - \sum_{\text{positive}} \ln(\hat{y}_i) \right)
+=
+\sum_{\text{positive}} (\hat{y}_i - 1)x_i
+=
+\sum_{\text{positive}} (\hat{y}_i - y_i)x_i
+\quad \text{(ici } y_i = 1 \text{)}
+\]
+
+\vspace{0.4cm}
+
+\textbf{Gradient sur les negative samples :}
+
+\[
+\nabla_w \left( - \sum_{\text{negative}} \ln(1 - \hat{y}_i) \right)
+=
+\sum_{\text{negative}} \hat{y}_i x_i
+=
+\sum_{\text{negative}} (\hat{y}_i - y_i)x_i
+\quad \text{(ici } y_i = 0 \text{)}
+\]
+
+\vspace{0.6cm}
+
+\textbf{Ainsi, on peut les réunir et ça donne :}
+
+\[
+\nabla_w R(w)
+=
+\sum_{i=1}^{N} (\hat{y}_i - y_i)x_i
+\]
+
+\vspace{0.8cm}
+
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=NavyBlue,
+    title=Gradient Descent Algorithm
+]
+
+1. Initialize $w_0$ randomly
+
+2. While not converged:
+
+\[
+w_k \leftarrow w_{k-1} - \eta \frac{dR}{dw}(w_{k-1})
+\]
+
+\vspace{0.4cm}
+
+\begin{itemize}
+    \item $\eta$ est le learning rate
+    \item on converge vers le minimum
+    \item $\frac{dR}{dw}$ si on a multi-output sera remplacé par le gradient $\nabla_w R(w_{k-1})$
+\end{itemize}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=RoyalBlue,
+    title=Convergence criteria
+]
+
+\begin{itemize}
+    \item $|R(w_k) - R(w_{k-1})| < \delta_R$
+    \item $\|w_k - w_{k-1}\| < \delta_w$
+    \item ou nombre fixe d’itérations
+\end{itemize}
+
+\end{tcolorbox}
+
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+\subsection{Test}
+
+Une fois $w^\star$ trouvé :
+
+\[
+\hat{y}_i = \sigma(w^{\star T} x_i)
+\]
+
+Puis classification :
+
+\[
+\hat{y} =
+\begin{cases}
+1 & \text{if } \hat{y}_i \geq 0.5 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+
+
+
+
+
+
+
+
+
+\vspace{8cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Classification evaluation}
+
+Ok c'est sympa de pouvoir faire de la classification maintenant mais on devrait quand même pouvoir évaluer comment on a fait si c'est bien ou pas. On utilise alors un tableau :
+
+\vspace{0.4cm}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\setlength{\tabcolsep}{12pt}
+
+\begin{tabular}{c|c|c}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{True class}} \\
+\cline{2-3}
+\textbf{Predicted class} & Pos & Neg \\
+\hline
+Pos & TP & FP \\
+Neg & FN & TN \\
+\end{tabular}
+\end{center}
+
+\vspace{0.6cm}
+
+\[
+P = TP + FN
+\qquad
+N = FP + TN
+\]
+
+\vspace{0.8cm}
+\begin{tcolorbox}[
+    mybubble,
+    colframe=ForestGreen,
+    title=Accuracy
+]
+
+\textbf{Definition:} \% of correctly classified samples
+
+\[
+\mathrm{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=RoyalBlue,
+    title=Precision
+]
+
+\textbf{Definition:} \% of positives that are really positives on the said positives
+
+\[
+\mathrm{Precision} = \frac{TP}{TP + FP}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=OrangeRed,
+    title=Recall
+]
+
+\textbf{Definition:} \% of positives correctly detected
+
+\[
+\mathrm{Recall} = \frac{TP}{TP + FN}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=Purple,
+    title=False Positive Rate (FPR)
+]
+
+\textbf{Definition:} \% of negatives incorrectly classified as positive
+
+\[
+\mathrm{FPR} = \frac{FP}{FP + TN}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=NavyBlue,
+    title=F1 Score
+]
+
+\[
+\mathrm{F1} = 2 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
+\]
+
+\vspace{0.3cm}
+
+\textbf{Interpretation:} The F1-score ranges between $0$ and $1$.
+
+A value close to $1$ indicates a very good balance between precision and recall, meaning few false positives and few false negatives.
+
+A value close to $0$ indicates a poor model performance, with either many false positives or many false negatives.
+
+In practice:
+\begin{itemize}
+    \item $F1 \approx 1$ : excellent classification performance
+    \item $F1 \approx 0.5$ : medium performance, imbalance between precision and recall
+    \item $F1 \approx 0$ : very poor model
+\end{itemize}
+
+\end{tcolorbox}
+
+
+
+
+
+
+
+
+
+
+
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Dealing with multi class}
+
+Maintenant, ce qu'on a fait pour la classification marchait seulement si on devait choisir entre 2 classes, par exemple $0$ et $1$.  
+Mais comment fait-on lorsque l'on a plusieurs classes ?
+
+\vspace{0.5cm}
+
+On représente alors les données différemment :  
+$y_i$ devient un vecteur multidimensionnel contenant des $0$ et un unique $1$ à la position correspondant au label.
+
+\vspace{0.3cm}
+
+\textbf{This is known as the ONE-HOT ENCODING.}
+
+\vspace{0.5cm}
+
+Exemple :
+
+\[
+y_i =
+\begin{pmatrix}
+0 \\
+0 \\
+0 \\
+1 \\
+0 \\
+0 \\
+0
+\end{pmatrix}
+\]
+
+In this case, we are of the label $3$.
+
+\vspace{0.8cm}
+
+\subsection{Linear classification}
+
+La méthode de train devient :
+
+\[
+\min_W \sum_{i=1}^{N} \|W^T x_i - y_i\|^2
+\]
+
+\vspace{0.4cm}
+
+dont la solution est :
+
+\[
+W^\star = X^\dagger Y
+\]
+
+\vspace{0.4cm}
+
+Puis :
+
+\[
+\hat{y}_i = W^{\star T} x_i
+\]
+
+\vspace{0.5cm}
+
+Dans ce cas, le vecteur $\hat{y}_i$ donne un score pour chaque catégorie.
+
+On choisit alors la catégorie ayant le plus grand score :
+
+\[
+k =
+\underset{j}{\arg\max}
+\;
+\hat{y}^{(j)}
+\]
+
+\vspace{0.8cm}
+
+\subsection{Logistic regression}
+
+On utilise maintenant la fonction \textbf{Softmax} :
+
+\[
+\hat{y}^{(k)}(x)
+=
+\frac{
+\exp\left(w^{(k)T}x\right)
+}{
+\sum_{j=1}^{C}
+\exp\left(w^{(j)T}x\right)
+}
+\]
+
+\vspace{0.5cm}
+
+Avec :
+
+\begin{itemize}
+    \item $w^{(k)}$ : la $k$-ème colonne de $W$
+    \item $C$ : le nombre de classes
+\end{itemize}
+
+\vspace{0.6cm}
+
+L'empirical risk devient :
+
+\[
+R(W)
+=
+-
+\sum_{i=1}^{N}
+\sum_{k=1}^{C}
+y_i^{(k)}
+\ln\left(\hat{y}_i^{(k)}\right)
+\]
+
+\vspace{0.6cm}
+
+Et on applique ensuite le gradient descent algorithm avec :
+
+\[
+\nabla_W R(W)
+=
+\sum_{i=1}^{N}
+x_i
+(\hat{y}_i - y_i)^T
+\]
+
+\vspace{0.8cm}
+
+Le résultat final est alors obtenu avec :
+
+\[
+k =
+\underset{j}{\arg\max}
+\;
+\hat{y}^{(j)}
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Evaluation metrics on multi-class classification}
+
+Etant donnée qu'on a plusieurs classes, les éléments qu'on avait définis (\textit{Accuracy, Recall, Precision...}) pour évaluer les modèles de classification ne marchent plus vraiment.
+
+Pour ce faire, on change déjà le tableau pour construire la \textbf{CONFUSION MATRIX}.
+
+\vspace{0.6cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=NavyBlue,
+    title=Example with 3 labels
+]
+
+\[
+\begin{array}{c|c|c|c}
+& A & B & C \\
+\hline
+A & \cdots & \cdots & \cdots \\
+\hline
+B & \cdots & \cdots & \cdots \\
+\hline
+C & \cdots & \cdots & \cdots \\
+\end{array}
+\]
+
+\vspace{0.4cm}
+
+\[
+\text{Predicted c'est le ABC en ligne} 
+\]
+
+\[
+\text{Actual c'est le ABC en colonne (à gauche)}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+Par exemple, pour l’Accuracy, la formule devient :
+
+\[
+\mathrm{Accuracy}
+=
+\frac{
+\sum \text{true good guesses}
+}{
+\text{total}
+}
+\]
+
+\vspace{0.8cm}
+
+Pour Precision, Recall, FPrate et F1-score, on peut :
+
+\begin{itemize}
+    \item do for each label and then the average
+\end{itemize}
+
+\vspace{0.4cm}
+
+But that solution does not account for \textbf{class imbalance}.
+
+
+
+
+
+
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{SVM}
+
+ça j'ai pas bien compris du coup je préfère te laisser remplir
+
+
+
+
+
+
+
+
+
+
+
+\vspace{4cm}
+\noindent\rule{0.9\textwidth}{0.4pt}
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Nonlinear machine models: KNN}
+
+KNN va chercher à déterminer la valeur en fonction des éléments à côté, des neighbors, pour pouvoir déterminer la valeur dudit point.
+
+C'est très sommaire mais ça marche donc c'est sympa !
+
+\vspace{0.8cm}
+
+\subsection{Distances}
+
+Pour déterminer les éléments à côté il faut savoir à quelle distance on est d'eux, donc on doit choisir des mesures de distance.
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=RoyalBlue,
+    title=Euclidian distance
+]
+
+\textbf{Definition:} mesure de la distance géométrique entre deux points.
+
+\vspace{0.3cm}
+
+\[
+d(x_i, x_j)
+=
+\sqrt{
+\sum_{k=1}^{D}
+(x_i^{(k)} - x_j^{(k)})^2
+}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=Purple,
+    title=Chi-square distance
+]
+
+\textbf{Definition:} distance souvent utilisée pour comparer des distributions ou histogrammes.
+
+\vspace{0.3cm}
+
+\[
+d(x_i, x_j)
+=
+\sqrt{\chi^2(x_i, x_j)}
+=
+\sqrt{
+\sum_{k=1}^{D}
+\frac{
+\left(x_i^{(k)} - x_j^{(k)}\right)^2
+}{
+x_i^{(k)} + x_j^{(k)}
+}
+}
+\]
+
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+\subsection{Classification}
+
+Pour la classification, c'est plutôt simple : on va prendre les $k$ neighbors les plus proches puis choisir le label le plus fréquent.
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=ForestGreen,
+    title=KNN classification algorithm
+]
+
+\begin{enumerate}
+    \item Compute distance between $x$ and all $x_i$
+    
+    \item Find $k$ samples with minimum distances
+    
+    \item Find the most common label among these $k$ nearest neighbors
+    
+    \item Assign the result
+\end{enumerate}
+
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+\subsection{Regression}
+
+Pour la regression, on peut faire la moyenne des neighbors pour obtenir le résultat.
+
+\vspace{0.3cm}
+
+Pour faire ladite moyenne, on peut utiliser différentes méthodes : weighted ou non.
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=OrangeRed,
+    title=KNN regression algorithm
+]
+
+\begin{enumerate}
+    \item Compute distance between $x$ and all $x_i$
+    
+    \item Find $k$ samples with minimum distances
+    
+    \item Compute the value based on the test sample using the K-NN:
+    
+    \begin{itemize}
+        \item average
+        
+        \item weighted average
+        
+        \begin{itemize}
+            \item probability weighting
+            
+            \item inverse distance weighting
+        \end{itemize}
+    \end{itemize}
+
+\[
+\hat{y}
+=
+\frac{
+\sum_i w_i y_i
+}{
+\sum_i w_i
+}
+\]
+
+avec :
+
+\[
+w_i = \frac{1}{d_i}
+\]
+
+\end{enumerate}
+
+\end{tcolorbox}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\vspace{7cm}
+
+
+
+
+
+
+
+
+
+
+\section{Polynomial curve fitting}
+
+On arrive à un nouveau défi.
+
+Quand on représente les points, cela peut faire des courbes, des cercles, des exponentielles ou encore des polynômes très complexes.
+
+Dans ces cas-là, une simple droite ou les KNN ne sont pas toujours très précis.
+
+\vspace{0.4cm}
+
+Pour cela, on utilise la \textbf{POLYNOMIAL CURVE FITTING} par \textbf{POLYNOMIAL CURVE EXPANSION}.
+
+\vspace{0.8cm}
+
+\subsection{Base}
+
+En quoi cela consiste ?
+
+\vspace{0.3cm}
+
+On prend nos données de base $x$ puis on leur applique une transformation $\phi$ qui crée un nouveau vecteur contenant différentes combinaisons des paramètres initiaux.
+
+\vspace{0.5cm}
+
+Par exemple :
+
+\[
+x =
+\begin{pmatrix}
+x_1 \\
+x_2
+\end{pmatrix}
+\]
+
+\vspace{0.4cm}
+
+Après polynomial curve expansion :
+
+\[
+\phi(x)
+=
+\begin{pmatrix}
+x_1 \\
+x_2 \\
+x_1 + x_2 \\
+x_1^2
+\end{pmatrix}
+\]
+
+\vspace{0.5cm}
+
+C'est ça la polynomial curve expansion.
+
+Grâce à cette transformation, on peut approximer des courbes beaucoup plus complexes même avec des méthodes similaires à la régression linéaire.
+
+\vspace{0.6cm}
+
+On obtient alors :
+
+\[
+\hat{y}_i = w^T \phi(x_i)
+\]
+
+\vspace{0.4cm}
+
+Avec :
+
+\begin{itemize}
+    \item $\phi(x_i) \in \mathbb{R}^{F}$
+    
+    \item $w \in \mathbb{R}^{F}$
+\end{itemize}
+
+\vspace{0.8cm}
+
+\subsection{Application}
+
+On obtient alors :
+
+\[
+\nabla_w R(w)
+=
+2
+\sum_{i=1}^{N}
+\phi(x_i)
+\left(
+\phi(x_i)^T w - y_i
+\right)
+\]
+
+\vspace{0.6cm}
+
+En imposant :
+
+\[
+\nabla_w R(w) = 0
+\]
+
+on obtient :
+
+\[
+\sum_{i=1}^{N}
+\phi(x_i)\phi(x_i)^T w^\star
+=
+\sum_{i=1}^{N}
+\phi(x_i)y_i
+\]
+
+\vspace{0.6cm}
+
+Donc :
+
+\[
+w^\star
+=
+(\Phi^T \Phi)^{-1}\Phi^T y
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=Purple,
+    title=Cover's theorem
+]
+
+\textit{
+A complex pattern classification problem cast in a high-dimensional space non-linearly is more likely to be linearly separable than in a low-dimensional space, provided that the space is not densely populated.
+}
+
+\end{tcolorbox}
+
+
+
+
+
+
+
+
+
+
+
+
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+
+
+\section{Fitting and regularization - Cross validation}
+
+\begin{tcolorbox}[
+    colback=gray!10,
+    colframe=black,
+    sharp corners,
+    boxrule=0.8pt,
+    title=Definition: Overfitting
+]
+
+Error low on training data but large on test data.
+
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    colback=gray!10,
+    colframe=black,
+    sharp corners,
+    boxrule=0.8pt,
+    title=Definition: Underfitting
+]
+
+Error large on both training and testing data.
+
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+Jusqu'à maintenant on a vu plusieurs modèles et plusieurs manières de les comprendre, de les analyser et de voir les résultats.
+
+Mais on n'a pas encore de méthode permettant de savoir si notre modèle est performant avant de le tester dans la vraie vie.
+
+Il faut donc remédier à cela.
+
+\vspace{0.4cm}
+
+Pour cela, on va simuler training et test uniquement sur les training data puisque l'on n'est pas censé connaître les test data.
+
+\vspace{0.8cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=RoyalBlue,
+    title=Validation set
+]
+
+Principe simple :
+
+\vspace{0.3cm}
+
+We separate the data into training and testing data, run the algorithm normally and then analyze the results.
+
+\vspace{0.3cm}
+
+We usually use ratios such as:
+
+\[
+80/20
+\qquad \text{or} \qquad
+70/30
+\]
+
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=ForestGreen,
+    title=Leave-one-out cross validation (LOOCV)
+]
+
+\[
+\text{For } i = 1 \dots N
+\]
+
+\begin{enumerate}
+    \item $(x_i, y_i)$ be the $i$-th sample
+    
+    \item Temporarily remove $(x_i, y_i)$ from the training set
+    
+    \item Perform regression on the remaining $N-1$ samples
+    
+    \item Compute the error on $(x_i, y_i)$
+\end{enumerate}
+
+\vspace{0.4cm}
+
+When all points have been processed, report the average error.
+
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=OrangeRed,
+    title=K-fold cross validation
+]
+
+We split the data into $k$ partitions.
+
+\vspace{0.3cm}
+
+Then, for each partition:
+
+\begin{itemize}
+    \item train on the other partitions
+    
+    \item test on the selected partition
+    
+    \item compute the error
+\end{itemize}
+
+\vspace{0.3cm}
+
+Finally, report the average error over all points.
+
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+\subsection{Pros and cons}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=Purple,
+    title=Comparison
+]
+
+\begin{itemize}
+    \item \textbf{Validation set:} cheap but may waste data
+    
+    \item \textbf{LOOCV:} expensive but does not waste data
+    
+    \item \textbf{K-fold:} good compromise between both methods
+\end{itemize}
+
+\end{tcolorbox}
+
+
+
+
+
+
+
+
+
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Penalizing overfitting}
+
+On va ajouter des regularisateurs pour avoir moins de chances d'obtenir des problèmes dans nos simulations, nos trainings et nos predictions.
+
+\vspace{0.5cm}
+
+On ajoute un regularizer à l'empirical risk.
+
+\vspace{0.5cm}
+
+Nouvelle training objective function :
+
+\[
+E(w)
+=
+R(w)
++
+\lambda E_w(w)
+\]
+
+\vspace{0.5cm}
+
+Avec :
+
+\begin{itemize}
+    \item $\lambda > 0$ : hyperparameter controlling the influence of the regularizer
+    
+    \item $E_w(w)$ : regularizer
+\end{itemize}
+
+\vspace{0.8cm}
+
+\subsection{Common regularizer}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[
+    mybubble,
+    colframe=RoyalBlue,
+    title=L2 regularization
+]
+
+\[
+E_w(w)
+=
+w^T w
+\]
+
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+This regularizer leads to the regularized linear regression:
+
+\[
+\min_w
+\sum_{i=1}^{N}
+\left(
+\phi(x_i)^T w - y_i
+\right)^2
++
+\lambda w^T w
+\]
+
+\vspace{0.7cm}
+
+On a :
+
+\[
+\nabla_w E(w)
+=
+\nabla_w R(w)
++
+\nabla_w E_w(w)
+\]
+
+\vspace{0.4cm}
+
+Ce qui donne :
+
+\[
+\nabla_w E(w)
+=
+2
+\sum_{i=1}^{N}
+\phi(x_i)
+\left(
+\phi(x_i)^T w - y_i
+\right)
++
+2\lambda w
+\]
+
+\vspace{0.7cm}
+
+Donc la solution devient :
+
+\[
+w^\star
+=
+\left(
+\Phi^T \Phi
++
+\lambda I_F
+\right)^{-1}
+\Phi^T y
+\]
+
+\vspace{0.5cm}
+
+
+\textbf{This is a RIDGE REGRESSION}
+
+\vspace{0.3cm}
+
+$I_F$ is the identity matrix of dimension $F$.
+
+\vspace{0.9cm}
+
+\subsection{Multi-output ridge regression}
+
+\vspace{0.3cm}
+
+On multi-output problems, it becomes:
+
+\[
+\min_W
+\sum_{i=1}^{N}
+\|W^T \phi(x_i) - y_i\|^2
++
+\lambda
+\|W\|_F^2
+\]
+
+\vspace{0.4cm}
+
+Avec :
+
+\[
+\|W\|_F
+\]
+
+the Frobenius norm.
+
+\vspace{0.6cm}
+
+Consequently:
+
+\[
+W^\star
+=
+\left(
+\Phi^T \Phi
++
+\lambda I_F
+\right)^{-1}
+\Phi^T Y
+\]
+
+\vspace{0.9cm}
+
+\subsection{What about SVM}
+
+\vspace{0.3cm}
+
+Pour les SVM, pas besoin d'ajouter explicitement de régularisation.
+
+\vspace{0.3cm}
+
+
+La régularisation est déjà préincluse dans la formulation initiale du SVM.
+
+
+
+
+
+
+
+
+
+\vspace{4cm}
+
+
+
+
+
+
+
+
+
+\section{Kernel function}
+
+Jusque-là on a pu voir comment améliorer nos algos, comment les différencier, les tester, et déterminer le meilleur.
+
+Pendant cela, on a vu comment faire de la polynomial curve expansion et définir $\phi$.
+
+Mais le problème est que cela reste complexe, et assez arbitraire lorsqu’il faut définir $\phi$ et tester de nombreuses combinaisons.
+
+C'est pourquoi on introduit un nouvel outil : \textbf{the KERNEL FUNCTION}.
+
+\vspace{0.6cm}
+
+Instead of explicitly defining the mapping $\phi$, we define a similarity function $k(x_i, x_j)$, defining a relation between points.
+
+\vspace{0.3cm}
+
+$k$ is a scalar (not a vector).
+
+\vspace{0.5cm}
+
+\[
+k(x_i, x_j)
+=
+\phi(x_i)^T \phi(x_j)
+\quad (\text{even if } \phi \text{ may be unknown})
+\]
+
+\vspace{0.8cm}
+
+Exemple :
+
+\[
+k(x_i, x_j)
+=
+(x_i^T x_j + c)^d
+\]
+
+is equivalent to a feature map:
+
+\[
+\phi(x)
+=
+\begin{pmatrix}
+(x^{(1)})^2 \\
+(x^{(2)})^2 \\
+\sqrt{2}\,x^{(1)}x^{(2)} \\
+\sqrt{2}\,x^{(1)} \\
+\sqrt{2}\,x^{(2)} \\
+1
+\end{pmatrix}
+\]
+
+\vspace{0.8cm}
+
+Exemple : Gaussian kernel
+
+\[
+k(x_i, x_j)
+=
+\exp\left(
+-
+\frac{\|x_i - x_j\|^2}{2\sigma^2}
+\right)
+\]
+
+This kernel does not have a simple explicit $\phi$ representation.
+
+\vspace{1cm}
+
+\subsection{Kernelizing}
+
+Since a kernel function corresponds to a similarity (dot product), we can replace any dot product between samples in ML algorithms with a kernel function.
+
+This is called \textbf{kernelizing an algorithm}.
+
+\vspace{0.5cm}
+
+\[
+k(X, x_i)
+=
+\begin{pmatrix}
+k(x_1, x_i) \\
+k(x_2, x_i) \\
+\vdots \\
+k(x_N, x_i)
+\end{pmatrix}
+\in \mathbb{R}^N
+\]
+
+\vspace{0.6cm}
+
+Kernel matrix:
+
+\[
+K =
+\begin{pmatrix}
+k(x_1, x_1) & \cdots & k(x_1, x_N) \\
+\vdots & \ddots & \vdots \\
+k(x_N, x_1) & \cdots & k(x_N, x_N)
+\end{pmatrix}
+\]
+
+\vspace{1cm}
+
+\subsection{Linear regression}
+
+Normally:
+
+\[
+w^\star
+=
+(\Phi^T \Phi)^{-1} \Phi^T y
+\]
+
+\vspace{0.5cm}
+
+With kernels:
+
+\[
+R(\alpha)
+=
+\sum_{i=1}^{N}
+\left(
+\alpha^T k(X, x_i) - y_i
+\right)^2
+\]
+
+avec $k(X,x_i) = \Phi \phi(x_i)$.
+
+\vspace{0.6cm}
+
+Gradient:
+
+\[
+\nabla_\alpha R(\alpha)
+=
+2 \sum_{i=1}^{N}
+k(X, x_i)
+\left(
+k(X, x_i)^T \alpha - y_i
+\right)
+\]
+
+\[
+=
+2K K \alpha - 2K y
+\]
+
+\vspace{0.6cm}
+
+Solve:
+
+\[
+K \alpha^\star = y
+\quad \Rightarrow \quad
+\alpha^\star = K^{-1} y
+\]
+
+\vspace{0.6cm}
+
+\[
+w^\star = \Phi^T \alpha^\star
+\]
+
+\vspace{0.5cm}
+
+Final prediction:
+
+\[
+\hat{y}
+=
+w^{\star T} \phi(x)
+=
+y^T K^{-1} k(X, x)
+\]
+
+\vspace{1cm}
+
+\subsection{Ridge regression}
+
+\[
+E(w)
+=
+\sum (w^T \phi(x_i) - y_i)^2
++
+\lambda w^T w
+\]
+
+\vspace{0.5cm}
+
+Kernel form:
+\[
+E(\alpha)
+=
+\sum (\alpha^T \Phi \phi(x_i) - y_i)^2
++
+\lambda \alpha^T \Phi \Phi^T \alpha
+\]
+
+\[
+=
+\sum (\alpha^T k(X, x_i) - y_i)^2
++
+\lambda \alpha^T K \alpha
+\]
+
+\vspace{0.5cm}
+
+Gradient:
+
+\[
+\nabla_\alpha E(\alpha)
+=
+2K(K + \lambda I_N)\alpha - 2Ky
+\]
+
+\vspace{0.5cm}
+
+Solution:
+
+\[
+\alpha^\star
+=
+(K + \lambda I_N)^{-1} y
+\]
+
+\vspace{1cm}
+
+\subsection{How to find a good $k(\cdot,\cdot)$ ?}
+
+By cross validation (no miracle solution exists).
+
+\vspace{1cm}
+
+\subsection{Multi-output form}
+
+\[
+E(W)
+=
+\sum \|W^T \phi(x_i) - y_i\|^2
++
+\lambda \|W\|_F^2
+\]
+
+\vspace{0.5cm}
+
+Solution:
+
+\[
+W^\star
+=
+\Phi^T (K + \lambda I)^{-1} Y
+\]
+
+\vspace{0.5cm}
+
+Prediction:
+
+\[
+\hat{y}
+=
+W^{\star T} \phi(x)
+=
+Y^T (K + \lambda I)^{-1} k(X,x)
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
