@@ -1618,6 +1618,38 @@ x_2 = \tfrac{1}{7}[1,\,1,\,1,\,1,\,0,\,0,\,0,\,1,\,1,\,1] \approx [0.14,\,0.14,\
 \end{itemize}
 \end{rembox}
 
+
+\subsection{For image data — Visual Bag of Words}
+
+\begin{rembox}[title=Pourquoi et quand utiliser le Visual BoW ?]
+\textbf{Pourquoi :} Une image brute est une grille de pixels — pas directement exploitable comme vecteur de features sémantiques. L'idée est d'appliquer le principe du BoW au contenu visuel : on extrait des petits morceaux de l'image (\textit{patches}), on les regroupe en catégories visuelles (\textit{visual words}), et on représente l'image par la distribution de ces catégories.
+
+\textbf{Quand :} Classification d'images avec des méthodes classiques (SVM, KNN) avant l'ère deep learning.
+
+\textbf{Output :} $x_i \in \mathbb{R}^D$ où $D$ est la taille du dictionnaire visuel.
+\end{rembox}
+
+\begin{algbox}[title=Visual Bag of Words — procédure]
+\textbf{1. Extraire des patches} : découper toutes les images en petites régions locales (ex : $16\times16$ pixels). Exemples : yeux, nez, bouches, textures\dots
+
+\textbf{2. Construire un dictionnaire visuel} : regrouper tous les patches en $D$ clusters.
+
+\textbf{3. Encoder chaque image} : pour chaque patch d'une image,
+\begin{itemize}
+    \item trouver le visual word le plus proche dans le dictionnaire,
+    \item incrémenter de $+1$ l'entrée correspondante dans le vecteur BoW.
+\end{itemize}
+
+\textbf{4. Normaliser} : diviser par le nombre total de patches $\Rightarrow$ vecteur de fréquences $x_i \in \mathbb{R}^D$.
+\end{algbox}
+
+\begin{rembox}[title=Discussion]
+We have seen that text and images can be represented as Bags of Words. What other type of data can you represent in this way? How would you do it? 
+\end{rembox}
+
+Large and heterogeneous data can be made compact and homogeneous via BoW. The resulting reprensentations can be directly used as input to any ML algorithm.
+
+
 \iffalse
 % ------------------------------------------------------------
 \section{Artificial neural networks (deep learning)}
