@@ -16,3 +16,6 @@ _overview/**
 
 # AI assistant files
 .claude/
+
+# OS files
+desktop.ini
