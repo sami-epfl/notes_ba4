@@ -1552,6 +1552,73 @@ W^{\star T} \phi(x)
 Y^T (K + \lambda I)^{-1} k(X,x)
 \]
 
+
+% ------------------------------------------------------------
+\section{Data representation}
+% ------------------------------------------------------------
+
+Les algorithmes de ML attendent des vecteurs numériques $x_i \in \mathbb{R}^D$. Mais les données brutes peuvent être du texte, des images, des sons\dots\ Il faut donc les \textbf{représenter} sous forme vectorielle avant de les passer au modèle.
+
+\subsection{For text data — Bag of Words (BoW)}
+
+\begin{rembox}[title=Pourquoi et quand utiliser le Bag of Words ?]
+\textbf{Pourquoi :} Les données textuelles sont des séquences de mots, mais les modèles de ML attendent des vecteurs de features numériques. Le BoW transforme un document en un vecteur de fréquences de mots, permettant d'appliquer des algorithmes classiques.
+
+\textbf{Quand :} Classification de texte, détection de spam, analyse de sentiment — partout où la présence/fréquence des mots suffit à caractériser le document.
+
+\textbf{Output :} $x_i \in \mathbb{R}^D$ où $D$ est la taille du dictionnaire.
+\end{rembox}
+
+\begin{algbox}[title=Bag of Words — procédure]
+\textbf{1.} Collecter tous les documents (corpus).
+
+\textbf{2.} Construire un dictionnaire de $D$ mots distincts.
+
+\textbf{3.} Pour chaque document, compter les occurrences de chaque mot $\Rightarrow$ vecteur de comptage $\tilde{x}_i \in \mathbb{N}^D$.
+
+\textbf{4.} Normaliser : diviser par le nombre total de mots du document $\Rightarrow$ vecteur de fréquences $x_i \in \mathbb{R}^D$.
+\end{algbox}
+
+\begin{exbox}[title=Exemple BoW]
+Documents :
+\begin{enumerate}
+    \item \textit{John likes to watch movies. Mary likes movies too.}
+    \item \textit{John also likes to watch football games.}
+\end{enumerate}
+
+Dictionnaire ($D = 10$) : \{John, likes, to, watch, movies, Mary, too, also, football, games\}
+
+\medskip
+\textbf{Vecteurs de comptage} $\tilde{x}$ :
+
+\renewcommand{\arraystretch}{1.3}
+\begin{center}
+\begin{tabular}{l|cccccccccc}
+ & John & likes & to & watch & movies & Mary & too & also & football & games \\ \hline
+Doc 1 & 1 & 2 & 1 & 1 & 2 & 1 & 1 & 0 & 0 & 0 \\
+Doc 2 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+\end{tabular}
+\end{center}
+
+\medskip
+\textbf{Représentation finale} (normalisée par nombre de mots) :
+\[
+x_1 = \tfrac{1}{9}[1,\,2,\,1,\,1,\,2,\,1,\,1,\,0,\,0,\,0] \approx [0.11,\,0.22,\,0.11,\,\ldots]
+\]
+\[
+x_2 = \tfrac{1}{7}[1,\,1,\,1,\,1,\,0,\,0,\,0,\,1,\,1,\,1] \approx [0.14,\,0.14,\,0.14,\,\ldots]
+\]
+\end{exbox}
+
+\begin{rembox}[title=Limitations du BoW]
+\begin{itemize}
+    \item \textbf{Pas d'ordre des mots} : ``John likes Mary'' et ``Mary likes John'' donnent le même vecteur.
+    \item \textbf{Vocabulaire large} : $D$ peut être très grand (dizaines de milliers de mots) $\Rightarrow$ vecteurs creux (sparse).
+    \item \textbf{Mots fréquents non informatifs} : ``the'', ``is'', ``a''\dots\ dominent les comptages. On les élimine souvent avec une liste de \textit{stop words}.
+\end{itemize}
+\end{rembox}
+
+\iffalse
 % ------------------------------------------------------------
 \section{Artificial neural networks (deep learning)}
 % ------------------------------------------------------------
@@ -1635,7 +1702,7 @@ W^{(l)} \leftarrow W^{(l)} - \eta \, \nabla_{W^{(l)}} R
 \begin{rembox}[title=Stochastic Gradient Descent (SGD)]
 Plutôt que de calculer le gradient sur tout le dataset (coûteux), on estime le gradient sur un \textbf{mini-batch} de $B$ samples à chaque itération. Cela accélère l'entraînement et permet de traiter de grands datasets.
 \end{rembox}
-
+\fi
 % ============================================================
 \chapter{Unsupervised ML}
 % ============================================================
