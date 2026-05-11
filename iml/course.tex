@@ -1719,6 +1719,25 @@ What other solutions to cleaning noisy data can you think of?
 \medskip
 Use human knowledge to identify and correct errors (e.g.\ impossible values, typos\dots)
 \end{rembox}
+
+\subsection{Data normalization}
+
+Goal: scale each individual attribute/feature dimension to fall within a specified range. This ensures no single feature dominates due to its scale.
+
+\begin{defnbox}[title=Normalization methods]
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{l l l}
+\textbf{Method} & \textbf{Formula} & \textbf{Result range} \\
+\hline
+Min-max & $x_i^{(d)} \leftarrow \dfrac{x_i^{(d)} - \min_d}{\max_d - \min_d}$ & $[0, 1]$ \\[8pt]
+Z-score & $x_i^{(d)} \leftarrow \dfrac{x_i^{(d)} - \mu_d}{\sigma_d}$ & mean $0$, std $1$ \\[8pt]
+Max normalization & $x_i^{(d)} \leftarrow \dfrac{x_i^{(d)}}{\max_d}$ & $[-1, 1]$ \\[8pt]
+Decimal scaling & $x_i^{(d)} \leftarrow \dfrac{x_i^{(d)}}{10^j}$ & $\max|x^{(d)}| < 1$ \\
+\end{tabular}
+
+\medskip
+where $\mu_d$ and $\sigma_d$ are the mean and standard deviation of feature $d$ across the dataset, and $j$ is the smallest integer such that $\max(|x_i^{(d)}|) < 1$.
+\end{defnbox}
 \iffalse
 % ------------------------------------------------------------
 \section{Artificial neural networks (deep learning)}
