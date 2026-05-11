@@ -35,7 +35,7 @@
 x_i \in \mathbb{R}^{D}
 \]
 
-It is a column vector of dimension $D$.
+It is a column vector of dimension $D$ (the number of features).
 
 \vspace{0.4cm}
 
@@ -43,12 +43,20 @@ It is a column vector of dimension $D$.
 y_i \in \mathbb{R}^{C}
 \]
 
-It is a column vector of dimension $C$.
+It is the target output. For regression, $C = 1$ (a single real value). For multi-class classification with $C$ classes, $y_i$ is a one-hot vector of dimension $C$.
+
+\vspace{0.4cm}
+
+In matrix form, the dataset of $N$ samples is written:
+\[
+X \in \mathbb{R}^{N \times D}, \qquad y \in \mathbb{R}^{N}
+\]
+where row $i$ of $X$ is $x_i^T$.
 \end{defnbox}
 
 \subsection{Rappels mathématiques}
 
-\begin{rembox}[title=Rappels]
+\begin{rembox}[title=Rappels -- Dérivée et optimalité]
 Si on a $R(w)$ une fonction.
 
 \vspace{0.3cm}
@@ -89,6 +97,8 @@ w^\star
 \end{rembox}
 
 \begin{defnbox}[title=Gradient]
+Le gradient est la généralisation de la dérivée pour les fonctions multi-variables. Il pointe dans la direction de plus forte augmentation de $R$.
+
 \[
 \nabla_{w} R(w)
 =
@@ -135,7 +145,19 @@ alors on obtient un \textit{stationary point} lorsque l'on recherche $w^\star$.
 
 \section{Linear regression}
 
-Le principe de la régression linéaire est d'essayer de fitter une droite, un plan, etc. sur les données que nous avons afin de pouvoir en faire des approximations.
+\begin{rembox}[title=Pourquoi et quand utiliser la régression linéaire ?]
+\textbf{Pourquoi :} La régression linéaire est le modèle le plus simple pour prédire une valeur continue. Elle a une solution analytique exacte (pas besoin d'itérations), est rapide à entraîner, et ses paramètres sont facilement interprétables.
+
+\vspace{0.3cm}
+
+\textbf{Quand :} On l'utilise lorsque la relation entre les features $x_i$ et la cible $y_i$ est approximativement linéaire, et que la sortie est une valeur continue (ex : prédire un prix, une température).
+
+\vspace{0.3cm}
+
+\textbf{Output :} Un scalaire $\hat{y}_i \in \mathbb{R}$ (ou un vecteur pour le multi-output).
+\end{rembox}
+
+Le principe de la régression linéaire est d'essayer de fitter une droite, un plan, ou un hyperplan sur les données que nous avons afin de pouvoir en faire des approximations.
 
 \vspace{0.4cm}
 
@@ -164,15 +186,15 @@ En pratique, on utilise la squared Euclidean distance :
 d^2(\hat{y}_i, y_i) = (\hat{y}_i - y_i)^2
 \]
 
-Comme la racine carrée est monotone croissante sur les réels positifs, minimiser la distance ou son carré revient au même.
+Comme la racine carrée est monotone croissante sur les réels positifs, minimiser la distance ou son carré revient au même. Utiliser le carré a aussi l'avantage de rendre la fonction différentiable et de pénaliser plus fortement les grandes erreurs.
 
 \vspace{0.4cm}
 \end{defnbox}
 
 \vspace{0.4cm}
 
-On va alors chercher donc à minimiser cette distance, pour être le plus proche possible des vrais résultats. *
-Le training devient donc un minimization problem où on va tenter de minimiser ce que l'on définit alors la fonction de coût (empirical risk) :
+On va alors chercher à minimiser cette distance, pour être le plus proche possible des vrais résultats.
+Le training devient donc un minimization problem où on va tenter de minimiser ce que l'on définit comme la fonction de coût (empirical risk) :
 
 \[
 R(w) = \frac{1}{N} \sum_{i=1}^{N} (w^T x_i - y_i)^2
@@ -187,19 +209,21 @@ Le problème de training devient donc :
 \vspace{0.6cm}
 
 \begin{defnbox}[title=Empirical Risk]
-C'est ce que l'on va appeler ici la fonction de \textbf{\textcolor{redColor}{EMPPIRICAL RISK}} $R(w)$ dont la forme générale est :
+La \textbf{empirical risk} $R(w)$ mesure l'erreur moyenne du modèle sur les données d'entraînement. Sa forme générale est :
 
 \[
 R(\{x_i\}, \{y_i\}, w)
 =
 \frac{1}{N} \sum_{i=1}^{N} \ell(\hat{y}_i, y_i)
 \]
+
+où $\ell$ est la \textit{loss function} (fonction de perte). En régression linéaire, on utilise $\ell(\hat{y}, y) = (\hat{y} - y)^2$.
 \end{defnbox}
 
 \vspace{1.0cm}
 
-Mais comment va-t-on réduire une telle somme facilement ? Grâce au gradient !!!
-On calcule ensuite le gradient en appliquant la dérivation terme à terme :
+Pour minimiser $R(w)$, on calcule le gradient et on impose qu'il soit nul.
+On applique la dérivation terme à terme :
 
 \[
 \nabla_w R(w)
@@ -209,23 +233,13 @@ On calcule ensuite le gradient en appliquant la dérivation terme à terme :
 
 \vspace{0.4cm}
 
-En utilisant la règle de dérivation (chaîne) :
+En utilisant la règle de la chaîne :
 
 \[
 \nabla_w (u^2) = 2u \, \nabla_w u
 \]
 
 avec \( u = w^T x_i - y_i \), et en notant que \( \nabla_w (w^T x_i) = x_i \), on obtient :
-
-\[
-\nabla_w R(w)
-=
-\frac{1}{N} \sum_{i=1}^{N} 2 (w^T x_i - y_i) \nabla_w (w^T x_i)
-\]
-
-\vspace{0.4cm}
-
-Donc finalement :
 
 \[
 \nabla_w R(w)
@@ -261,7 +275,7 @@ Si $X^T X$ est inversible :
 w^\star = (X^T X)^{-1} X^T y
 \]
 
-Sinon :
+Sinon (cas sous-déterminé ou sur-déterminé), on utilise la pseudo-inverse :
 
 \[
 w^\star = X^\dagger y
@@ -271,17 +285,19 @@ w^\star = X^\dagger y
 
 \subsection{Test}
 
-Une fois le modèle entraîné :
+Une fois le modèle entraîné, on prédit sur un nouveau point $x$ :
 
 \[
 \hat{y} = w^{\star T} x
 \]
 
+\textbf{Output :} un scalaire $\hat{y} \in \mathbb{R}$.
+
 \vspace{0.8cm}
 
 \subsection{Complement: multiple outputs}
 
-On généralise à plusieurs sorties :
+On généralise à plusieurs sorties ($C > 1$) :
 
 \[
 \min_W \sum_{i=1}^{N} \|W^T x_i - y_i\|^2
@@ -290,10 +306,10 @@ On généralise à plusieurs sorties :
 avec :
 
 \[
-W = [w_1 \; w_2 \; \dots \; w_D]
+W = [w_1 \; w_2 \; \dots \; w_C] \in \mathbb{R}^{D \times C}
 \]
 
-La solution devient :
+Chaque colonne $w_k$ prédit la $k$-ème sortie indépendamment. La solution devient :
 
 \[
 W^\star = X^\dagger Y
@@ -313,19 +329,17 @@ Ainsi, une fois $W^\star$ calculé, la phase de test consiste simplement à appl
 
 \vspace{0.4cm}
 
-Le modèle est donc entièrement déterminé par la
-solution analytique
-du problème d'optimisation.
+Le modèle est donc entièrement déterminé par la solution analytique du problème d'optimisation.
 
 \subsection{Model evaluation on test sample}
 
-C'est bien de faire des modèles, mais il faut quand même vérifier s'ils sont bons.
-C'est pour cela qu'on utilise des métriques permettant d'évaluer les performances des modèles.
+Après training, il faut mesurer si le modèle est bon sur des données qu'il n'a pas vues.
+On utilise pour cela des métriques calculées sur le jeu de test.
 
 \vspace{0.6cm}
 
 \begin{defnbox}[title=Mean Squared Error (MSE)]
-Le \textbf{Mean Squared Error} mesure la moyenne des erreurs au carré :
+Moyenne des erreurs au carré. Pénalise fortement les grandes erreurs.
 
 \[
 \mathrm{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
@@ -335,18 +349,17 @@ Le \textbf{Mean Squared Error} mesure la moyenne des erreurs au carré :
 \vspace{0.4cm}
 
 \begin{defnbox}[title=Root Mean Squared Error (RMSE)]
-Le \textbf{Root Mean Squared Error} est la racine du MSE :
+Racine carrée du MSE. Exprimée dans la même unité que $y_i$, donc plus interprétable.
 
 \[
-\mathrm{RMSE} =
-\frac{1}{N} \sum_{i=1}^{N} \sqrt{(y_i - \hat{y}_i)^2}
+\mathrm{RMSE} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2}
 \]
 \end{defnbox}
 
 \vspace{0.4cm}
 
 \begin{defnbox}[title=Mean Absolute Error (MAE)]
-Le \textbf{Mean Absolute Error} mesure la moyenne des erreurs absolues :
+Moyenne des erreurs absolues. Moins sensible aux outliers que le MSE.
 
 \[
 \mathrm{MAE} = \frac{1}{N} \sum_{i=1}^{N} |\hat{y}_i - y_i|
@@ -356,7 +369,7 @@ Le \textbf{Mean Absolute Error} mesure la moyenne des erreurs absolues :
 \vspace{0.4cm}
 
 \begin{defnbox}[title=Mean Absolute Percentage Error (MAPE)]
-Le \textbf{Mean Absolute Percentage Error} mesure l'erreur relative en pourcentage :
+Erreur relative en pourcentage. Utile pour comparer des modèles sur des cibles d'échelles différentes. Attention : ne fonctionne pas si $y_i = 0$.
 
 \[
 \mathrm{MAPE} = \frac{1}{N} \sum_{i=1}^{N} \left| \frac{\hat{y}_i - y_i}{y_i} \right|
@@ -369,54 +382,69 @@ Le \textbf{Mean Absolute Percentage Error} mesure l'erreur relative en pourcenta
 
 \subsection{Logistic Regression}
 
-Maintenant on veut un premier élément, une première méthode pour faire face aux problèmes de classification. C'est pour ça que l'on utilise la logistic regression.
+\begin{rembox}[title=Pourquoi et quand utiliser la logistic regression ?]
+\textbf{Pourquoi :} On ne peut pas utiliser directement la régression linéaire pour la classification car ses prédictions $w^T x_i$ peuvent prendre n'importe quelle valeur dans $\mathbb{R}$, alors qu'on cherche une probabilité dans $[0, 1]$. La logistic regression résout ce problème en passant la prédiction linéaire à travers une fonction sigmoid.
+
+\vspace{0.3cm}
+
+\textbf{Quand :} Problème de classification binaire (2 classes) avec des données approximativement linéairement séparables dans l'espace des features.
+
+\vspace{0.3cm}
+
+\textbf{Output :} Une probabilité $\hat{y}_i \in (0, 1)$ interprétée comme $p(\text{class} = 1 \mid x_i)$, puis un label $\{0, 1\}$ par seuillage.
+\end{rembox}
 
 \vspace{0.6cm}
 
-\subsubsection{Linear classification}
+\subsubsection{Pourquoi pas la linear regression pour classifier ?}
 
-On peut d'abord, avant de parler de logistic regression, utiliser la linear regression pour un problème de classification puis séparer les résultats en disant :
+On pourrait utiliser la régression linéaire pour un problème de classification en seuillant le résultat :
 
 \[
 \hat{y} =
 \begin{cases}
-1 & \text{if } y \geq 0.5 \\
+1 & \text{if } w^T x \geq 0.5 \\
 0 & \text{otherwise}
 \end{cases}
 \]
 
-Mais cette méthode n'est pas fiable.
+Mais cette méthode n'est pas fiable : les prédictions ne sont pas des probabilités, et la fonction de perte quadratique pénalise les points bien classifiés mais éloignés de la frontière.
 
 \vspace{0.8cm}
 
-\subsubsection{LSF}
+\subsubsection{Logistic Sigmoid Function}
 
-On va rester sur le même principe mais utiliser une fonction spéciale qui permet de séparer les différentes classes : la \textbf{sigmoid function}.
+Pour obtenir une probabilité, on applique la \textbf{sigmoid function} à la combinaison linéaire $w^T x_i$ :
 
 \vspace{0.4cm}
 
 \begin{defnbox}[title=Sigmoid function]
-Définition de la sigmoid function :
-
 \[
-\sigma(z) = \frac{1}{1 + e^{-z}}
+\sigma(z) = \frac{1}{1 + e^{-z}} \in (0, 1)
 \]
+
+Elle mappe $\mathbb{R} \to (0,1)$, ce qui permet d'interpréter la sortie comme une probabilité.
 \end{defnbox}
 
 \vspace{0.4cm}
 
-Dans notre cas :
+Dans notre cas, la prédiction devient :
 
 \[
-\hat{y}_i = \frac{1}{1 + \exp(-w^T x_i)} = \sigma(w^T x_i)
+\hat{y}_i = \sigma(w^T x_i) = \frac{1}{1 + \exp(-w^T x_i)}
 \]
 
 \vspace{0.8cm}
 
 \subsubsection{Training}
 
-Ici on doit trouver le $w$ optimal noté $w^\star$.
-Pour cela, on utilise les probabilités et on définit une loss function :
+On veut trouver $w^\star$ qui maximise la vraisemblance des observations. Pour un sample $i$ de label $y_i \in \{0,1\}$, la probabilité du label donné $w$ est :
+
+\[
+p(y_i | x_i, w) = \hat{y}_i^{y_i} (1 - \hat{y}_i)^{1 - y_i}
+\]
+
+Sur tout le dataset (échantillons supposés indépendants) :
 
 \[
 p(y|w) = \prod_{i=1}^{N} \hat{y}_i^{y_i} (1 - \hat{y}_i)^{1 - y_i}
@@ -424,7 +452,7 @@ p(y|w) = \prod_{i=1}^{N} \hat{y}_i^{y_i} (1 - \hat{y}_i)^{1 - y_i}
 
 \vspace{0.4cm}
 
-En prenant le log, on obtient la empirical loss function :
+En prenant le log (pour transformer le produit en somme) et en passant à la minimisation (on minimise le négatif), on obtient la \textbf{binary cross-entropy loss} :
 
 \[
 R(w) =
@@ -433,50 +461,19 @@ R(w) =
 
 \vspace{0.4cm}
 
-On peut aussi écrire :
-
-\[
-R(w)
-=
-- \sum_{i \in \text{positive}} \ln(\hat{y}_i)
--
-\sum_{i \in \text{negative}} \ln(1 - \hat{y}_i)
-\]
-
-\vspace{0.8cm}
-
-Mais voilà ici, on ne sait pas exactement bien le résoudre facilement et pratiquement, on va donc utiliser un algorithme, le gradient descent.
-Mais d'abord calculer le gradient :
+Interprétation :
+\begin{itemize}
+    \item Pour les samples positifs ($y_i = 1$) : on veut maximiser $\ln(\hat{y}_i)$, donc on pénalise si $\hat{y}_i$ est faible.
+    \item Pour les samples négatifs ($y_i = 0$) : on veut maximiser $\ln(1 - \hat{y}_i)$, donc on pénalise si $\hat{y}_i$ est élevé.
+\end{itemize}
 
 \vspace{0.4cm}
 
-\textbf{Gradient sur les positive samples :}
-
-\[
-\nabla_w \left( - \sum_{\text{positive}} \ln(\hat{y}_i) \right)
-=
-\sum_{\text{positive}} (\hat{y}_i - 1)x_i
-=
-\sum_{\text{positive}} (\hat{y}_i - y_i)x_i
-\quad \text{(ici } y_i = 1 \text{)}
-\]
-
-\vspace{0.4cm}
-
-\textbf{Gradient sur les negative samples :}
-
-\[
-\nabla_w \left( - \sum_{\text{negative}} \ln(1 - \hat{y}_i) \right)
-=
-\sum_{\text{negative}} \hat{y}_i x_i
-=
-\sum_{\text{negative}} (\hat{y}_i - y_i)x_i
-\quad \text{(ici } y_i = 0 \text{)}
-\]
+Contrairement à la régression linéaire, il n'existe pas de solution fermée. On utilise donc le \textbf{gradient descent}.
 
 \vspace{0.6cm}
 
-\textbf{Ainsi, on peut les réunir et ça donne :}
+Le gradient se calcule en séparant positifs et négatifs puis en les réunissant :
 
 \[
 \nabla_w R(w)
@@ -487,28 +484,32 @@ Mais d'abord calculer le gradient :
 \vspace{0.8cm}
 
 \begin{algbox}[title=Gradient Descent Algorithm]
+\textbf{But :} minimiser $R(w)$ de façon itérative en descendant dans la direction opposée au gradient.
+
+\vspace{0.3cm}
+
 1. Initialize $w_0$ randomly
 
 2. While not converged:
 
 \[
-w_k \leftarrow w_{k-1} - \eta \frac{dR}{dw}(w_{k-1})
+w_k \leftarrow w_{k-1} - \eta \, \nabla_w R(w_{k-1})
 \]
 
 \vspace{0.4cm}
 
 \begin{itemize}
-    \item $\eta$ est le learning rate
-    \item on converge vers le minimum
-    \item $\frac{dR}{dw}$ si on a multi-output sera remplacé par le gradient $\nabla_w R(w_{k-1})$
+    \item $\eta > 0$ est le \textbf{learning rate} : trop grand $\Rightarrow$ divergence ; trop petit $\Rightarrow$ convergence lente.
+    \item À chaque itération, on se rapproche du minimum de $R$.
 \end{itemize}
 \end{algbox}
 
 \begin{rembox}[title=Convergence criteria]
+On arrête lorsqu'une des conditions suivantes est satisfaite :
 \begin{itemize}
-    \item $|R(w_k) - R(w_{k-1})| < \delta_R$
-    \item $\|w_k - w_{k-1}\| < \delta_w$
-    \item ou nombre fixe d'itérations
+    \item $|R(w_k) - R(w_{k-1})| < \delta_R$ \quad (la loss ne bouge plus)
+    \item $\|w_k - w_{k-1}\| < \delta_w$ \quad (les paramètres ne bougent plus)
+    \item Nombre fixe d'itérations atteint (budget computationnel)
 \end{itemize}
 \end{rembox}
 
@@ -522,19 +523,22 @@ Une fois $w^\star$ trouvé :
 \hat{y}_i = \sigma(w^{\star T} x_i)
 \]
 
-Puis classification :
+Puis classification par seuillage :
 
 \[
-\hat{y} =
+\text{label} =
 \begin{cases}
 1 & \text{if } \hat{y}_i \geq 0.5 \\
 0 & \text{otherwise}
 \end{cases}
 \]
 
+Le seuil $0.5$ peut être ajusté selon le contexte (ex : priorité à la précision ou au recall).
+
 \subsection{Classification evaluation}
 
-Ok c'est sympa de pouvoir faire de la classification maintenant mais on devrait quand même pouvoir évaluer comment on a fait si c'est bien ou pas. On utilise alors un tableau :
+Après entraînement, comment savoir si le modèle classifie correctement ?
+On compare les labels prédits aux labels réels via une \textbf{confusion matrix} (pour 2 classes, c'est un tableau $2\times 2$) :
 
 \vspace{0.4cm}
 
@@ -552,48 +556,63 @@ Neg & FN & TN \\
 \end{tabular}
 \end{center}
 
-\vspace{0.6cm}
+\vspace{0.4cm}
+
+\begin{itemize}
+    \item \textbf{TP} (True Positive) : prédit positif, vrai label positif.
+    \item \textbf{TN} (True Negative) : prédit négatif, vrai label négatif.
+    \item \textbf{FP} (False Positive, type I error) : prédit positif, vrai label négatif.
+    \item \textbf{FN} (False Negative, type II error) : prédit négatif, vrai label positif.
+\end{itemize}
+
+\vspace{0.4cm}
 
 \[
-P = TP + FN
+P = TP + FN \quad \text{(total real positives)}
 \qquad
-N = FP + TN
+N = FP + TN \quad \text{(total real negatives)}
 \]
 
 \vspace{0.8cm}
 
 \begin{defnbox}[title=Accuracy]
-\textbf{Definition:} \% of correctly classified samples
+\textbf{Definition:} proportion of correctly classified samples (all classes combined).
 
 \[
 \mathrm{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
 \]
+
+\textbf{Limitation :} trompeuse sur des données déséquilibrées (ex : 99\% de négatifs $\Rightarrow$ prédire toujours négatif donne 99\% d'accuracy).
 \end{defnbox}
 
 \vspace{0.4cm}
 
 \begin{defnbox}[title=Precision]
-\textbf{Definition:} \% of positives that are really positives on the said positives
+\textbf{Definition:} parmi tout ce qui a été prédit positif, quelle fraction l'est vraiment ?
 
 \[
 \mathrm{Precision} = \frac{TP}{TP + FP}
 \]
+
+\textbf{Quand la prioriser :} quand les fausses alarmes sont coûteuses (ex : spam filter).
 \end{defnbox}
 
 \vspace{0.4cm}
 
-\begin{defnbox}[title=Recall]
-\textbf{Definition:} \% of positives correctly detected
+\begin{defnbox}[title=Recall (Sensitivity)]
+\textbf{Definition:} parmi tous les vrais positifs, quelle fraction a été détectée ?
 
 \[
 \mathrm{Recall} = \frac{TP}{TP + FN}
 \]
+
+\textbf{Quand le prioriser :} quand manquer un positif est coûteux (ex : détection de cancer).
 \end{defnbox}
 
 \vspace{0.4cm}
 
 \begin{defnbox}[title=False Positive Rate (FPR)]
-\textbf{Definition:} \% of negatives incorrectly classified as positive
+\textbf{Definition:} proportion de négatifs incorrectement classifiés comme positifs.
 
 \[
 \mathrm{FPR} = \frac{FP}{FP + TN}
@@ -603,6 +622,8 @@ N = FP + TN
 \vspace{0.4cm}
 
 \begin{defnbox}[title=F1 Score]
+La précision et le recall sont souvent en tension (améliorer l'un dégrade l'autre). Le F1-score est leur moyenne harmonique :
+
 \[
 \mathrm{F1} = 2 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
 \]
@@ -611,56 +632,41 @@ N = FP + TN
 
 \textbf{Interpretation:} The F1-score ranges between $0$ and $1$.
 
-A value close to $1$ indicates a very good balance between precision and recall, meaning few false positives and few false negatives.
-
-A value close to $0$ indicates a poor model performance, with either many false positives or many false negatives.
-
-In practice:
 \begin{itemize}
-    \item $F1 \approx 1$ : excellent classification performance
-    \item $F1 \approx 0.5$ : medium performance, imbalance between precision and recall
+    \item $F1 \approx 1$ : excellent balance between precision and recall
+    \item $F1 \approx 0.5$ : imbalance between precision and recall
     \item $F1 \approx 0$ : very poor model
 \end{itemize}
+
+\textbf{Quand l'utiliser :} données déséquilibrées où l'accuracy est trompeuse.
 \end{defnbox}
 
 \subsection{Dealing with multi class}
 
-Maintenant, ce qu'on a fait pour la classification marchait seulement si on devait choisir entre 2 classes, par exemple $0$ et $1$.
-Mais comment fait-on lorsque l'on a plusieurs classes ?
+Maintenant, ce qu'on a fait pour la classification marchait seulement si on devait choisir entre 2 classes.
+Mais comment fait-on lorsque l'on a $C > 2$ classes ?
 
 \vspace{0.5cm}
 
-On représente alors les données différemment :
-$y_i$ devient un vecteur multidimensionnel contenant des $0$ et un unique $1$ à la position correspondant au label.
-
-\vspace{0.3cm}
-
-\textbf{This is known as the ONE-HOT ENCODING.}
+On représente alors les labels différemment avec le \textbf{one-hot encoding} :
+$y_i$ devient un vecteur de dimension $C$ contenant des $0$ et un unique $1$ à la position correspondant au label.
 
 \vspace{0.5cm}
 
-Exemple :
+Exemple pour $C = 7$ classes, label = classe 3 :
 
 \[
 y_i =
 \begin{pmatrix}
-0 \\
-0 \\
-0 \\
-1 \\
-0 \\
-0 \\
-0
+0 \\ 0 \\ 0 \\ 1 \\ 0 \\ 0 \\ 0
 \end{pmatrix}
 \]
 
-In this case, we are of the label $3$.
-
 \vspace{0.8cm}
 
-\subsubsection{Linear classification}
+\subsubsection{Linear classification (multi-class)}
 
-La méthode de train devient :
+La méthode de train devient un problème de régression multi-output :
 
 \[
 \min_W \sum_{i=1}^{N} \|W^T x_i - y_i\|^2
@@ -676,30 +682,29 @@ W^\star = X^\dagger Y
 
 \vspace{0.4cm}
 
-Puis :
+Pour prédire, on calcule un score pour chaque classe :
 
 \[
-\hat{y}_i = W^{\star T} x_i
+\hat{y}_i = W^{\star T} x_i \in \mathbb{R}^C
 \]
 
 \vspace{0.5cm}
 
-Dans ce cas, le vecteur $\hat{y}_i$ donne un score pour chaque catégorie.
-
-On choisit alors la catégorie ayant le plus grand score :
+On choisit la classe ayant le score le plus élevé :
 
 \[
 k =
 \underset{j}{\arg\max}
 \;
-\hat{y}^{(j)}
+\hat{y}_i^{(j)}
 \]
 
 \vspace{0.8cm}
 
-\subsubsection{Logistic regression}
+\subsubsection{Logistic regression (multi-class -- Softmax)}
 
-On utilise maintenant la fonction \textbf{Softmax} :
+On remplace la fonction sigmoid par la \textbf{Softmax} qui généralise sigmoid à $C$ classes.
+La Softmax produit une distribution de probabilité sur toutes les classes (les valeurs sont dans $(0,1)$ et leur somme est $1$) :
 
 \[
 \hat{y}^{(k)}(x)
@@ -717,13 +722,14 @@ On utilise maintenant la fonction \textbf{Softmax} :
 Avec :
 
 \begin{itemize}
-    \item $w^{(k)}$ : la $k$-ème colonne de $W$
+    \item $w^{(k)}$ : la $k$-ème colonne de $W$ (poids pour la classe $k$)
     \item $C$ : le nombre de classes
+    \item $\hat{y}^{(k)}(x) \approx p(\text{class} = k \mid x)$
 \end{itemize}
 
 \vspace{0.6cm}
 
-L'empirical risk devient :
+L'empirical risk devient la \textbf{cross-entropy loss} multi-classe :
 
 \[
 R(W)
@@ -737,7 +743,7 @@ y_i^{(k)}
 
 \vspace{0.6cm}
 
-Et on applique ensuite le gradient descent algorithm avec :
+Et on applique le gradient descent avec :
 
 \[
 \nabla_W R(W)
@@ -749,76 +755,155 @@ x_i
 
 \vspace{0.8cm}
 
-Le résultat final est alors obtenu avec :
+Le résultat final est obtenu par :
 
 \[
 k =
 \underset{j}{\arg\max}
 \;
-\hat{y}^{(j)}
+\hat{y}^{(j)}(x)
 \]
 
 \subsection{Evaluation metrics on multi-class classification}
 
-Etant donnée qu'on a plusieurs classes, les éléments qu'on avait définis (\textit{Accuracy, Recall, Precision...}) pour évaluer les modèles de classification ne marchent plus vraiment.
-
-Pour ce faire, on change déjà le tableau pour construire la \textbf{CONFUSION MATRIX}.
+Avec plusieurs classes, on généralise la confusion matrix en un tableau $C \times C$.
 
 \vspace{0.6cm}
 
-\begin{exbox}[title=Example with 3 labels]
+\begin{exbox}[title=Confusion matrix -- 3 classes]
 \[
 \begin{array}{c|c|c|c}
-& A & B & C \\
+& \text{True A} & \text{True B} & \text{True C} \\
 \hline
-A & \cdots & \cdots & \cdots \\
+\text{Predicted A} & \cdots & \cdots & \cdots \\
 \hline
-B & \cdots & \cdots & \cdots \\
+\text{Predicted B} & \cdots & \cdots & \cdots \\
 \hline
-C & \cdots & \cdots & \cdots \\
+\text{Predicted C} & \cdots & \cdots & \cdots \\
 \end{array}
 \]
 
 \vspace{0.4cm}
 
-\[
-\text{Predicted c'est le ABC en ligne}
-\]
-
-\[
-\text{Actual c'est le ABC en colonne (à gauche)}
-\]
+La diagonale contient les bons classements. Les éléments hors-diagonale sont des erreurs.
 \end{exbox}
 
 \vspace{0.8cm}
 
-Par exemple, pour l'Accuracy, la formule devient :
+L'Accuracy se généralise directement :
 
 \[
 \mathrm{Accuracy}
 =
 \frac{
-\sum \text{true good guesses}
+\sum_{k=1}^{C} \text{true positives for class } k
 }{
-\text{total}
+\text{total samples}
 }
 \]
 
 \vspace{0.8cm}
 
-Pour Precision, Recall, FPrate et F1-score, on peut :
-
-\begin{itemize}
-    \item do for each label and then the average
-\end{itemize}
+Pour Precision, Recall, FPR et F1-score, on calcule la métrique pour chaque classe (one-vs-all) puis on en fait la moyenne.
 
 \vspace{0.4cm}
 
-But that solution does not account for \textbf{class imbalance}.
+\begin{rembox}[title=Macro vs Weighted Average]
+\begin{itemize}
+    \item \textbf{Macro average} : moyenne simple sur toutes les classes. Chaque classe contribue également, quelle que soit sa taille.
 
-\subsection{SVM}
+    \item \textbf{Weighted average} : moyenne pondérée par le nombre de samples par classe. Prend en compte le déséquilibre des classes (\textit{class imbalance}).
+\end{itemize}
 
-ça j'ai pas bien compris du coup je préfère te laisser remplir
+En pratique, si les classes sont déséquilibrées, préférer le \textbf{weighted average} ou l'analyse par classe séparément.
+\end{rembox}
+
+\subsection{SVM -- Support Vector Machines}
+
+\begin{rembox}[title=Pourquoi et quand utiliser les SVM ?]
+\textbf{Pourquoi :} La logistic regression trouve \textit{une} frontière qui sépare les classes, mais pas nécessairement la \textit{meilleure}. Les SVM cherchent la frontière qui maximise la marge (distance aux points les plus proches), ce qui améliore la généralisation.
+
+\vspace{0.3cm}
+
+\textbf{Quand :} Classification binaire, surtout quand les données sont linéairement séparables ou presque. Très efficace en haute dimension. S'étend aux problèmes non-linéaires via les kernels.
+
+\vspace{0.3cm}
+
+\textbf{Output :} Un label binaire $\hat{y} \in \{-1, +1\}$.
+\end{rembox}
+
+\vspace{0.5cm}
+
+\subsubsection{Intuition}
+
+On cherche un hyperplan $w^T x + b = 0$ qui sépare les deux classes ($y_i \in \{-1, +1\}$).
+Parmi tous les hyperplans qui séparent correctement les données, on choisit celui qui maximise la marge.
+
+\vspace{0.5cm}
+
+\begin{defnbox}[title=Margin]
+La marge est la distance minimale entre l'hyperplan et les points les plus proches de chaque classe.
+
+\[
+\text{margin} = \frac{2}{\|w\|}
+\]
+
+Les points qui définissent la marge (les plus proches de l'hyperplan) sont appelés les \textbf{support vectors}.
+\end{defnbox}
+
+\vspace{0.6cm}
+
+\subsubsection{Hard-margin SVM (données linéairement séparables)}
+
+On maximise la marge sous contrainte que tous les points soient correctement classifiés :
+
+\[
+\min_{w, b} \frac{1}{2} \|w\|^2
+\quad \text{s.t.} \quad
+y_i (w^T x_i + b) \geq 1 \quad \forall i
+\]
+
+La contrainte $y_i (w^T x_i + b) \geq 1$ force chaque point à être du bon côté de la marge.
+
+\vspace{0.6cm}
+
+\subsubsection{Soft-margin SVM (données non parfaitement séparables)}
+
+En pratique, les données ne sont pas toujours linéairement séparables.
+On introduit des \textbf{slack variables} $\xi_i \geq 0$ qui permettent à certains points de violer la marge :
+
+\[
+\min_{w, b, \xi} \frac{1}{2} \|w\|^2 + C \sum_{i=1}^{N} \xi_i
+\quad \text{s.t.} \quad
+y_i (w^T x_i + b) \geq 1 - \xi_i, \quad \xi_i \geq 0 \quad \forall i
+\]
+
+Avec :
+\begin{itemize}
+    \item $C > 0$ : hyperparamètre contrôlant le compromis entre marge large et erreurs tolérées.
+    \item $C$ grand $\Rightarrow$ peu d'erreurs tolérées (risque d'overfitting).
+    \item $C$ petit $\Rightarrow$ marge plus large mais plus d'erreurs (risque d'underfitting).
+\end{itemize}
+
+\vspace{0.6cm}
+
+\subsubsection{Prédiction}
+
+\[
+\hat{y} = \text{sign}(w^T x + b) \in \{-1, +1\}
+\]
+
+\vspace{0.6cm}
+
+\subsubsection{Regularization built-in}
+
+Le terme $\frac{1}{2}\|w\|^2$ dans l'objectif joue le rôle d'une régularisation L2, qui pénalise les poids trop grands. C'est pourquoi les SVM n'ont pas besoin d'un terme de régularisation additionnel explicite.
+
+\vspace{0.6cm}
+
+\subsubsection{Kernel SVM}
+
+Pour des données non-linéairement séparables, on peut kerneliser le SVM en remplaçant le produit scalaire $x_i^T x_j$ par un kernel $k(x_i, x_j)$ dans la formulation duale. Cela revient à travailler dans un espace de features de grande dimension sans le calculer explicitement.
 
 % ============================================================
 \chapter{Non-linear Supervised ML}
@@ -826,22 +911,33 @@ But that solution does not account for \textbf{class imbalance}.
 
 \section{k-Nearest Neighbors}
 
-KNN va chercher à déterminer la valeur en fonction des éléments à côté, des neighbors, pour pouvoir déterminer la valeur dudit point.
+\begin{rembox}[title=Pourquoi et quand utiliser KNN ?]
+\textbf{Pourquoi :} KNN est un algorithme non-paramétrique : il ne fait aucune hypothèse sur la forme des données. Il mémorise l'ensemble du training set et prédit en cherchant les points les plus similaires.
 
-C'est très sommaire mais ça marche donc c'est sympa !
+\vspace{0.3cm}
+
+\textbf{Quand :} Données avec des frontières de décision complexes et non-linéaires. Fonctionne bien sur de petits datasets. Simple à implémenter et sans phase d'entraînement.
+
+\vspace{0.3cm}
+
+\textbf{Limitations :} Prédiction lente (distance à tous les points de training à chaque fois). Sensible aux features mal scalées et aux outliers. Pas adapté aux grands datasets.
+
+\vspace{0.3cm}
+
+\textbf{Output :} Un label de classe (classification) ou une valeur continue (régression).
+\end{rembox}
 
 \vspace{0.8cm}
 
 \subsection{Distances}
 
-Pour déterminer les éléments à côté il faut savoir à quelle distance on est d'eux, donc on doit choisir des mesures de distance.
+Pour déterminer les voisins les plus proches, on choisit une mesure de distance.
+Le choix de la distance dépend de la nature des données.
 
 \vspace{0.5cm}
 
 \begin{defnbox}[title=Euclidian distance]
-\textbf{Definition:} mesure de la distance géométrique entre deux points.
-
-\vspace{0.3cm}
+Mesure standard de la distance géométrique entre deux points. Adaptée aux features continues de même échelle.
 
 \[
 d(x_i, x_j)
@@ -856,9 +952,7 @@ d(x_i, x_j)
 \vspace{0.5cm}
 
 \begin{defnbox}[title=Chi-square distance]
-\textbf{Definition:} distance souvent utilisée pour comparer des distributions ou histogrammes.
-
-\vspace{0.3cm}
+Distance souvent utilisée pour comparer des distributions ou histogrammes (ex : features de fréquence).
 
 \[
 d(x_i, x_j)
@@ -880,31 +974,36 @@ x_i^{(k)} + x_j^{(k)}
 
 \subsection{Classification}
 
-Pour la classification, c'est plutôt simple : on va prendre les $k$ neighbors les plus proches puis choisir le label le plus fréquent.
+Pour la classification : on prend le vote majoritaire parmi les $k$ voisins les plus proches.
 
 \vspace{0.5cm}
 
 \begin{algbox}[title=KNN classification algorithm]
 \begin{enumerate}
-    \item Compute distance between $x$ and all $x_i$
+    \item Compute distance between $x$ and all $x_i$ in the training set
 
-    \item Find $k$ samples with minimum distances
+    \item Find the $k$ samples with minimum distances
 
-    \item Find the most common label among these $k$ nearest neighbors
+    \item Find the most common label among these $k$ nearest neighbors (majority vote)
 
-    \item Assign the result
+    \item Assign that label as $\hat{y}$
 \end{enumerate}
 \end{algbox}
+
+\begin{rembox}[title=Choix de $k$]
+\begin{itemize}
+    \item $k = 1$ : modèle très flexible, risque d'overfitting.
+    \item $k$ grand : modèle plus lisse, risque d'underfitting.
+    \item On choisit $k$ par cross-validation.
+    \item En pratique, choisir $k$ impair pour éviter les égalités (pour 2 classes).
+\end{itemize}
+\end{rembox}
 
 \vspace{0.8cm}
 
 \subsection{Regression}
 
-Pour la regression, on peut faire la moyenne des neighbors pour obtenir le résultat.
-
-\vspace{0.3cm}
-
-Pour faire ladite moyenne, on peut utiliser différentes méthodes : weighted ou non.
+Pour la régression : on fait la moyenne (éventuellement pondérée) des valeurs des $k$ voisins.
 
 \vspace{0.5cm}
 
@@ -914,35 +1013,19 @@ Pour faire ladite moyenne, on peut utiliser différentes méthodes : weighted ou
 
     \item Find $k$ samples with minimum distances
 
-    \item Compute the value based on the test sample using the K-NN:
+    \item Compute the predicted value as a (weighted) average of the neighbors:
 
-    \begin{itemize}
-        \item average
+    \[
+    \hat{y}
+    =
+    \frac{
+    \sum_i w_i y_i
+    }{
+    \sum_i w_i
+    }
+    \]
 
-        \item weighted average
-
-        \begin{itemize}
-            \item probability weighting
-
-            \item inverse distance weighting
-        \end{itemize}
-    \end{itemize}
-
-\[
-\hat{y}
-=
-\frac{
-\sum_i w_i y_i
-}{
-\sum_i w_i
-}
-\]
-
-avec :
-
-\[
-w_i = \frac{1}{d_i}
-\]
+    avec $w_i = 1$ (unweighted) ou $w_i = \frac{1}{d_i}$ (inverse distance weighting : les voisins plus proches ont plus d'influence).
 
 \end{enumerate}
 \end{algbox}
@@ -953,25 +1036,23 @@ w_i = \frac{1}{d_i}
 
 \subsection{Polynomial curve fitting}
 
-On arrive à un nouveau défi.
-
-Quand on représente les points, cela peut faire des courbes, des cercles, des exponentielles ou encore des polynômes très complexes.
-
-Dans ces cas-là, une simple droite ou les KNN ne sont pas toujours très précis.
-
-\vspace{0.4cm}
-
-Pour cela, on utilise la \textbf{POLYNOMIAL CURVE FITTING} par \textbf{POLYNOMIAL CURVE EXPANSION}.
-
-\vspace{0.8cm}
-
-\subsubsection{Base}
-
-En quoi cela consiste ?
+\begin{rembox}[title=Pourquoi et quand utiliser la feature expansion ?]
+\textbf{Pourquoi :} Les modèles linéaires ne peuvent capturer que des relations linéaires entre les features et la cible. Si les données suivent une courbe, un cercle, ou un polynôme complexe, un modèle linéaire sera trop limité. La feature expansion transforme les features pour rendre les relations non-linéaires linéairement représentables.
 
 \vspace{0.3cm}
 
-On prend nos données de base $x$ puis on leur applique une transformation $\phi$ qui crée un nouveau vecteur contenant différentes combinaisons des paramètres initiaux.
+\textbf{Quand :} Les données ont une structure non-linéaire dans l'espace original, mais on veut garder la simplicité et la tractabilité des modèles linéaires.
+
+\vspace{0.3cm}
+
+\textbf{Output :} Le même type de sortie que le modèle linéaire sous-jacent, mais avec une frontière de décision non-linéaire dans l'espace original.
+\end{rembox}
+
+\vspace{0.8cm}
+
+\subsubsection{Principe}
+
+On prend nos données de base $x$ puis on leur applique une transformation $\phi$ qui crée un nouveau vecteur contenant différentes combinaisons (polynomiales) des features initiales.
 
 \vspace{0.5cm}
 
@@ -987,28 +1068,24 @@ x_2
 
 \vspace{0.4cm}
 
-Après polynomial curve expansion :
+Après polynomial curve expansion (degré 2) :
 
 \[
 \phi(x)
 =
 \begin{pmatrix}
+1 \\
 x_1 \\
 x_2 \\
-x_1 + x_2 \\
-x_1^2
+x_1^2 \\
+x_1 x_2 \\
+x_2^2
 \end{pmatrix}
 \]
 
 \vspace{0.5cm}
 
-C'est ça la polynomial curve expansion.
-
-Grâce à cette transformation, on peut approximer des courbes beaucoup plus complexes même avec des méthodes similaires à la régression linéaire.
-
-\vspace{0.6cm}
-
-On obtient alors :
+On obtient alors un modèle encore linéaire \textit{dans l'espace transformé}, mais non-linéaire dans l'espace original :
 
 \[
 \hat{y}_i = w^T \phi(x_i)
@@ -1019,16 +1096,15 @@ On obtient alors :
 Avec :
 
 \begin{itemize}
-    \item $\phi(x_i) \in \mathbb{R}^{F}$
-
+    \item $\phi(x_i) \in \mathbb{R}^{F}$ (où $F$ est le nombre de features après expansion)
     \item $w \in \mathbb{R}^{F}$
 \end{itemize}
 
 \vspace{0.8cm}
 
-\subsubsection{Application}
+\subsubsection{Solution analytique}
 
-On obtient alors :
+On obtient alors le gradient :
 
 \[
 \nabla_w R(w)
@@ -1043,25 +1119,7 @@ On obtient alors :
 
 \vspace{0.6cm}
 
-En imposant :
-
-\[
-\nabla_w R(w) = 0
-\]
-
-on obtient :
-
-\[
-\sum_{i=1}^{N}
-\phi(x_i)\phi(x_i)^T w^\star
-=
-\sum_{i=1}^{N}
-\phi(x_i)y_i
-\]
-
-\vspace{0.6cm}
-
-Donc :
+En imposant $\nabla_w R(w) = 0$, on obtient :
 
 \[
 w^\star
@@ -1069,54 +1127,67 @@ w^\star
 (\Phi^T \Phi)^{-1}\Phi^T y
 \]
 
+où $\Phi \in \mathbb{R}^{N \times F}$ est la matrice dont la ligne $i$ est $\phi(x_i)^T$.
+
 \begin{thmbox}[title=Cover's theorem]
 \textit{
 A complex pattern classification problem cast in a high-dimensional space non-linearly is more likely to be linearly separable than in a low-dimensional space, provided that the space is not densely populated.
 }
+
+\vspace{0.3cm}
+
+En d'autres termes : en augmentant la dimensionnalité via $\phi$, on facilite la séparation linéaire des classes.
 \end{thmbox}
 
 \subsection{Fitting and regularization -- Cross validation}
 
 \begin{defnbox}[title=Definition: Overfitting]
-Error low on training data but large on test data.
+Le modèle mémorise les données d'entraînement mais ne généralise pas.
+
+\vspace{0.2cm}
+
+Symptôme : erreur faible sur training, erreur grande sur test.
+
+\vspace{0.2cm}
+
+Cause typique : modèle trop complexe (ex : polynôme de trop haut degré).
 \end{defnbox}
 
 \vspace{0.5cm}
 
 \begin{defnbox}[title=Definition: Underfitting]
-Error large on both training and testing data.
+Le modèle est trop simple pour capturer la structure des données.
+
+\vspace{0.2cm}
+
+Symptôme : erreur grande sur training \textit{et} test.
+
+\vspace{0.2cm}
+
+Cause typique : modèle pas assez expressif.
 \end{defnbox}
 
 \vspace{0.8cm}
 
-Jusqu'à maintenant on a vu plusieurs modèles et plusieurs manières de les comprendre, de les analyser et de voir les résultats.
-
-Mais on n'a pas encore de méthode permettant de savoir si notre modèle est performant avant de le tester dans la vraie vie.
-
-Il faut donc remédier à cela.
-
-\vspace{0.4cm}
-
-Pour cela, on va simuler training et test uniquement sur les training data puisque l'on n'est pas censé connaître les test data.
+\begin{rembox}[title=Pourquoi la cross-validation ?]
+On ne peut pas utiliser les données de test pour choisir le modèle (cela biaiserait l'évaluation). La cross-validation simule le comportement sur des données non vues en utilisant uniquement les données d'entraînement. Elle permet de choisir les hyperparamètres (ex : degré du polynôme, $k$ dans KNN) et d'estimer l'erreur de généralisation.
+\end{rembox}
 
 \vspace{0.8cm}
 
 \begin{propbox}[title=Validation set]
-Principe simple :
+On sépare le dataset en train/validation avant d'entraîner, puis on évalue sur la partie validation.
 
 \vspace{0.3cm}
 
-We separate the data into training and testing data, run the algorithm normally and then analyze the results.
-
-\vspace{0.3cm}
-
-We usually use ratios such as:
-
+Ratios courants :
 \[
 80/20
-\qquad \text{or} \qquad
+\qquad \text{ou} \qquad
 70/30
 \]
+
+\textbf{Avantage :} rapide. \textbf{Inconvénient :} l'estimation dépend du split choisi aléatoirement.
 \end{propbox}
 
 \vspace{0.6cm}
@@ -1127,91 +1198,78 @@ We usually use ratios such as:
 \]
 
 \begin{enumerate}
-    \item $(x_i, y_i)$ be the $i$-th sample
-
     \item Temporarily remove $(x_i, y_i)$ from the training set
 
-    \item Perform regression on the remaining $N-1$ samples
+    \item Train on the remaining $N-1$ samples
 
     \item Compute the error on $(x_i, y_i)$
 \end{enumerate}
 
 \vspace{0.4cm}
 
-When all points have been processed, report the average error.
+Report the average error over all $N$ folds.
+
+\textbf{Avantage :} utilise presque toutes les données pour l'entraînement. \textbf{Inconvénient :} $N$ entraînements = très coûteux.
 \end{propbox}
 
 \vspace{0.6cm}
 
 \begin{propbox}[title=K-fold cross validation]
-We split the data into $k$ partitions.
+On divise les données en $K$ partitions (folds).
 
 \vspace{0.3cm}
 
-Then, for each partition:
-
+Pour chaque fold $k = 1, \dots, K$ :
 \begin{itemize}
-    \item train on the other partitions
-
-    \item test on the selected partition
-
-    \item compute the error
+    \item Entraîner sur les $K-1$ autres folds
+    \item Tester sur le fold $k$
+    \item Calculer l'erreur
 \end{itemize}
 
 \vspace{0.3cm}
 
-Finally, report the average error over all points.
+On reporte la moyenne des erreurs sur les $K$ folds.
+
+\textbf{Avantage :} bon compromis coût/fiabilité. \textbf{Valeur typique :} $K = 5$ ou $K = 10$.
 \end{propbox}
 
 \vspace{0.8cm}
 
-\subsubsection{Pros and cons}
-
-\vspace{0.3cm}
-
 \begin{rembox}[title=Comparison]
 \begin{itemize}
-    \item \textbf{Validation set:} cheap but may waste data
-
-    \item \textbf{LOOCV:} expensive but does not waste data
-
-    \item \textbf{K-fold:} good compromise between both methods
+    \item \textbf{Validation set :} rapide, mais estimation instable (dépend du split)
+    \item \textbf{LOOCV :} très coûteux, estimation quasi-optimale
+    \item \textbf{K-fold :} meilleur compromis vitesse/fiabilité
 \end{itemize}
 \end{rembox}
 
-\subsection{Penalizing overfitting}
+\subsection{Penalizing overfitting -- Regularization}
 
-On va ajouter des regularisateurs pour avoir moins de chances d'obtenir des problèmes dans nos simulations, nos trainings et nos predictions.
-
-\vspace{0.5cm}
-
-On ajoute un regularizer à l'empirical risk.
+\begin{rembox}[title=Pourquoi régulariser ?]
+Avec la polynomial curve expansion, on peut avoir $F \gg N$ features (plus de features que de samples), ce qui conduit à de l'overfitting. La régularisation ajoute une pénalité sur la norme de $w$ pour forcer les poids à rester petits, ce qui simplifie le modèle et améliore la généralisation.
+\end{rembox}
 
 \vspace{0.5cm}
 
-Nouvelle training objective function :
+Nouvelle training objective :
 
 \[
 E(w)
 =
-R(w)
+\underbrace{R(w)}_{\text{fit to data}}
 +
-\lambda E_w(w)
+\underbrace{\lambda E_w(w)}_{\text{regularizer}}
 \]
 
-\vspace{0.5cm}
-
 Avec :
-
 \begin{itemize}
-    \item $\lambda > 0$ : hyperparameter (to put by hand) controlling the influence of the regularizer
-
-    \item $E_w(w)$ : regularizer
+    \item $\lambda > 0$ : hyperparamètre contrôlant l'influence du régularisateur (choisi par cross-validation)
+    \item $E_w(w)$ : terme de pénalité sur la complexité du modèle
 \end{itemize}
 
 \vspace{0.8cm}
 
-\subsubsection{Common regularizer}
+\subsubsection{L2 regularization -- Ridge Regression}
 
 \vspace{0.3cm}
 
@@ -1219,13 +1277,15 @@ Avec :
 \[
 E_w(w)
 =
-w^T w
+w^T w = \|w\|^2
 \]
+
+Pénalise les poids de grande norme. Tend à distribuer les poids uniformément (pas de mise à zéro).
 \end{defnbox}
 
 \vspace{0.6cm}
 
-This regularizer leads to the regularized linear regression:
+Le problème devient :
 
 \[
 \min_w
@@ -1239,19 +1299,7 @@ This regularizer leads to the regularized linear regression:
 
 \vspace{0.7cm}
 
-On a :
-
-\[
-\nabla_w E(w)
-=
-\nabla_w R(w)
-+
-\nabla_w E_w(w)
-\]
-
-\vspace{0.4cm}
-
-Ce qui donne :
+Le gradient :
 
 \[
 \nabla_w E(w)
@@ -1268,7 +1316,7 @@ Ce qui donne :
 
 \vspace{0.7cm}
 
-Donc la solution devient :
+La solution analytique devient (toujours une forme fermée !) :
 
 \[
 w^\star
@@ -1283,11 +1331,7 @@ w^\star
 
 \vspace{0.5cm}
 
-\textbf{This is a RIDGE REGRESSION}
-
-\vspace{0.3cm}
-
-$I_F$ is the identity matrix of dimension $F$.
+Ceci est la \textbf{Ridge Regression}. Ajouter $\lambda I_F$ rend la matrice toujours inversible, même si $\Phi^T \Phi$ ne l'est pas.
 
 \vspace{0.9cm}
 
@@ -1295,7 +1339,7 @@ $I_F$ is the identity matrix of dimension $F$.
 
 \vspace{0.3cm}
 
-On multi-output problems, it becomes:
+Sur des problèmes multi-output :
 
 \[
 \min_W
@@ -1306,19 +1350,11 @@ On multi-output problems, it becomes:
 \|W\|_F^2
 \]
 
-\vspace{0.4cm}
-
-Avec :
-
-\[
-\|W\|_F
-\]
-
-the Frobenius norm.
+Avec $\|W\|_F$ la norme de Frobenius ($\sqrt{\sum_{i,j} W_{ij}^2}$).
 
 \vspace{0.6cm}
 
-Consequently:
+Solution :
 
 \[
 W^\star
@@ -1331,76 +1367,52 @@ W^\star
 \Phi^T Y
 \]
 
-\vspace{0.9cm}
-
-\subsubsection{What about SVM}
-
-\vspace{0.3cm}
-
-Pour les SVM, pas besoin d'ajouter explicitement de régularisation.
-
-\vspace{0.3cm}
-
-La régularisation est déjà préincluse dans la formulation initiale du SVM.
-
 % ------------------------------------------------------------
 \section{Kernel methods}
 % ------------------------------------------------------------
 
-Jusque-là on a pu voir comment améliorer nos algos, comment les différencier, les tester, et déterminer le meilleur.
-
-Pendant cela, on a vu comment faire de la polynomial curve expansion et définir $\phi$.
-
-Mais le problème est que cela reste complexe, et assez arbitraire lorsqu'il faut définir $\phi$ et tester de nombreuses combinaisons.
-
-C'est pourquoi on introduit un nouvel outil : \textbf{the KERNEL FUNCTION}.
-
-\vspace{0.6cm}
-
-Instead of explicitly defining the mapping $\phi$, we define a similarity function $k(x_i, x_j)$, defining a relation between points.
+\begin{rembox}[title=Pourquoi et quand utiliser les kernels ?]
+\textbf{Problème avec la feature expansion :} si on veut des features polynomiales de degré élevé, $F$ devient exponentiellement grand (ex : $D = 10$ features, degré 3 $\Rightarrow$ des milliers de features). Le stockage et le calcul de $\phi(x)$ deviennent infaisables.
 
 \vspace{0.3cm}
 
-$k$ is a scalar (not a vector).
+\textbf{Solution -- le kernel trick :} on n'a jamais besoin de $\phi(x)$ explicitement ! Il suffit de calculer des produits scalaires $\phi(x_i)^T \phi(x_j)$. On définit directement une \textbf{fonction de similarité} $k(x_i, x_j)$ qui calcule ce produit scalaire implicitement.
 
-\vspace{0.5cm}
+\vspace{0.3cm}
+
+\textbf{Quand :} données avec structure non-linéaire complexe ; $F \gg N$ ; quand choisir $\phi$ explicitement est difficile.
+
+\vspace{0.3cm}
+
+\textbf{Output :} même type de sortie que le modèle de base (régression ou classification), avec une frontière non-linéaire dans l'espace original.
+\end{rembox}
+
+\vspace{0.6cm}
+
+Plutôt que de définir $\phi$ explicitement, on définit une fonction de similarité :
 
 \[
 k(x_i, x_j)
 =
 \phi(x_i)^T \phi(x_j)
-\quad (\text{even if } \phi \text{ may be unknown})
+\quad (\text{même si } \phi \text{ peut être inconnu ou de dimension infinie})
 \]
+
+\vspace{0.5cm}
+
+$k$ est un scalaire (pas un vecteur).
 
 \vspace{0.8cm}
 
-Exemple :
-
+\begin{exbox}[title=Exemples de kernels]
+\textbf{Polynomial kernel} (correspond à une expansion polynomiale) :
 \[
 k(x_i, x_j)
 =
 (x_i^T x_j + c)^d
 \]
 
-is equivalent to a feature map:
-
-\[
-\phi(x)
-=
-\begin{pmatrix}
-(x^{(1)})^2 \\
-(x^{(2)})^2 \\
-\sqrt{2}\,x^{(1)}x^{(2)} \\
-\sqrt{2}\,x^{(1)} \\
-\sqrt{2}\,x^{(2)} \\
-1
-\end{pmatrix}
-\]
-
-\vspace{0.8cm}
-
-Exemple : Gaussian kernel
-
+\textbf{Gaussian (RBF) kernel} (correspond à un espace de features de dimension \textit{infinie}) :
 \[
 k(x_i, x_j)
 =
@@ -1410,18 +1422,18 @@ k(x_i, x_j)
 \right)
 \]
 
-This kernel does not have a simple explicit $\phi$ representation.
+Plus $x_i$ et $x_j$ sont proches, plus $k(x_i, x_j)$ est grand (proche de 1). Plus ils sont loin, plus $k$ est petit (proche de 0).
+\end{exbox}
 
 \vspace{1cm}
 
-\subsection{Kernelizing}
+\subsection{Kernelizing an algorithm}
 
-Since a kernel function corresponds to a similarity (dot product), we can replace any dot product between samples in ML algorithms with a kernel function.
-
-This is called \textbf{kernelizing an algorithm}.
+Puisqu'un kernel correspond à un produit scalaire dans l'espace des features, on peut remplacer tout produit scalaire $\phi(x_i)^T \phi(x_j)$ par $k(x_i, x_j)$ dans les algorithmes existants.
 
 \vspace{0.5cm}
 
+\textbf{Kernel vector} (similarité entre un nouveau point $x_i$ et tous les points du training set) :
 \[
 k(X, x_i)
 =
@@ -1436,7 +1448,7 @@ k(x_N, x_i)
 
 \vspace{0.6cm}
 
-Kernel matrix:
+\textbf{Kernel matrix} (toutes les similarités entre training points) :
 
 \[
 K =
@@ -1445,13 +1457,16 @@ k(x_1, x_1) & \cdots & k(x_1, x_N) \\
 \vdots & \ddots & \vdots \\
 k(x_N, x_1) & \cdots & k(x_N, x_N)
 \end{pmatrix}
+\in \mathbb{R}^{N \times N}
 \]
+
+$K$ est symétrique et semi-définie positive.
 
 \vspace{1cm}
 
-\subsection{Linear regression}
+\subsection{Kernelized linear regression}
 
-Normally:
+\textbf{Normalement :}
 
 \[
 w^\star
@@ -1459,59 +1474,15 @@ w^\star
 (\Phi^T \Phi)^{-1} \Phi^T y
 \]
 
-\vspace{0.5cm}
-
-With kernels:
+\textbf{Avec kernels :} on reparamétrise $w = \Phi^T \alpha$ (le vecteur $w$ s'exprime comme combinaison linéaire des $\phi(x_i)$). Le problème s'exprime en $\alpha \in \mathbb{R}^N$ :
 
 \[
-R(\alpha)
-=
-\sum_{i=1}^{N}
-\left(
-\alpha^T k(X, x_i) - y_i
-\right)^2
-\]
-
-avec $k(X,x_i) = \Phi \phi(x_i)$.
-
-\vspace{0.6cm}
-
-Gradient:
-
-\[
-\nabla_\alpha R(\alpha)
-=
-2 \sum_{i=1}^{N}
-k(X, x_i)
-\left(
-k(X, x_i)^T \alpha - y_i
-\right)
-\]
-
-\[
-=
-2K K \alpha - 2K y
-\]
-
-\vspace{0.6cm}
-
-Solve:
-
-\[
-K \alpha^\star = y
-\quad \Rightarrow \quad
 \alpha^\star = K^{-1} y
 \]
 
 \vspace{0.6cm}
 
-\[
-w^\star = \Phi^T \alpha^\star
-\]
-
-\vspace{0.5cm}
-
-Final prediction:
+Prédiction finale (sans jamais calculer $\phi$) :
 
 \[
 \hat{y}
@@ -1523,28 +1494,10 @@ y^T K^{-1} k(X, x)
 
 \vspace{1cm}
 
-\subsection{Ridge regression}
+\subsection{Kernelized ridge regression}
 
-\[
-E(w)
-=
-\sum (w^T \phi(x_i) - y_i)^2
-+
-\lambda w^T w
-\]
-
-\vspace{0.5cm}
-
-Kernel form:
 \[
 E(\alpha)
-=
-\sum (\alpha^T \Phi \phi(x_i) - y_i)^2
-+
-\lambda \alpha^T \Phi \Phi^T \alpha
-\]
-
-\[
 =
 \sum (\alpha^T k(X, x_i) - y_i)^2
 +
@@ -1553,17 +1506,7 @@ E(\alpha)
 
 \vspace{0.5cm}
 
-Gradient:
-
-\[
-\nabla_\alpha E(\alpha)
-=
-2K(K + \lambda I_N)\alpha - 2Ky
-\]
-
-\vspace{0.5cm}
-
-Solution:
+Solution :
 
 \[
 \alpha^\star
@@ -1571,27 +1514,25 @@ Solution:
 (K + \lambda I_N)^{-1} y
 \]
 
-\vspace{1cm}
-
-\subsection{How to find a good \texorpdfstring{$k(\cdot,\cdot)$\,?}{k(.,.) ?}}
-
-By cross validation (no miracle solution exists).
-
-\vspace{1cm}
-
-\subsection{Multi-output form}
-
-\[
-E(W)
-=
-\sum \|W^T \phi(x_i) - y_i\|^2
-+
-\lambda \|W\|_F^2
-\]
-
 \vspace{0.5cm}
 
-Solution:
+Prédiction :
+
+\[
+\hat{y}
+=
+y^T (K + \lambda I_N)^{-1} k(X, x)
+\]
+
+\vspace{1cm}
+
+\subsection{How to find a good kernel ?}
+
+Par \textbf{cross-validation} : on teste différents kernels (polynomial, RBF...) et leurs hyperparamètres ($d$, $\sigma$...) et on choisit celui qui minimise l'erreur de validation.
+
+\vspace{1cm}
+
+\subsection{Multi-output kernelized ridge regression}
 
 \[
 W^\star
@@ -1601,7 +1542,7 @@ W^\star
 
 \vspace{0.5cm}
 
-Prediction:
+Prédiction :
 
 \[
 \hat{y}
@@ -1615,8 +1556,84 @@ Y^T (K + \lambda I)^{-1} k(X,x)
 \section{Artificial neural networks (deep learning)}
 % ------------------------------------------------------------
 
-\begin{rembox}[title=Section à compléter]
-Cette section sera complétée ultérieurement.
+\begin{rembox}[title=Pourquoi et quand utiliser les réseaux de neurones ?]
+\textbf{Pourquoi :} Les méthodes précédentes nécessitent de définir manuellement $\phi$ ou $k$. Les réseaux de neurones \textbf{apprennent automatiquement} une représentation des données adaptée au problème, couche par couche.
+
+\vspace{0.3cm}
+
+\textbf{Quand :} Grands datasets ; problèmes complexes avec des structures non-linéaires riches (images, texte, audio). En pratique, ils surpassent les méthodes précédentes dès que $N$ est suffisamment grand.
+
+\vspace{0.3cm}
+
+\textbf{Output :} Tout type de sortie selon la couche finale : $\hat{y} \in \mathbb{R}$ (régression), $\hat{y} \in (0,1)$ (classification binaire), distribution sur $C$ classes (classification multi-classe).
+\end{rembox}
+
+\vspace{0.6cm}
+
+\subsection{Architecture}
+
+Un réseau de neurones est composé de couches successives de transformations affines suivies de non-linéarités :
+
+\[
+h^{(0)} = x \quad \text{(input)}
+\]
+\[
+h^{(l)} = \sigma\!\left(W^{(l)T} h^{(l-1)} + b^{(l)}\right) \quad l = 1, \dots, L
+\]
+\[
+\hat{y} = h^{(L)} \quad \text{(output)}
+\]
+
+Avec :
+\begin{itemize}
+    \item $W^{(l)} \in \mathbb{R}^{d_{l-1} \times d_l}$ : poids de la couche $l$
+    \item $b^{(l)} \in \mathbb{R}^{d_l}$ : biais de la couche $l$
+    \item $\sigma$ : fonction d'activation non-linéaire
+    \item $L$ : nombre de couches (profondeur du réseau)
+\end{itemize}
+
+\vspace{0.6cm}
+
+\begin{defnbox}[title=Fonctions d'activation courantes]
+\begin{itemize}
+    \item \textbf{Sigmoid :} $\sigma(z) = \frac{1}{1+e^{-z}} \in (0,1)$ -- utilisée pour les sorties binaires.
+
+    \item \textbf{ReLU :} $\sigma(z) = \max(0, z)$ -- la plus utilisée dans les couches cachées (évite le problème de vanishing gradient).
+
+    \item \textbf{Softmax :} $\sigma(z)^{(k)} = \frac{e^{z^{(k)}}}{\sum_j e^{z^{(j)}}}$ -- utilisée en sortie pour la classification multi-classe.
+\end{itemize}
+\end{defnbox}
+
+\vspace{0.6cm}
+
+\subsection{Training -- Backpropagation}
+
+La phase de training consiste à minimiser la loss function $R(W)$ par rapport à tous les paramètres $\{W^{(l)}, b^{(l)}\}$.
+
+\vspace{0.4cm}
+
+\begin{itemize}
+    \item \textbf{Régression :} $R(W) = \frac{1}{N}\sum_i \|\hat{y}_i - y_i\|^2$
+
+    \item \textbf{Classification :} $R(W) = -\frac{1}{N}\sum_i \sum_k y_i^{(k)} \ln \hat{y}_i^{(k)}$ (cross-entropy)
+\end{itemize}
+
+\vspace{0.5cm}
+
+Le gradient $\nabla_{W^{(l)}} R$ est calculé par \textbf{backpropagation} : on propage l'erreur depuis la sortie vers l'entrée via la règle de la chaîne, couche par couche.
+
+\vspace{0.4cm}
+
+On utilise ensuite la descente de gradient (ou une variante comme \textbf{Adam}) :
+
+\[
+W^{(l)} \leftarrow W^{(l)} - \eta \, \nabla_{W^{(l)}} R
+\]
+
+\vspace{0.6cm}
+
+\begin{rembox}[title=Stochastic Gradient Descent (SGD)]
+Plutôt que de calculer le gradient sur tout le dataset (coûteux), on estime le gradient sur un \textbf{mini-batch} de $B$ samples à chaque itération. Cela accélère l'entraînement et permet de traiter de grands datasets.
 \end{rembox}
 
 % ============================================================
@@ -1625,14 +1642,6 @@ Cette section sera complétée ultérieurement.
 
 \section{Dimensionality reduction}
 
-\begin{rembox}[title=Section à compléter]
-Cette section sera complétée ultérieurement.
-\end{rembox}
-
 \section{k-Means Clustering}
-
-\begin{rembox}[title=Section à compléter]
-Cette section sera complétée ultérieurement.
-\end{rembox}
 
 \end{document}
