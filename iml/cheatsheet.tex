@@ -210,7 +210,7 @@ $\lambda>0$ controls regularization strength.
 \subsection{Kernel Function}
 \begin{defn}[title=Kernel]
 \[ k(x_i, x_j) = \phi(x_i)^T\phi(x_j) \]
-Measures similarity without computing $\phi$ explicitly.
+\kv{To be valid}{$k(x, x) = \|\phi(x)\|^2 \ge 0$ for all $x$}
 \end{defn}
 
 \begin{itemize}
