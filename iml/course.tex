@@ -1644,12 +1644,81 @@ x_2 = \tfrac{1}{7}[1,\,1,\,1,\,1,\,0,\,0,\,0,\,1,\,1,\,1] \approx [0.14,\,0.14,\
 \end{algbox}
 
 \begin{rembox}[title=Discussion]
-We have seen that text and images can be represented as Bags of Words. What other type of data can you represent in this way? How would you do it? 
+We have seen that text and images can be represented as Bags of Words. What other type of data can you represent in this way? How would you do it?
+
+\medskip
+Large and heterogeneous data can be made compact and homogeneous via BoW. The resulting representations can be directly used as input to any ML algorithm.
 \end{rembox}
 
-Large and heterogeneous data can be made compact and homogeneous via BoW. The resulting reprensentations can be directly used as input to any ML algorithm.
+\subsection{Data pre-processing}
 
+Raw data can be noisy, incomplete, or incorrectly formatted. Pre-processing improves data quality and model performance. Two main problems: \textbf{missing data} and \textbf{noise}.
 
+\subsubsection{Missing data}
+
+When we know that some data is missing, potential solutions:
+
+\begin{defnbox}[title=Missing data — potential solutions]
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l l}
+\textbf{Strategy} & \textbf{Remark} \\
+\hline
+Ignore the corresponding sample & Simple but loses information \\
+Fill with a global constant & Fast, imprecise \\
+Fill with the mean of the feature & Preserves global distribution \\
+Fill with the mean of the feature for the same class & More precise if classes are distinct \\
+\end{tabular}
+\end{defnbox}
+
+\subsubsection{Noise — incorrect values}
+
+Noise refers to incorrect or corrupted values in the data. A classical smoothing technique is \textbf{binning}.
+
+\begin{algbox}[title=Binning]
+For each attribute:
+\begin{enumerate}
+    \item Sort the data.
+    \item Partition it into bins — either \textbf{equal width} or \textbf{equal frequency}.
+    \item Smooth the data by replacing each value with the \textbf{mean} or \textbf{median} of its bin.
+\end{enumerate}
+\end{algbox}
+
+\begin{exbox}[title=Binning example]
+Data (sorted): $0,\ 4,\ 12,\ 16,\ 16,\ 18,\ 24,\ 26,\ 28$
+
+\medskip
+\textbf{Equal width} (width $= 10$):
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l l l}
+Bin 1 $[-,10)$ & $0,\ 4$ & mean $= 2$ \\
+Bin 2 $[10,20)$ & $12,\ 16,\ 16,\ 18$ & mean $= 15.5$ \\
+Bin 3 $[20,+)$ & $24,\ 26,\ 28$ & mean $= 26$ \\
+\end{tabular}
+\end{center}
+
+\medskip
+\textbf{Equal frequency} (3 values per bin):
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l l l}
+Bin 1 & $0,\ 4,\ 12$ & mean $= 5.3$ \\
+Bin 2 & $16,\ 16,\ 18$ & mean $= 16.7$ \\
+Bin 3 & $24,\ 26,\ 28$ & mean $= 26$ \\
+\end{tabular}
+\end{center}
+\end{exbox}
+
+\begin{defnbox}[title=Clustering to detect outliers]
+Detect outliers as the clusters with too few elements and remove those samples.
+\end{defnbox}
+
+\begin{rembox}[title=Discussion]
+What other solutions to cleaning noisy data can you think of?
+
+\medskip
+Use human knowledge to identify and correct errors (e.g.\ impossible values, typos\dots)
+\end{rembox}
 \iffalse
 % ------------------------------------------------------------
 \section{Artificial neural networks (deep learning)}
