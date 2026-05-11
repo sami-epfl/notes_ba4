@@ -1738,6 +1738,106 @@ Decimal scaling & $x_i^{(d)} \leftarrow \dfrac{x_i^{(d)}}{10^j}$ & $\max|x^{(d)}
 \medskip
 where $\mu_d$ and $\sigma_d$ are the mean and standard deviation of feature $d$ across the dataset, and $j$ is the smallest integer such that $\max(|x_i^{(d)}|) < 1$.
 \end{defnbox}
+
+\subsection{Imbalanced data}
+
+You train a classifier to predict if a subject suffers from cancer or not from image data. On validation data, your classifier gives you $99.1\%$ accuracy. This sounds fantastic! We are ready to deploy it in the real world, right?
+
+Out of curiosity, you check the confusion matrix:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{c|cc}
+ & \textbf{Predicted Negative} & \textbf{Predicted Positive} \\
+\hline
+\textbf{Actual Negative} & 990 & 0 \\
+\textbf{Actual Positive} & 9 & 1 \\
+\end{tabular}
+\end{center}
+
+You missed almost all the cancerous cases! So this is the problem of \textbf{imbalanced vs balanced data}.
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{images/imbalanced-balanced-data.png}
+\end{center}
+
+Two main approaches:
+\begin{enumerate}
+    \item Act on the data $\Rightarrow$ \textbf{Sampling methods}
+    \item Act on the cost function $\Rightarrow$ \textbf{Cost-sensitive methods}
+\end{enumerate}
+
+\subsubsection{Sampling methods}
+
+Compensate the lack of data by rebalancing the classes:
+
+\begin{defnbox}[title=Oversampling — increase the minority class]
+\textbf{Naive:} replicate data samples from the smallest class until balanced.
+
+\textit{Drawback:} may lead to overfitting.
+
+\medskip
+\textbf{Smarter:} create new data samples based on neighboring existing ones (e.g.\ SMOTE).
+
+\textit{Drawback:} may create noisy samples.
+
+\begin{center}
+\includegraphics[width=0.48\textwidth]{images/oversampling.png}
+\hfill
+\includegraphics[width=0.48\textwidth]{images/oversampling2.png}
+\end{center}
+\end{defnbox}
+
+\begin{defnbox}[title=Undersampling — reduce the majority class]
+\textbf{Naive:} randomly remove samples from the largest class until balanced.
+
+\textit{Drawback:} may remove important samples.
+
+\medskip
+\textbf{Smarter:} remove only the redundant samples. Works well if the majority class is densely populated.
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{images/undersampling.png}
+\end{center}
+\end{defnbox}
+
+\subsubsection{Cost-sensitive methods}
+
+Given $N$ training samples $\{(x_i, y_i)\}_{i=1}^N$, the standard empirical risk is:
+\[
+R({\mathbf{x}_i}, {y_i}, \mathbf{w}) = \frac{1}{N} \sum_{i=1}^{N} \ell(\hat{y}_i, y_i)
+\]
+
+A simple solution consists of \textbf{re-weighting} the samples to put more emphasis on the rare class:
+\[
+R({\mathbf{x}_i}, {y_i}, \mathbf{w}) = \frac{1}{N} \sum_{i=1}^{N} \beta_i \, \ell(\hat{y}_i, y_i)
+\]
+
+where $\beta_i$ is the weight of sample $i$, set \textbf{manually} (it cannot be optimized, as that would trivially give zero loss). It is chosen inversely proportional to the class frequency:
+\[
+\beta_i = 1 - \frac{N_k}{N}
+\]
+if sample $i$ belongs to class $k$, which contains $N_k$ samples (smaller class $\Rightarrow$ larger weight).
+
+This re-weighting can be applied to any algorithm:
+
+\begin{defnbox}[title=Weighted empirical risk — applications]
+\textbf{Least-squares classification:}
+\[
+\min_{\mathbf{W}} \sum_{i=1}^{N} \beta_i \|\mathbf{W}^T \mathbf{x}_i - \mathbf{y}_i\|^2 + \lambda\|\mathbf{W}\|_F^2
+\]
+
+\textbf{Logistic regression:}
+\[
+\min_{\mathbf{w}} -\sum_{i=1}^{N} \beta_i \sum_{k=1}^{C} y_i^{(k)} \ln(\mathbf{w}^T \mathbf{x}_i)
+\]
+
+\textbf{SVM (soft-margin):}
+\[
+\min_{w^{(0)},\mathbf{\tilde{w}}} \;\tfrac{1}{2C}\|\mathbf{\tilde{w}}\|^2 + \sum_{i=1}^{N} \beta_i \max(0, 1 - y_i \cdot (w^{(0)} + \mathbf{\tilde{w}}^T \mathbf{x}_i))
+\]
+\end{defnbox}
+
 \iffalse
 % ------------------------------------------------------------
 \section{Artificial neural networks (deep learning)}
