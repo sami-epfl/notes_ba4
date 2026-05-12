@@ -50,10 +50,29 @@ Each subject folder contains `cheatsheet.tex` (the cheat sheet) and `course.tex`
 
 ## Authors 
 
+<table>
+  <tr>
+    <td align="center" style="padding: 20px;">
+      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="90" alt="GitHub Logo"/><br/>
+
+      <h3 style="margin:10px 0 5px;">Sami Kabbaj</h3>
+
+      <p style="margin:0; font-size:13px;">
+        💻 Software Engineer • Builder • Problem Solver
+      </p>
+
+      <br/>
+
+      <a href="https://github.com/SamiPro206">
+        <img src="https://img.shields.io/badge/GitHub-Profile-black?logo=github&style=for-the-badge" />
+      </a>
+    </td>
+  </tr>
+</table>
+
 **Salim Chaoui El Faiz**  
 🔗 [GitHub – Salim Chaoui El Faiz](https://github.com/SalimThePokemonMaster)
 
-**Sami Kabbaj**  
-🔗 [GitHub – Sami Kabbaj](https://github.com/SamiPro206)
+
 
 ---
