@@ -331,6 +331,8 @@ Ainsi, une fois $W^\star$ calculé, la phase de test consiste simplement à appl
 
 Le modèle est donc entièrement déterminé par la solution analytique du problème d'optimisation.
 
+\vspace{8cm}
+
 \subsection{Model evaluation on test sample}
 
 Après training, il faut mesurer si le modèle est bon sur des données qu'il n'a pas vues.
@@ -379,6 +381,9 @@ Erreur relative en pourcentage. Utile pour comparer des modèles sur des cibles 
 % ------------------------------------------------------------
 \newpage \section{Linear models for classification}
 % ------------------------------------------------------------
+
+\vspace{8cm}
+
 
 \subsection{Logistic Regression}
 
@@ -534,6 +539,7 @@ Puis classification par seuillage :
 \]
 
 Le seuil $0.5$ peut être ajusté selon le contexte (ex : priorité à la précision ou au recall).
+\vspace{8cm}
 
 \subsection{Classification evaluation}
 
@@ -640,6 +646,7 @@ La précision et le recall sont souvent en tension (améliorer l'un dégrade l'a
 
 \textbf{Quand l'utiliser :} données déséquilibrées où l'accuracy est trompeuse.
 \end{defnbox}
+\vspace{8cm}
 
 \subsection{Dealing with multi class}
 
@@ -764,6 +771,8 @@ k =
 \hat{y}^{(j)}(x)
 \]
 
+\vspace{8cm}
+
 \subsection{Evaluation metrics on multi-class classification}
 
 Avec plusieurs classes, on généralise la confusion matrix en un tableau $C \times C$.
@@ -817,6 +826,8 @@ Pour Precision, Recall, FPR et F1-score, on calcule la métrique pour chaque cla
 
 En pratique, si les classes sont déséquilibrées, préférer le \textbf{weighted average} ou l'analyse par classe séparément.
 \end{rembox}
+
+\vspace{8cm}
 
 \subsection{SVM -- Support Vector Machines}
 
@@ -908,6 +919,7 @@ Pour des données non-linéairement séparables, on peut kerneliser le SVM en re
 % ============================================================
 \chapter{Non-linear Supervised ML}
 % ============================================================
+\vspace{8cm}
 
 \section{k-Nearest Neighbors}
 
@@ -1033,6 +1045,7 @@ Pour la régression : on fait la moyenne (éventuellement pondérée) des valeur
 % ------------------------------------------------------------
 \newpage \section{Feature expansion}
 % ------------------------------------------------------------
+\vspace{8cm}
 
 \subsection{Polynomial curve fitting}
 
@@ -1138,6 +1151,7 @@ A complex pattern classification problem cast in a high-dimensional space non-li
 
 En d'autres termes : en augmentant la dimensionnalité via $\phi$, on facilite la séparation linéaire des classes.
 \end{thmbox}
+\vspace{8cm}
 
 \subsection{Fitting and regularization -- Cross validation}
 
@@ -1242,6 +1256,8 @@ On reporte la moyenne des erreurs sur les $K$ folds.
     \item \textbf{K-fold :} meilleur compromis vitesse/fiabilité
 \end{itemize}
 \end{rembox}
+
+\vspace{8cm}
 
 \subsection{Penalizing overfitting -- Regularization}
 
@@ -1368,6 +1384,8 @@ W^\star
 \]
 
 % ------------------------------------------------------------
+\vspace{8cm}
+
 \newpage \section{Kernel methods}
 % ------------------------------------------------------------
 
@@ -1554,6 +1572,8 @@ Y^T (K + \lambda I)^{-1} k(X,x)
 
 
 % ------------------------------------------------------------
+\vspace{8cm}
+
 \newpage \section{Data representation}
 % ------------------------------------------------------------
 
@@ -1720,6 +1740,8 @@ What other solutions to cleaning noisy data can you think of?
 Use human knowledge to identify and correct errors (e.g.\ impossible values, typos\dots)
 \end{rembox}
 
+\vspace{8cm}
+
 \subsection{Data normalization}
 
 Goal: scale each individual attribute/feature dimension to fall within a specified range. This ensures no single feature dominates due to its scale.
@@ -1739,7 +1761,9 @@ Decimal scaling & $x_i^{(d)} \leftarrow \dfrac{x_i^{(d)}}{10^j}$ & $\max|x^{(d)}
 where $\mu_d$ and $\sigma_d$ are the mean and standard deviation of feature $d$ across the dataset, and $j$ is the smallest integer such that $\max(|x_i^{(d)}|) < 1$.
 \end{defnbox}
 
-\subsection{Imbalanced data}
+\vspace{8cm}
+
+\subsection{Imbalanced data - sampling methods}
 
 You train a classifier to predict if a subject suffers from cancer or not from image data. On validation data, your classifier gives you $99.1\%$ accuracy. This sounds fantastic! We are ready to deploy it in the real world, right?
 
@@ -1772,6 +1796,8 @@ Two main approaches:
 Compensate the lack of data by rebalancing the classes:
 
 \begin{defnbox}[title=Oversampling — increase the minority class]
+\textbf{What is it?} Generate new data inputs for the smallest class.
+
 \textbf{Naive:} replicate data samples from the smallest class until balanced.
 
 \textit{Drawback:} may lead to overfitting.
@@ -1789,6 +1815,8 @@ Compensate the lack of data by rebalancing the classes:
 \end{defnbox}
 
 \begin{defnbox}[title=Undersampling — reduce the majority class]
+\textbf{What is it?} Remove redundant datapoints from the largest class.
+
 \textbf{Naive:} randomly remove samples from the largest class until balanced.
 
 \textit{Drawback:} may remove important samples.
@@ -1930,5 +1958,498 @@ Plutôt que de calculer le gradient sur tout le dataset (coûteux), on estime le
 \section{Dimensionality reduction}
 
 \newpage \section{k-Means Clustering}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\vspace{8cm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ------------------------------------------------------------
+\newpage \section{Parametric feature expansion}
+% ------------------------------------------------------------
+
+Maintenant que on a vu que on peut faire des algorithms, des trainings plus compliqués mais aussi plus précis en ajoutant des bias, puis on a régularisé, puis on a mis des sécurité pour éviter l'underflow ou encore on a fait du polynomial feature expansion qui nous permettait de tester différentes manières de prendre un sample et de travailler avec des combinaisons, des puissances des éléments du vecteur d'un même input et de le pousser plus loin et plus facilement avec les kernel methods.
+
+\vspace{0.4cm}
+
+Maintenant tout ça c'est bien sympa mais on veut aller encore plus loin et faire un peu mieux quand même, ajouter encore de la précision, là où le polynomial feature expansion nous permettait de suivre, d'approximer une courbe, là on va vouloir approximer plus, grand, plus complexe (l'exemple de la heatmap).
+
+\vspace{0.4cm}
+
+Pour cela on va utiliser la \textbf{PARAMETRIC FEATURE EXPANSION!!!!}
+
+\vspace{0.8cm}
+
+\subsection{PARAMETRICsss FEATURE EXPANSION}
+
+En fait on va appliquer un modèle linéaire, puis ajouter de la non-linearity avec la fonction et ensuite on va résoudre comme linéairement.
+
+\vspace{0.5cm}
+
+D'abord on définit pour nous aider à simplifier plus tard :
+
+\[
+a^{(1)}
+=
+W_{(1)}^T
+\begin{pmatrix}
+1 \\
+x
+\end{pmatrix}
+\]
+
+\vspace{0.4cm}
+
+\[
+=
+\begin{pmatrix}
+W_{(0,1)}^{(1)} + W_{(1,1)}^{(1)} x \\
+W_{(0,2)}^{(1)} + W_{(1,2)}^{(1)} x \\
+\vdots
+\end{pmatrix}
+\]
+
+\vspace{0.4cm}
+
+\[
+=
+\begin{pmatrix}
+a_{(1)}^{(1)} \\
+a_{(2)}^{(1)} \\
+\vdots
+\end{pmatrix}
+\]
+
+\vspace{0.8cm}
+
+Alors on va définir notre parametric feature expansion qui va revenir à appliquer une fonction sur les résultats du produit $W$ et $x$ soit :
+
+\[
+x
+\rightarrow
+\begin{pmatrix}
+f\!\left(a_{(1)}^{(1)}\right) \\
+\vdots
+\end{pmatrix}
+=
+f
+\left(
+W_{(1)}^T
+\begin{pmatrix}
+1 \\
+x
+\end{pmatrix}
+\right)
+\]
+
+\vspace{0.5cm}
+
+Avec :
+\begin{itemize}
+    \item $f$ the activation function (ex: sigmoid, hyperbolic tangent...)
+\end{itemize}
+
+\vspace{0.6cm}
+
+Pour simplifier on va noter :
+
+\[
+z^{(1)} = f\!\left(a^{(1)}_{(1)}, a^{(1)}_{(2)}, \ldots \right)
+\]
+
+\vspace{0.4cm}
+
+$z$ est ici the hidden representation et chaque élément $f\!\left(a_{(k)}^{(1)}\right)$ une hidden unit.
+\vspace{0.6cm}
+
+Par conséquent, avec ces changement on a :
+
+\[
+\hat{y}
+=
+w^{(2)T} z^{(1)}
+\]
+
+\vspace{0.4cm}
+
+\[
+=
+\sum_{i=1}^{M}
+w^{(2)}_{(i)}
+\left(
+W^{(1)}_{(0,i)}
++
+W^{(1)}_{(1,i)} x
+\right)
+\]
+
+\vspace{1cm}
+
+\subsection{Universal approximation}
+
+Maintenant, on peut étendre la formule pour montrer un peu à quoi ça ressemble un peu comme Taylor ou Fourier...
+
+\vspace{0.5cm}
+
+\[
+\hat{y}
+=
+w^{(2)T} z^{(1)}
+\]
+
+\vspace{0.4cm}
+
+\[
+=
+\sum_{i=1}^{M}
+w^{(2)}_{(i)}
+\left(
+W^{(1)}_{(0,i)}
++
+W^{(1)}_{(1,i)} x
+\right)
+\]
+
+\vspace{0.4cm}
+
+\[
+=
+w^{(2)}_{(1)}
+\left(
+W^{(1)}_{(0,1)}
++
+W^{(1)}_{(1,1)} x
+\right)
++
+w^{(2)}_{(2)}
+\left(
+W^{(1)}_{(0,2)}
++
+W^{(1)}_{(1,2)} x
+\right)
++
+w^{(2)}_{(3)}
+\left(
+W^{(1)}_{(0,3)}
++
+W^{(1)}_{(1,3)} x
+\right)
++
+\cdots
+\]
+
+\vspace{1cm}
+
+\subsection{Multilayer perception}
+
+Maintenant, si on veut ajouter encore certaines fonctions, certaines non-linearity, certaines précision, on peu cumuler les couches, les étapes intermédiaires de notre neural network, pour ça, c'est très simple, il suffit de répéter l'opération simplement :
+
+\vspace{0.5cm}
+
+\[
+z_{(1)}
+=
+f
+\left(
+W^{(1)T} x
+\right)
+\]
+
+\vspace{0.6cm}
+
+\[
+z_{(l)}
+=
+f
+\left(
+W_{(l)}^{T} z_{(l-1)}
+\right)
+\]
+
+\vspace{0.6cm}
+
+We call going from $x$ to $y$ the \textbf{forward pass} of the network.
+
+\vspace{1cm}
+
+\subsection{Training}
+
+For the regression la loss function will be:
+
+\[
+R(W)
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\|
+\hat{y}_i(W) - y_i
+\|^2
+\]
+
+\vspace{0.6cm}
+
+In that case to solve it we will be using graident descent and the gradient will be an average of gradients as the empirical risk is an average over the training.
+
+\vspace{0.6cm}
+
+\[
+R(\{W^{(1)}\})
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\ell(\hat{y}_i, y_i)
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\ell_i
+\]
+
+\vspace{0.8cm}
+
+For the $k$th dimension of the output layer $l$ we will have :
+
+\[
+a_{(k)}^{(l)}
+=
+\sum_{j}
+W_{(k,j)}^{(l)}
+z_{(j)}^{(l-1)}
+\]
+
+\vspace{0.8cm}
+
+The form for the partial derivative of $a$ is:
+\[
+\frac{
+\partial a^{(k)}_{(l)}
+}{
+\partial W^{(k,j)}_{(l)}
+}
+=
+z^{(j)}_{(l-1)}
+\]
+
+\vspace{0.8cm}
+
+Moreover we define to simplify :
+
+\[
+\delta^{(k)}_{(l)}
+=
+\frac{
+\partial \ell_i
+}{
+\partial a^{(k)}_{(l)}
+}
+\]
+
+\vspace{0.8cm}
+
+Consequently:, using chain rule:
+
+\[
+\frac{
+\partial \ell_i
+}{
+\partial W_{(k,j)}^{(l)}
+}
+=
+\delta_{(k)}^{(l)}
+z_{(j)}^{(l-1)}
+\]
+
+\vspace{0.8cm}
+
+And for the last layer we will have
+\[
+a_{(k)}^{(L)}
+=
+\hat{y}^{(k)}
+\]
+
+\vspace{0.6cm}
+
+Meaning that we can also go back from last $\delta^{(L)}$ to the previous ones (because we didn't exactly know all the values, and weights and factors)
+
+\vspace{0.4cm}
+
+\[
+\frac{
+\partial \ell_i
+}{
+\partial W_{(l)}^{(k,j)}
+}
+=
+\delta_{(l)}^{(k)}
+z_{(l-1)}^{(j)}
+\]
+
+\vspace{0.6cm}
+
+Tzzo go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
+
+\vspace{0.8cm}
+
+\begin{algbox}[title=Back propagation]
+\begin{enumerate}
+    \item Propagate $x_i$ forward through the network (using gradient descent)
+
+    \item Compute $\delta^{(L)}$ depending on the loss
+
+    \item Propagate that delta backward to obtain each $\delta^{(l)}$
+
+    \item At each layer, compute the partial derivatives:
+
+    \[
+    \frac{
+    \partial \ell_i
+    }{
+    \partial W_{(l)}^{(k,j)}
+    }
+    =
+    \delta_{(l)}^{(k)}
+    z_{(l-1)}^{(j)}
+    \]
+\end{enumerate}
+\end{algbox}
+
+
+
+
+
+\subsection{Stochastic gradient descent}
+On va avoir des adaptations du gradient descent pour pouvoir le  corroborrer à notre problème.
+
+\[
+\text{inspired by the gradient descent -- the gradient is sample in each iteration.}
+\]
+
+\[
+W_k \leftarrow W_{k-1} - \eta \nabla \ell_{i(k)}(W_{k-1})
+\]
+
+\[
+\Rightarrow \text{but has problems with jumps as } i \text{ obtain a more reliable gradient estimate, SGD with mini-batches of } B \text{ examples}
+\]
+
+\[
+W_k \leftarrow W_{k-1} - \eta \sum_{b=1}^{B} \nabla \ell_{(b,k)}(W_{k-1})
+\]
+
+\vspace{1.5cm}
+
+\textbf{SGD extensions}
+
+\[
+\text{momentum } \Rightarrow \text{ add inertia the parameter updates}
+\]
+
+\[
+\nu \leftarrow \gamma \nu + \eta\nabla R(W)
+\]
+
+\[
+W \leftarrow W - \nu
+\]
+
+\[
+\text{with } \gamma>0 \Rightarrow \text{ accelerates if the gradient does not change too much}
+\]
+
+\textbf{For classification}
+We can use the softmax.
+
+\[
+\hat{y}^{(k)} =
+\frac{
+\exp\left(w_{(L)}^T(k)\, z_{(L-1)}\right)
+}{
+\sum_{j=1}^{C}
+\exp\left(w_{(L)(j)}^T\, z_{(L-1)}\right)
+}
+\]
+
+\[
+w_{(L)j} \text{ : column of } W_{(L)}
+\]
+
+In this case:
+
+\[
+R(W) := - \frac{1}{N}
+\sum_{i=1}^{N} \sum_{j=1}^{C}
+y_{i}^(k) \log \hat{y}^{(k)}_j
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \end{document}
