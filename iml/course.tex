@@ -2351,13 +2351,292 @@ y_{i}^{(k)} \log \hat{y}^{(k)}_j
 
 \section{Dimensionality reduction}
 
+\subsection{Definition}
+
+\begin{defnbox}[title=Dimensionality Reduction]
+Given high-dimensional samples \(x_i \in \R^D\), find a low-dimensional representation \(y_i \in \R^d\) with \(d < D\).
+
+\textbf{Goals:}
+\begin{itemize}
+    \item Discover the data manifold
+    \item Obtain a compact, low-dimensional representation
+    \item Remove noise if possible
+\end{itemize}
+
+General mapping: \(y_i = f(x_i)\) \quad — \quad Linear mapping: \(y_i = W^T x_i\)
+\end{defnbox}
+
+\subsection{Example}
+
+\begin{exbox}[title=Image vectorization]
+\[
+x_i \in \R^{536 \cdot 356 \cdot 3} = \R^{572448}
+\]
+Even though the image lives in a $572\,448$-dimensional space, the true degrees of freedom are much fewer.
+\end{exbox}
+
+\subsection{Manifold Intuition}
+
+\begin{rembox}[title=Manifold Hypothesis]
+Although data lives in \(\R^D\), it often concentrates near a low-dimensional manifold.
+
+\textbf{Example:} images of the digit 3 have only 3 degrees of freedom (2 translations + 1 rotation) despite living in \(\R^{572448}\).
+\end{rembox}
+
+% ============================================================
+\section{Principal Component Analysis (PCA)}
+
+\subsection{Definition}
+
+\begin{defnbox}[title=PCA Projection]
+\[
+y_i = W^T(x_i - \bar{x}),
+\qquad W^T W = I_d,
+\qquad \bar{x} = \frac{1}{N}\sum_{i=1}^{N} x_i
+\]
+\end{defnbox}
+
+\subsection{PCA Objective}
+
+Variance of the \(j\)-th projected dimension:
+\[
+\operatorname{var}(\{y_i^{(j)}\})
+=
+\frac{1}{N}\sum_{i=1}^{N}\left(y_i^{(j)} - \bar{y}^{(j)}\right)^2
+\]
+
+\begin{propbox}[title=PCA Objective]
+Maximize the variance of the projected data. Equivalently, minimize the reconstruction error among all orthogonal projections.
+\end{propbox}
+
+\subsection{1D PCA}
+
+Projection vector: \(w_{(1)} \in \R^D\), \quad \(w_{(1)}^T w_{(1)} = 1\)
+
+Projection: \(y_i = w_{(1)}^T(x_i - \bar{x})\)
+
+Projected mean:
+\[
+\bar{y}
+= \frac{1}{N}\sum_{i=1}^{N} w_{(1)}^T(x_i-\bar{x})
+= w_{(1)}^T \underbrace{\left(\frac{1}{N}\sum_{i=1}^{N} x_i\right)}_{\bar{x}} - w_{(1)}^T \bar{x}
+= 0
+\]
+
+\subsection{Covariance Matrix}
+
+\begin{defnbox}[title=Sample Covariance Matrix]
+\[
+C = \frac{1}{N}\sum_{i=1}^{N}(x_i-\bar{x})(x_i-\bar{x})^T \in \R^{D \times D}
+\]
+\end{defnbox}
+
+Variance after projection:
+\[
+\operatorname{var}(\{y_i\})
+= \frac{1}{N}\sum_{i=1}^{N}(y_i-\bar{y})^2
+= \frac{1}{N}\sum_{i=1}^{N}\left(w_{(1)}^T(x_i-\bar{x})\right)^2
+= w_{(1)}^T C w_{(1)}
+\]
+
+\subsection{Optimization Problem}
+
+\[
+\max_{w_{(1)}} \; w_{(1)}^T C w_{(1)}
+\quad \text{s.t.} \quad w_{(1)}^T w_{(1)} = 1
+\]
+
+Lagrangian:
+\[
+L(w_{(1)}, \lambda_1)
+= w_{(1)}^T C w_{(1)} + \lambda_1\!\left(1 - w_{(1)}^T w_{(1)}\right)
+\]
+
+Stationarity condition:
+\[
+\frac{\partial L}{\partial w_{(1)}} = 2Cw_{(1)} - 2\lambda_1 w_{(1)} = 0
+\quad \Longrightarrow \quad
+Cw_{(1)} = \lambda_1 w_{(1)}
+\]
+
+Multiplying left by \(w_{(1)}^T\): \quad \(w_{(1)}^T C w_{(1)} = \lambda_1\), so projected variance \(= \lambda_1\).
+
+\begin{propbox}[title=1D PCA Solution]
+\(w_{(1)}\) is the eigenvector of \(C\) with the \textbf{largest} eigenvalue \(\lambda_1\). The maximum projected variance equals \(\lambda_1\).
+\end{propbox}
+
+\subsection{Higher Dimensional PCA}
+
+\[
+W = \begin{bmatrix} w_{(1)} & w_{(2)} & \cdots & w_{(d)} \end{bmatrix} \in \R^{D \times d},
+\qquad W^T W = I_d
+\]
+
+Columns \(w_{(1)}, \ldots, w_{(d)}\) are the \(d\) eigenvectors of \(C\) with the \(d\) largest eigenvalues \(\lambda_1 \ge \cdots \ge \lambda_d\).
+
+Projection: \(y_i = W^T(x_i - \bar{x}) \in \R^d\)
+
+\subsection{Variance Retention}
+
+Choose \(d\) to retain at least \(90\%\) of the variance:
+\[
+\sum_{j=1}^{d} \lambda_j \;\ge\; 0.9\sum_{k=1}^{D} \lambda_k
+\]
+
+\subsection{Reconstruction}
+
+\[
+\hat{x}_i = \bar{x} + Wy_i = \bar{x} + WW^T(x_i-\bar{x})
+\]
+
+Reconstruction error: \(e_i = \norm{\hat{x}_i - x_i}^2\)
+
+\begin{propbox}[title=PCA minimizes reconstruction error]
+Among all orthogonal projections onto a \(d\)-dimensional subspace, PCA achieves the minimum average reconstruction error.
+\end{propbox}
+
+\subsection{PCA Mapping}
+
+\[
+\hat{x} = \bar{x} + Wy, \qquad y \in \R^d
+\]
+
+% ============================================================
+\section{Kernel PCA}
+
+\subsection{Feature Mapping}
+
+Map inputs to a (possibly infinite-dimensional) feature space:
+\[
+x_i \mapsto \phi(x_i), \qquad k(x_i,x_j) = \phi(x_i)^T \phi(x_j)
+\]
+
+\subsection{Centered Feature Space}
+
+Assume centered features: \(\displaystyle\frac{1}{N}\sum_{i=1}^{N}\phi(x_i) = 0\)
+
+Covariance matrix in feature space:
+\[
+C = \frac{1}{N}\sum_{i=1}^{N}\phi(x_i)\phi(x_i)^T,
+\qquad Cw_{(1)} = \lambda_1 w_{(1)}
+\]
+
+\subsection{Representer Theorem}
+
+\begin{propbox}[title=Representer Theorem]
+The eigenvectors of \(C\) lie in the span of the mapped data:
+\[
+w_{(1)} = \sum_{j=1}^{N} a_j \phi(x_j)
+\]
+
+Substituting leads to an eigenvalue problem on the kernel matrix \(K \in \R^{N \times N}\), \(K_{ij} = k(x_i,x_j)\):
+\[
+Ka = \lambda_1 N a, \qquad a \in \R^N
+\]
+\end{propbox}
+
+\subsection{Kernel PCA Projection}
+
+\[
+y_i
+= \phi(x_i)^T w_{(1)}
+= \sum_{j=1}^{N} a_j \underbrace{\phi(x_i)^T \phi(x_j)}_{k(x_i,x_j)}
+= \sum_{j=1}^{N} a_j k(x_i,x_j)
+\]
+
+Everything is expressed in terms of kernel evaluations — \(\phi\) need not be computed explicitly.
+
+\subsection{Non-centered Data}
+
+Centered features:
+\[
+\tilde{\phi}(x_i) = \phi(x_i) - \frac{1}{N}\sum_{j=1}^{N}\phi(x_j)
+\]
+
+Centered kernel matrix:
+\[
+\tilde{K} = K - \mathbf{1}_N K - K\mathbf{1}_N + \mathbf{1}_N K \mathbf{1}_N,
+\qquad \mathbf{1}_N = \frac{1}{N}\mathbf{1}\mathbf{1}^T,
+\qquad \tilde{K}_{i,j} = \tilde{\phi}(x_i)^T\tilde{\phi}(x_j)
+\]
+
+% ============================================================
+\section{Autoencoders}
+
+\subsection{Linear PCA Form}
+
+\[
+y = W^T(x-\bar{x}), \qquad \hat{x} = \bar{x} + Wy
+\]
+
+\subsection{Simple Autoencoder}
+
+\begin{defnbox}[title=Simple Autoencoder]
+\[
+\hat{x} = W f(W^T x)
+\]
+
+where \(f(\cdot)\) is a nonlinear activation function.
+
+\textbf{Encoder:} \(x \mapsto y = f(W^T x)\) \qquad \textbf{Decoder:} \(y \mapsto \hat{x} = Wy\) \qquad \textbf{Goal:} \(\hat{x} \approx x\)
+\end{defnbox}
+
+\subsection{Deep Autoencoder}
+
+\begin{defnbox}[title=Deep Autoencoder]
+Stacked layers:
+\[
+z^{(j)} = f^{(j)}\!\left(W_{(j)}^T z^{(j-1)}\right)
+\]
+
+\textbf{Encoder:} first half of layers \(x \to \cdots \to y\) \qquad \textbf{Decoder:} mirrored second half \(y \to \cdots \to \hat{x}\)
+\end{defnbox}
+
+\subsection{Training}
+
+\begin{algbox}[title=Autoencoder Training]
+\textbf{Objective:} minimize reconstruction error
+\[
+R(\{W_{(j)}\}) = \frac{1}{N}\sum_{i=1}^{N}\norm{\hat{x}_i(\{W_{(j)}\}) - x_i}^2
+\]
+\begin{itemize}
+    \item Non-convex optimization
+    \item Solved with stochastic gradient descent
+    \item Backpropagation computes gradients through encoder and decoder
+\end{itemize}
+\end{algbox}
+
+\subsection{Denoising Autoencoder}
+
+\begin{rembox}[title=Denoising Autoencoder]
+\textbf{Idea:} add noise to the input, train to reconstruct the clean version.
+
+Forces the encoder to learn a robust representation rather than the identity.
+\end{rembox}
+
+\subsection{Sparse Autoencoder}
+
+\begin{defnbox}[title=Sparse Autoencoder]
+Add an \(\ell_1\) sparsity penalty on the latent code \(y_i \in \R^M\):
+\[
+E_r(\{W_{(j)}\}) = \sum_{i=1}^{N}\sum_{k=1}^{M}\abs{y_i^{(k)}}
+\]
+Encourages most latent units to be zero for any given input.
+\end{defnbox}
+
+\subsection{Applications}
+
+\begin{keybox}[title=Autoencoder Applications]
+\begin{itemize}
+    \item Compact representation / compression
+    \item Retrieval and nearest-neighbor search in latent space
+    \item Anomaly detection (high reconstruction error \(\Rightarrow\) anomaly)
+    \item Sample generation (decode random latent codes)
+\end{itemize}
+\end{keybox}
+
+% ============================================================
 \newpage \section{k-Means Clustering}
-
-
-
-
-
-
 
 
 
