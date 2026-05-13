@@ -2135,6 +2135,7 @@ W^{(3,1)}_{(1)}x
 +
 \cdots
 \end{align*}
+
 \end{minipage}
 \hfill
 \begin{minipage}{0.3\textwidth}
@@ -2163,31 +2164,125 @@ The resulting simple artifical neural network with one hidden layer can be depic
 \end{center}
 
 \subsection{Multilayer perceptron (MLP)}
-Maintenant, si on veut ajouter encore certaines fonctions, certaines non-linearity, certaines précision, on peu cumuler les couches, les étapes intermédiaires de notre neural network, pour ça, c'est très simple, il suffit de répéter l'opération simplement :
+En prenant M très grand, on remarque que la fonction devient de plus en plus précise, mais il se passe quoi si on ajoute des couches intermédiaires ?
+
+
+\begin{minipage}{0.38\textwidth}
+\[
+\begin{aligned}
+z_{(1)} &= f\!\left(W_{(1)}^{T}x\right) \\[4pt]
+&\mathrel{\makebox[\widthof{$=$}]{\vdots}} \\[4pt]
+z_{(l)} &= f\!\left(W_{(l)}^{T}z_{(l-1)}\right)
+\end{aligned}
+\]
+\end{minipage}
+\hfill
+\begin{minipage}{0.58\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/multilayer-perceptron.png}
+\end{minipage}
+
+
+We call going from $x$ to $y$ the \textbf{forward pass} of the network. Finally:
 
 \[
-z_{(1)}
-=
-f
-\left(
-W^{(1)T} x
-\right)
+\hat{y} = W_{(L)}^T z_{(L-1)}
+= W_{(L)}^T f\!\left(W_{(L-1)}^T f\!\left(W_{(L-2)}^T f\!\left(\cdots f\!\left(W_{(1)}^T x\right)\cdots\right)\right)\right)
 \]
 
-\[
-z_{(l)}
-=
-f
-\left(
-W_{(l)}^{T} z_{(l-1)}
-\right)
-\]
-
-We call going from $x$ to $y$ the \textbf{forward pass} of the network.
+\begin{itemize}
+    \item This is not very convenient, and it is easier to simply think of $\hat{y}$ as a function of all parameters
+    \[
+    \hat{y} = \hat{y}(\mathbf{W})
+    \]
+    where $\mathbf{W} = \left\{ W_{(l)} \right\}$ encompasses the parameters of all the layers
+\end{itemize}
 
 \subsection{Training}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{images/mlp-explanation.png}
+\end{center}
 
-For the regression la loss function will be:
+\begin{minipage}{0.48\textwidth}
+\centering
+
+\begin{tikzpicture}[>=stealth]
+
+% Layer l-1
+\node[circle,draw,minimum size=0.5cm] (x1) at (0,2) {};
+\node[circle,draw,minimum size=0.5cm] (x2) at (0,1) {};
+\node[circle,draw,minimum size=0.5cm] (x3) at (0,0) {};
+
+% Split lines for left nodes
+\draw (x1.north) -- (x1.south);
+\draw (x2.north) -- (x2.south);
+\draw (x3.north) -- (x3.south);
+
+% Layer l
+\node[circle,draw,minimum size=1.5cm] (y1) at (4,1) {};
+\draw (y1.north) -- (y1.south);
+
+% Connections
+\draw (x1) -- (y1);
+\draw (x2) -- (y1);
+\draw (x3) -- (y1);
+
+% Labels inside right node
+\node at (3.6,1) {$a^{(k)}_{(l)}$};
+\node at (4.45,1) {$z^{(k)}_{(l)}$};
+
+% Layer labels
+\node[above] at (0,2.7) {Layer $l-1$};
+\node[above] at (4,2.7) {Layer $l$};
+
+\end{tikzpicture}
+
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+
+\[
+a^{(k)}_{(l)}
+=
+\sum_j
+W^{(k,j)}_{(l)}
+z^{(j)}_{(l-1)}
+\]
+
+\vspace{8pt}
+
+\[
+z^{(k)}_{(l)}
+=
+f\left(
+a^{(k)}_{(l)}
+\right)
+\]
+
+\vspace{12pt}
+
+\[
+W_{(l)}
+=
+\begin{bmatrix}
+w^{(1)}_{(l)} &
+w^{(2)}_{(l)} &
+\cdots &
+w^{(M_l)}_{(l)}
+\end{bmatrix}
+\]
+
+\[
+a^{(k)}_{(l)}
+=
+\left(
+w^{(k)}_{(l)}
+\right)^T
+z_{(l-1)}
+\]
+
+\end{minipage}
+For regression, the empirical risk is typically defined using the square loss:
 
 \[
 R(W)
@@ -2195,95 +2290,84 @@ R(W)
 \frac{1}{N}
 \sum_{i=1}^{N}
 \|
-\hat{y}_i(W) - y_i
+\hat{y}_i(W)-y_i
 \|^2
 \]
 
-In that case to solve it we will be using graident descent and the gradient will be an average of gradients as the empirical risk is an average over the training.
+where:
+\begin{itemize}
+    \item $N$ is the number of training samples,
+    \item $\hat{y}_i(W)$ is the prediction of the network for sample $i$,
+    \item $y_i$ is the target value.
+\end{itemize}
+
+\medskip
+
+Because the empirical risk is an average over the training samples, its gradient is also an average of gradients:
 
 \[
-R(\{W^{(1)}\})
+R(\{W_{(l)}\})
 =
 \frac{1}{N}
 \sum_{i=1}^{N}
-\ell(\hat{y}_i, y_i)
+\ell(\hat{y}_i,y_i)
 =
 \frac{1}{N}
 \sum_{i=1}^{N}
 \ell_i
 \]
 
+Thus, to compute the gradient of the full empirical risk, we can focus on the gradient of a single loss term $\ell_i$.
+
 \medskip
 
-For the $k$th dimension of the output layer $l$ we will have :
+For a neuron $k$ in layer $l$, define the pre-activation value:
 
 \[
-a_{(k)}^{(l)}
+a^{(k)}_{(l)}
 =
-\sum_{j}
-W_{(k,j)}^{(l)}
-z_{(j)}^{(l-1)}
-\]
-
-The form for the partial derivative of $a$ is:
-
-\[
-\frac{
-\partial a^{(k)}_{(l)}
-}{
-\partial W^{(k,j)}_{(l)}
-}
-=
+\sum_j
+W^{(k,j)}_{(l)}
 z^{(j)}_{(l-1)}
 \]
 
-Moreover we define to simplify :
+which corresponds to the weighted sum of the outputs from the previous layer.
+
+\medskip
+
+The quantity
 
 \[
 \delta^{(k)}_{(l)}
 =
-\frac{
-\partial \ell_i
-}{
-\partial a^{(k)}_{(l)}
-}
+\frac{\partial \ell_i}
+{\partial a^{(k)}_{(l)}}
 \]
 
-Consequently:, using chain rule:
+measures how sensitive the loss is to the pre-activation of neuron $(k,l)$.
+
+\medskip
+
+Since $a^{(k)}_{(l)}$ depends linearly on the weights, we have:
 
 \[
-\frac{
-\partial \ell_i
-}{
-\partial W_{(k,j)}^{(l)}
-}
+\frac{\partial a^{(k)}_{(l)}}
+{\partial W^{(k,j)}_{(l)}}
 =
-\delta_{(k)}^{(l)}
-z_{(j)}^{(l-1)}
+z^{(j)}_{(l-1)}
 \]
 
-And for the last layer we will have
+Finally, by applying the chain rule:
 
 \[
-a_{(k)}^{(L)}
+\frac{\partial \ell_i}
+{\partial W^{(k,j)}_{(l)}}
 =
-\hat{y}^{(k)}
+\delta^{(k)}_{(l)}
+z^{(j)}_{(l-1)}
 \]
 
-Meaning that we can also go back from last $\delta^{(L)}$ to the previous ones (because we didn't exactly know all the values, and weights and factors)
-
-\[
-\frac{
-\partial \ell_i
-}{
-\partial W_{(l)}^{(k,j)}
-}
-=
-\delta_{(l)}^{(k)}
-z_{(l-1)}^{(j)}
-\]
-
-Tzzo go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
+To go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
 
 \bigskip
 
@@ -2315,6 +2399,8 @@ Tzzo go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
 
 
 \subsection{Stochastic gradient descent}
+
+Vidéo qui explique très bien [3 mins]: https://www.youtube.com/watch?v=UmathvAKj80
 
 On va avoir des adaptations du gradient descent pour pouvoir le  corroborrer à notre problème.
 
