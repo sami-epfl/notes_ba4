@@ -2380,8 +2380,7 @@ Even though the image lives in a $572\,448$-dimensional space, the true degrees 
 \begin{rembox}[title=Manifold Hypothesis]
 Although data lives in \(\R^D\), it often concentrates near a low-dimensional manifold.
 
-\textbf{Example:} images of the digit 3 have only 3 degrees of freedom (2 translations + 1 rotation) despite living in \(\R^{572448}\).
-\end{rembox}
+\textbf{Example:} images of the digit 3 lie in a high-dimensional space \(32 \times 32\), but have only 3 degrees of freedom: 2 translations and 1 rotation.\end{rembox}
 
 % ============================================================
 \section{Principal Component Analysis (PCA)}
@@ -2406,7 +2405,7 @@ Variance of the \(j\)-th projected dimension:
 \]
 
 \begin{propbox}[title=PCA Objective]
-Maximize the variance of the projected data. Equivalently, minimize the reconstruction error among all orthogonal projections.
+PCA finds directions with large variance in order to keep most of the important signal and remove noise.
 \end{propbox}
 
 \subsection{1D PCA}
@@ -2454,8 +2453,6 @@ L(w_{(1)}, \lambda_1)
 
 Stationarity condition:
 \[
-\frac{\partial L}{\partial w_{(1)}} = 2Cw_{(1)} - 2\lambda_1 w_{(1)} = 0
-\quad \Longrightarrow \quad
 Cw_{(1)} = \lambda_1 w_{(1)}
 \]
 
@@ -2468,13 +2465,51 @@ Multiplying left by \(w_{(1)}^T\): \quad \(w_{(1)}^T C w_{(1)} = \lambda_1\), so
 \subsection{Higher Dimensional PCA}
 
 \[
-W = \begin{bmatrix} w_{(1)} & w_{(2)} & \cdots & w_{(d)} \end{bmatrix} \in \R^{D \times d},
-\qquad W^T W = I_d
+W =
+\begin{bmatrix}
+w_{(1)} & w_{(2)} & \cdots & w_{(d)}
+\end{bmatrix}
+\in \R^{D \times d},
+\qquad
+W^T W = I_d
+\]
+
+\[
+\lambda_1 \ge \cdots \ge \lambda_d
 \]
 
 Columns \(w_{(1)}, \ldots, w_{(d)}\) are the \(d\) eigenvectors of \(C\) with the \(d\) largest eigenvalues \(\lambda_1 \ge \cdots \ge \lambda_d\).
 
 Projection: \(y_i = W^T(x_i - \bar{x}) \in \R^d\)
+
+\subsection{Limit Case: \(d = D\)}
+
+\begin{rembox}[title=No dimensionality reduction]
+If all dimensions are kept:
+\[
+d = D
+\]
+
+\begin{itemize}
+    \item No dimensionality reduction
+    \item No loss of information
+    \item In 3D, PCA can be interpreted as a rotation of the data
+    \item The dimensions in the new space are uncorrelated
+\end{itemize}
+\end{rembox}
+
+\subsection{Keeping Non-zero Eigenvalues}
+
+\begin{rembox}[title=Intrinsic low dimensionality]
+Another option is to keep all eigenvectors corresponding to non-zero eigenvalues.
+
+\begin{itemize}
+    \item The data is then truly low-dimensional
+    \item Often occurs when \(N < D\)
+    \item The resulting representations satisfy \(d < D\)
+    \item No information is lost
+\end{itemize}
+\end{rembox}
 
 \subsection{Variance Retention}
 
@@ -2492,7 +2527,7 @@ Choose \(d\) to retain at least \(90\%\) of the variance:
 Reconstruction error: \(e_i = \norm{\hat{x}_i - x_i}^2\)
 
 \begin{propbox}[title=PCA minimizes reconstruction error]
-Among all orthogonal projections onto a \(d\)-dimensional subspace, PCA achieves the minimum average reconstruction error.
+The corresponding rectangular matrix \(W\) is the orthogonal matrix that minimizes the reconstruction error.
 \end{propbox}
 
 \subsection{PCA Mapping}
@@ -2501,12 +2536,14 @@ Among all orthogonal projections onto a \(d\)-dimensional subspace, PCA achieves
 \hat{x} = \bar{x} + Wy, \qquad y \in \R^d
 \]
 
+This mapping constrains \(\hat{x}\) to lie in a subspace, and thus provides a form of regularization.
+
 % ============================================================
 \section{Kernel PCA}
 
 \subsection{Feature Mapping}
 
-Map inputs to a (possibly infinite-dimensional) feature space:
+Map inputs to a high-dimensional feature space, then perform PCA in feature space.
 \[
 x_i \mapsto \phi(x_i), \qquad k(x_i,x_j) = \phi(x_i)^T \phi(x_j)
 \]
@@ -2531,8 +2568,9 @@ w_{(1)} = \sum_{j=1}^{N} a_j \phi(x_j)
 
 Substituting leads to an eigenvalue problem on the kernel matrix \(K \in \R^{N \times N}\), \(K_{ij} = k(x_i,x_j)\):
 \[
-Ka = \lambda_1 N a, \qquad a \in \R^N
+Ka = \lambda_1 N a
 \]
+where \(a \in \R^N\) and \(K\) is the kernel matrix.
 \end{propbox}
 
 \subsection{Kernel PCA Projection}
@@ -2560,13 +2598,22 @@ Centered kernel matrix:
 \qquad \tilde{K}_{i,j} = \tilde{\phi}(x_i)^T\tilde{\phi}(x_j)
 \]
 
+\subsection{Kernel PCA vs PCA}
+
+\begin{propbox}[title=Kernel PCA limitation]
+As PCA, Kernel PCA defines a mapping from the high-dimensional space to the low-dimensional one.
+
+However, unlike PCA, Kernel PCA does not provide a mapping from the low-dimensional space back to the high-dimensional one.
+\end{propbox}
+
 % ============================================================
 \section{Autoencoders}
 
-\subsection{Linear PCA Form}
-
+\subsection{PCA Linear Mapping}
 \[
-y = W^T(x-\bar{x}), \qquad \hat{x} = \bar{x} + Wy
+y = W^T(x-\bar{x}),
+\qquad
+\hat{x} = \bar{x} + Wy
 \]
 
 \subsection{Simple Autoencoder}
@@ -2578,7 +2625,19 @@ y = W^T(x-\bar{x}), \qquad \hat{x} = \bar{x} + Wy
 
 where \(f(\cdot)\) is a nonlinear activation function.
 
-\textbf{Encoder:} \(x \mapsto y = f(W^T x)\) \qquad \textbf{Decoder:} \(y \mapsto \hat{x} = Wy\) \qquad \textbf{Goal:} \(\hat{x} \approx x\)
+\end{defnbox}
+
+\subsection{Autoencoder: General Form}
+
+\begin{defnbox}[title=Autoencoder]
+\textbf{Encoder:} maps the input to a latent representation
+
+\textbf{Decoder:} maps the latent representation to the output
+
+Goal:
+\[
+\hat{x} \approx x
+\]
 \end{defnbox}
 
 \subsection{Deep Autoencoder}
@@ -2589,7 +2648,6 @@ Stacked layers:
 z^{(j)} = f^{(j)}\!\left(W_{(j)}^T z^{(j-1)}\right)
 \]
 
-\textbf{Encoder:} first half of layers \(x \to \cdots \to y\) \qquad \textbf{Decoder:} mirrored second half \(y \to \cdots \to \hat{x}\)
 \end{defnbox}
 
 \subsection{Training}
@@ -2602,9 +2660,16 @@ R(\{W_{(j)}\}) = \frac{1}{N}\sum_{i=1}^{N}\norm{\hat{x}_i(\{W_{(j)}\}) - x_i}^2
 \begin{itemize}
     \item Non-convex optimization
     \item Solved with stochastic gradient descent
-    \item Backpropagation computes gradients through encoder and decoder
 \end{itemize}
 \end{algbox}
+
+\subsection{Dimensionality Expansion}
+
+\begin{rembox}[title=Dimensionality Expansion]
+Because the mapping is nonlinear, the latent representation does not need to be low-dimensional.
+
+This allows dimensionality expansion.
+\end{rembox}
 
 \subsection{Denoising Autoencoder}
 
@@ -2630,10 +2695,16 @@ Encourages most latent units to be zero for any given input.
 \begin{itemize}
     \item Compact representation / compression
     \item Retrieval and nearest-neighbor search in latent space
-    \item Anomaly detection (high reconstruction error \(\Rightarrow\) anomaly)
-    \item Sample generation (decode random latent codes)
 \end{itemize}
 \end{keybox}
+
+\subsection{Autoencoder Mapping}
+
+\begin{propbox}[title=Decoder mapping]
+The decoder defines a mapping from the latent space to the output space.
+
+New samples can therefore be generated by decoding arbitrary latent vectors.
+\end{propbox}
 
 % ============================================================
 \newpage \section{k-Means Clustering}
