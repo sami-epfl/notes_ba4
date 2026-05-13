@@ -2003,186 +2003,167 @@ Plutôt que de calculer le gradient sur tout le dataset (coûteux), on estime le
 
 
 % ------------------------------------------------------------
-\newpage \section{Parametric feature expansion}
+\newpage \section{Introduction to multilayer perceptron model (MLP)}
 % ------------------------------------------------------------
 
+\subsection{Parametric feature expansion}
 Maintenant que on a vu que on peut faire des algorithms, des trainings plus compliqués mais aussi plus précis en ajoutant des bias, puis on a régularisé, puis on a mis des sécurité pour éviter l'underflow ou encore on a fait du polynomial feature expansion qui nous permettait de tester différentes manières de prendre un sample et de travailler avec des combinaisons, des puissances des éléments du vecteur d'un même input et de le pousser plus loin et plus facilement avec les kernel methods.
 
-\vspace{0.4cm}
+\medskip
 
 Maintenant tout ça c'est bien sympa mais on veut aller encore plus loin et faire un peu mieux quand même, ajouter encore de la précision, là où le polynomial feature expansion nous permettait de suivre, d'approximer une courbe, là on va vouloir approximer plus, grand, plus complexe (l'exemple de la heatmap).
 
-\vspace{0.4cm}
+\medskip
 
-Pour cela on va utiliser la \textbf{PARAMETRIC FEATURE EXPANSION!!!!}
+Concrement, on veut faire du linéaire du non-linéaire, mais on ne veut pas faire du polynomial feature expansion manuellement. De manière plus intelligente, on va faire apprendre à notre modèle le meilleur feature expansion possible aussi.
 
-\vspace{0.8cm}
-
-\subsection{PARAMETRICsss FEATURE EXPANSION}
+\bigskip
 
 En fait on va appliquer un modèle linéaire, puis ajouter de la non-linearity avec la fonction et ensuite on va résoudre comme linéairement.
 
-\vspace{0.5cm}
+\medskip
 
 D'abord on définit pour nous aider à simplifier plus tard :
 
 \[
-a^{(1)}
-=
-W_{(1)}^T
-\begin{pmatrix}
-1 \\
-x
+a_{(1)}
+= W_{(1)}^T
+\begin{pmatrix} 1 \\ x \end{pmatrix}
+= \begin{pmatrix}
+W_{(1)}^{(1,0)} + W_{(1)}^{(1,1)} x \\
+\vdots \\
+W_{(1)}^{(M,0)} + W_{(1)}^{(M,1)} x
 \end{pmatrix}
-\]
-
-\vspace{0.4cm}
-
-\[
-=
-\begin{pmatrix}
-W_{(0,1)}^{(1)} + W_{(1,1)}^{(1)} x \\
-W_{(0,2)}^{(1)} + W_{(1,2)}^{(1)} x \\
-\vdots
-\end{pmatrix}
-\]
-
-\vspace{0.4cm}
-
-\[
-=
-\begin{pmatrix}
+= \begin{pmatrix}
 a_{(1)}^{(1)} \\
-a_{(2)}^{(1)} \\
-\vdots
+\vdots \\
+a_{(1)}^{(M)}
 \end{pmatrix}
+\in \mathbb{R}^{M \times 1}
 \]
-
-\vspace{0.8cm}
 
 Alors on va définir notre parametric feature expansion qui va revenir à appliquer une fonction sur les résultats du produit $W$ et $x$ soit :
 
 \[
 x
 \rightarrow
-\begin{pmatrix}
+z_{(1)} =
+\begin{bmatrix}
 f\!\left(a_{(1)}^{(1)}\right) \\
-\vdots
-\end{pmatrix}
+\vdots \\
+f\!\left(a_{(1)}^{(M)}\right)
+\end{bmatrix}
 =
-f
-\left(
+f\!\left(
 W_{(1)}^T
 \begin{pmatrix}
 1 \\
 x
 \end{pmatrix}
 \right)
+\in \mathbb{R}^{M \times 1}
 \]
-
-\vspace{0.5cm}
 
 Avec :
 \begin{itemize}
     \item $f$ the activation function (ex: sigmoid, hyperbolic tangent...)
+    \item $M$ the number of hidden units (the dimension of the hidden representation)
+    \item $W_{(1)}$ the weights of the first layer (the parameters of the feature expansion)
+    \item $z$ the hidden representation (the output of the feature expansion)
 \end{itemize}
 
-\vspace{0.6cm}
+\medskip
 
-Pour simplifier on va noter :
+Par conséquent, avec ces changements on a :
 
-\[
-z^{(1)} = f\!\left(a^{(1)}_{(1)}, a^{(1)}_{(2)}, \ldots \right)
-\]
-
-\vspace{0.4cm}
-
-$z$ est ici the hidden representation et chaque élément $f\!\left(a_{(k)}^{(1)}\right)$ une hidden unit.
-\vspace{0.6cm}
-
-Par conséquent, avec ces changement on a :
-
-\[
+\begin{align*}
 \hat{y}
-=
-w^{(2)T} z^{(1)}
-\]
-
-\vspace{0.4cm}
-
-\[
+&=
+w_{(2)}^{T} z_{(1)}
 =
 \sum_{i=1}^{M}
-w^{(2)}_{(i)}
-\left(
-W^{(1)}_{(0,i)}
+w^{(i)}_{(2)}
+f\left(
+W^{(i,0)}_{(1)}
 +
-W^{(1)}_{(1,i)} x
+W^{(i,1)}_{(1)}x
 \right)
-\]
+\end{align*}
 
-\vspace{1cm}
-
-\subsection{Universal approximation}
-
+\begin{defnbox}[title=Universal approximation]
+We can approximate any continuous function with a linear combination of translated/scaled ReLU functions $f(\cdot)$
+\end{defnbox}
 Maintenant, on peut étendre la formule pour montrer un peu à quoi ça ressemble un peu comme Taylor ou Fourier...
 
-\vspace{0.5cm}
-
-\[
+\begin{minipage}{0.58\textwidth}
+\begin{align*}
 \hat{y}
-=
-w^{(2)T} z^{(1)}
-\]
-
-\vspace{0.4cm}
-
-\[
+&=
+w_{(2)}^{T} z_{(1)}
 =
 \sum_{i=1}^{M}
-w^{(2)}_{(i)}
-\left(
-W^{(1)}_{(0,i)}
+w^{(i)}_{(2)}
+f\left(
+W^{(i,0)}_{(1)}
 +
-W^{(1)}_{(1,i)} x
+W^{(i,1)}_{(1)}x
 \right)
-\]
-
-\vspace{0.4cm}
-
-\[
-=
-w^{(2)}_{(1)}
-\left(
-W^{(1)}_{(0,1)}
+\\[6pt]
+&=
+w^{(1)}_{(2)}
+f\left(
+W^{(1,0)}_{(1)}
 +
-W^{(1)}_{(1,1)} x
+W^{(1,1)}_{(1)}x
 \right)
-+
+\\[6pt]
+&\quad+
 w^{(2)}_{(2)}
-\left(
-W^{(1)}_{(0,2)}
+f\left(
+W^{(2,0)}_{(1)}
 +
-W^{(1)}_{(1,2)} x
+W^{(2,1)}_{(1)}x
 \right)
+\\[6pt]
+&\quad+
+w^{(3)}_{(2)}
+f\left(
+W^{(3,0)}_{(1)}
 +
-w^{(2)}_{(3)}
-\left(
-W^{(1)}_{(0,3)}
-+
-W^{(1)}_{(1,3)} x
+W^{(3,1)}_{(1)}x
 \right)
 +
 \cdots
-\]
+\end{align*}
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/universal-appro-before.png}
 
-\vspace{1cm}
+\includegraphics[width=\textwidth]{images/universal-appro-after.png}
+\end{minipage}
 
-\subsection{Multilayer perception}
+\subsection{Dealing with D > 1}
+Dans la majorité des cas il y a plusieurs features, comment faire ?
+\[
+a_{(1)} = W_{(1)}^T
+\begin{pmatrix}1 \\ x_1 \\ \vdots \\ x_D\end{pmatrix}
+\in \mathbb{R}^{M \times 1} \quad\text{and}\quad
+z_{(1)} = f\!\left(a_{(1)}\right) \in \mathbb{R}^{M \times 1}
+\] 
 
+\subsection{Dealing with C > 1}
+De même, généralement, plusieurs output sont calculées, comment faire ? On va remplacer $w_{(2)}$ par une matrice $W_{(2)} \in \mathbb{R}^{M \times C}$.
+\[\hat{y} = W_{(2)}^T z_{(1)} \in \mathbb{R}^{C \times 1}\]
+
+The resulting simple artifical neural network with one hidden layer can be depicted as shown below:
+\begin{center}
+\includegraphics[width=0.4\textwidth]{images/simple-artifical-nn.png}
+\end{center}
+
+\subsection{Multilayer perceptron (MLP)}
 Maintenant, si on veut ajouter encore certaines fonctions, certaines non-linearity, certaines précision, on peu cumuler les couches, les étapes intermédiaires de notre neural network, pour ça, c'est très simple, il suffit de répéter l'opération simplement :
-
-\vspace{0.5cm}
 
 \[
 z_{(1)}
@@ -2193,8 +2174,6 @@ W^{(1)T} x
 \right)
 \]
 
-\vspace{0.6cm}
-
 \[
 z_{(l)}
 =
@@ -2204,11 +2183,7 @@ W_{(l)}^{T} z_{(l-1)}
 \right)
 \]
 
-\vspace{0.6cm}
-
 We call going from $x$ to $y$ the \textbf{forward pass} of the network.
-
-\vspace{1cm}
 
 \subsection{Training}
 
@@ -2224,11 +2199,7 @@ R(W)
 \|^2
 \]
 
-\vspace{0.6cm}
-
 In that case to solve it we will be using graident descent and the gradient will be an average of gradients as the empirical risk is an average over the training.
-
-\vspace{0.6cm}
 
 \[
 R(\{W^{(1)}\})
@@ -2242,7 +2213,7 @@ R(\{W^{(1)}\})
 \ell_i
 \]
 
-\vspace{0.8cm}
+\medskip
 
 For the $k$th dimension of the output layer $l$ we will have :
 
@@ -2254,9 +2225,8 @@ W_{(k,j)}^{(l)}
 z_{(j)}^{(l-1)}
 \]
 
-\vspace{0.8cm}
-
 The form for the partial derivative of $a$ is:
+
 \[
 \frac{
 \partial a^{(k)}_{(l)}
@@ -2266,8 +2236,6 @@ The form for the partial derivative of $a$ is:
 =
 z^{(j)}_{(l-1)}
 \]
-
-\vspace{0.8cm}
 
 Moreover we define to simplify :
 
@@ -2280,8 +2248,6 @@ Moreover we define to simplify :
 \partial a^{(k)}_{(l)}
 }
 \]
-
-\vspace{0.8cm}
 
 Consequently:, using chain rule:
 
@@ -2296,20 +2262,15 @@ Consequently:, using chain rule:
 z_{(j)}^{(l-1)}
 \]
 
-\vspace{0.8cm}
-
 And for the last layer we will have
+
 \[
 a_{(k)}^{(L)}
 =
 \hat{y}^{(k)}
 \]
 
-\vspace{0.6cm}
-
 Meaning that we can also go back from last $\delta^{(L)}$ to the previous ones (because we didn't exactly know all the values, and weights and factors)
-
-\vspace{0.4cm}
 
 \[
 \frac{
@@ -2322,11 +2283,9 @@ Meaning that we can also go back from last $\delta^{(L)}$ to the previous ones (
 z_{(l-1)}^{(j)}
 \]
 
-\vspace{0.6cm}
-
 Tzzo go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
 
-\vspace{0.8cm}
+\bigskip
 
 \begin{algbox}[title=Back propagation]
 \begin{enumerate}
@@ -2356,6 +2315,7 @@ Tzzo go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
 
 
 \subsection{Stochastic gradient descent}
+
 On va avoir des adaptations du gradient descent pour pouvoir le  corroborrer à notre problème.
 
 \[
@@ -2367,14 +2327,17 @@ W_k \leftarrow W_{k-1} - \eta \nabla \ell_{i(k)}(W_{k-1})
 \]
 
 \[
-\Rightarrow \text{but has problems with jumps as } i \text{ obtain a more reliable gradient estimate, SGD with mini-batches of } B \text{ examples}
+\Rightarrow \text{but has problems with jumps as } i \text{ obtain a more reliable}
+\]
+\[
+\text{gradient estimate, SGD with mini-batches of } B \text{ examples}
 \]
 
 \[
 W_k \leftarrow W_{k-1} - \eta \sum_{b=1}^{B} \nabla \ell_{(b,k)}(W_{k-1})
 \]
 
-\vspace{1.5cm}
+\bigskip
 
 \textbf{SGD extensions}
 
@@ -2395,6 +2358,7 @@ W \leftarrow W - \nu
 \]
 
 \textbf{For classification}
+
 We can use the softmax.
 
 \[
