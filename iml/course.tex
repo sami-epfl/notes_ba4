@@ -2355,15 +2355,6 @@ y_{i}^{(k)} \log \hat{y}^{(k)}_j
 
 \begin{defnbox}[title=Dimensionality Reduction]
 Given high-dimensional samples \(x_i \in \R^D\), find a low-dimensional representation \(y_i \in \R^d\) with \(d < D\).
-
-\textbf{Goals:}
-\begin{itemize}
-    \item Discover the data manifold
-    \item Obtain a compact, low-dimensional representation
-    \item Remove noise if possible
-\end{itemize}
-
-General mapping: \(y_i = f(x_i)\) \quad — \quad Linear mapping: \(y_i = W^T x_i\)
 \end{defnbox}
 
 \subsection{Example}
@@ -2375,12 +2366,12 @@ x_i \in \R^{536 \cdot 356 \cdot 3} = \R^{572448}
 Even though the image lives in a $572\,448$-dimensional space, the true degrees of freedom are much fewer.
 \end{exbox}
 
-\subsection{Manifold Intuition}
-
-\begin{rembox}[title=Manifold Hypothesis]
-Although data lives in \(\R^D\), it often concentrates near a low-dimensional manifold.
-
-\textbf{Example:} images of the digit 3 lie in a high-dimensional space \(32 \times 32\), but have only 3 degrees of freedom: 2 translations and 1 rotation.\end{rembox}
+Donc on a compris que pour traiter une image c'est troooop couteux, donc on va réduire sa dimension. Un autre exemple, si on prend un anneau en 3D, on ne perd que très peu d'informations en le regardant uniquement de face (comme en 2D). C'est notre motivation, on aura moins de dimensions à traiter, donc plus calcul plus rapide et plus faisable. 
+\begin{itemize}
+    \item \textbf{Principal Component Analysis (PCA):} simple rapide et interprétable, bien pour les structures linéaires
+    \item \textbf{Kernel PCA (KPCA):}  gérer les structures non linéaires, mais couteux en calcul mais il faut un bon kernel
+    \item \textbf{Autoencoders:} plus flexibles et capturent des relations complexes, plus compliquer à entrainer et moins interprétable
+\end{itemize}
 
 % ============================================================
 \section{Principal Component Analysis (PCA)}
@@ -2405,7 +2396,7 @@ Variance of the \(j\)-th projected dimension:
 \]
 
 \begin{propbox}[title=PCA Objective]
-PCA finds directions with large variance in order to keep most of the important signal and remove noise.
+Le PCA "cherche le point de vue" qui décrit le plus, donc où les données sont le plus éloignés, nos données. Si on reprend l'exemple de l'anneau, en le voyant de profil on voit une droit (très mauvaise interpretation), mais de face, on voit un cercle (excellente réduction de dimension)
 \end{propbox}
 
 \subsection{1D PCA}
