@@ -4,6 +4,7 @@
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+*.synctex.gz(busy)
 *.out
 *.toc
 course.pdf
