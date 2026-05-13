@@ -1866,9 +1866,8 @@ This re-weighting can be applied to any algorithm:
 \]
 \end{defnbox}
 
-\iffalse
 % ------------------------------------------------------------
-\newpage \section{Artificial neural networks (deep learning)}
+\newpage \section{Artificial neural networks \& MLP (deep learning)}
 % ------------------------------------------------------------
 
 \begin{rembox}[title=Pourquoi et quand utiliser les réseaux de neurones ?]
@@ -1885,145 +1884,13 @@ This re-weighting can be applied to any algorithm:
 
 \vspace{0.6cm}
 
-\subsection{Architecture}
-
-Un réseau de neurones est composé de couches successives de transformations affines suivies de non-linéarités :
-
-\[
-h^{(0)} = x \quad \text{(input)}
-\]
-\[
-h^{(l)} = \sigma\!\left(W^{(l)T} h^{(l-1)} + b^{(l)}\right) \quad l = 1, \dots, L
-\]
-\[
-\hat{y} = h^{(L)} \quad \text{(output)}
-\]
-
-Avec :
-\begin{itemize}
-    \item $W^{(l)} \in \mathbb{R}^{d_{l-1} \times d_l}$ : poids de la couche $l$
-    \item $b^{(l)} \in \mathbb{R}^{d_l}$ : biais de la couche $l$
-    \item $\sigma$ : fonction d'activation non-linéaire
-    \item $L$ : nombre de couches (profondeur du réseau)
-\end{itemize}
-
-\vspace{0.6cm}
-
-\begin{defnbox}[title=Fonctions d'activation courantes]
-\begin{itemize}
-    \item \textbf{Sigmoid :} $\sigma(z) = \frac{1}{1+e^{-z}} \in (0,1)$ -- utilisée pour les sorties binaires.
-
-    \item \textbf{ReLU :} $\sigma(z) = \max(0, z)$ -- la plus utilisée dans les couches cachées (évite le problème de vanishing gradient).
-
-    \item \textbf{Softmax :} $\sigma(z)^{(k)} = \frac{e^{z^{(k)}}}{\sum_j e^{z^{(j)}}}$ -- utilisée en sortie pour la classification multi-classe.
-\end{itemize}
-\end{defnbox}
-
-\vspace{0.6cm}
-
-\subsection{Training -- Backpropagation}
-
-La phase de training consiste à minimiser la loss function $R(W)$ par rapport à tous les paramètres $\{W^{(l)}, b^{(l)}\}$.
-
-\vspace{0.4cm}
-
-\begin{itemize}
-    \item \textbf{Régression :} $R(W) = \frac{1}{N}\sum_i \|\hat{y}_i - y_i\|^2$
-
-    \item \textbf{Classification :} $R(W) = -\frac{1}{N}\sum_i \sum_k y_i^{(k)} \ln \hat{y}_i^{(k)}$ (cross-entropy)
-\end{itemize}
-
-\vspace{0.5cm}
-
-Le gradient $\nabla_{W^{(l)}} R$ est calculé par \textbf{backpropagation} : on propage l'erreur depuis la sortie vers l'entrée via la règle de la chaîne, couche par couche.
-
-\vspace{0.4cm}
-
-On utilise ensuite la descente de gradient (ou une variante comme \textbf{Adam}) :
-
-\[
-W^{(l)} \leftarrow W^{(l)} - \eta \, \nabla_{W^{(l)}} R
-\]
-
-\vspace{0.6cm}
-
-\begin{rembox}[title=Stochastic Gradient Descent (SGD)]
-Plutôt que de calculer le gradient sur tout le dataset (coûteux), on estime le gradient sur un \textbf{mini-batch} de $B$ samples à chaque itération. Cela accélère l'entraînement et permet de traiter de grands datasets.
-\end{rembox}
-\fi
-% ============================================================
-\chapter{Unsupervised ML}
-% ============================================================
-
-\section{Dimensionality reduction}
-
-\newpage \section{k-Means Clustering}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\vspace{8cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% ------------------------------------------------------------
-\newpage \section{Introduction to multilayer perceptron model (MLP)}
-% ------------------------------------------------------------
-
 \subsection{Parametric feature expansion}
-Maintenant que on a vu que on peut faire des algorithms, des trainings plus compliqués mais aussi plus précis en ajoutant des bias, puis on a régularisé, puis on a mis des sécurité pour éviter l'underflow ou encore on a fait du polynomial feature expansion qui nous permettait de tester différentes manières de prendre un sample et de travailler avec des combinaisons, des puissances des éléments du vecteur d'un même input et de le pousser plus loin et plus facilement avec les kernel methods.
+
+Plutôt que de définir manuellement $\phi$ (comme dans le polynomial feature expansion), on va \textbf{apprendre} la meilleure expansion possible. On applique une transformation linéaire puis une non-linéarité, et on laisse le modèle optimiser les paramètres de cette transformation.
 
 \medskip
 
-Maintenant tout ça c'est bien sympa mais on veut aller encore plus loin et faire un peu mieux quand même, ajouter encore de la précision, là où le polynomial feature expansion nous permettait de suivre, d'approximer une courbe, là on va vouloir approximer plus, grand, plus complexe (l'exemple de la heatmap).
-
-\medskip
-
-Concrement, on veut faire du linéaire du non-linéaire, mais on ne veut pas faire du polynomial feature expansion manuellement. De manière plus intelligente, on va faire apprendre à notre modèle le meilleur feature expansion possible aussi.
-
-\bigskip
-
-En fait on va appliquer un modèle linéaire, puis ajouter de la non-linearity avec la fonction et ensuite on va résoudre comme linéairement.
-
-\medskip
-
-D'abord on définit pour nous aider à simplifier plus tard :
+On définit la pré-activation de la première couche cachée :
 
 \[
 a_{(1)}
@@ -2042,7 +1909,7 @@ a_{(1)}^{(M)}
 \in \mathbb{R}^{M \times 1}
 \]
 
-Alors on va définir notre parametric feature expansion qui va revenir à appliquer une fonction sur les résultats du produit $W$ et $x$ soit :
+La \textbf{parametric feature expansion} consiste à appliquer une fonction d'activation $f$ sur chaque pré-activation :
 
 \[
 x
@@ -2066,15 +1933,15 @@ x
 
 Avec :
 \begin{itemize}
-    \item $f$ the activation function (ex: sigmoid, hyperbolic tangent...)
-    \item $M$ the number of hidden units (the dimension of the hidden representation)
-    \item $W_{(1)}$ the weights of the first layer (the parameters of the feature expansion)
-    \item $z$ the hidden representation (the output of the feature expansion)
+    \item $f$ : fonction d'activation (ex: sigmoid, tangente hyperbolique, ReLU...)
+    \item $M$ : nombre d'unités cachées (dimension de la représentation interne)
+    \item $W_{(1)}$ : poids de la première couche (paramètres de la feature expansion)
+    \item $z_{(1)}$ : représentation cachée (output de la feature expansion)
 \end{itemize}
 
 \medskip
 
-Par conséquent, avec ces changements on a :
+La prédiction finale est une combinaison linéaire des features apprises :
 
 \begin{align*}
 \hat{y}
@@ -2093,7 +1960,6 @@ W^{(i,1)}_{(1)}x
 \begin{defnbox}[title=Universal approximation]
 We can approximate any continuous function with a linear combination of translated/scaled ReLU functions $f(\cdot)$
 \end{defnbox}
-Maintenant, on peut étendre la formule pour montrer un peu à quoi ça ressemble un peu comme Taylor ou Fourier...
 
 \begin{minipage}{0.58\textwidth}
 \begin{align*}
@@ -2145,27 +2011,42 @@ W^{(3,1)}_{(1)}x
 \includegraphics[width=\textwidth]{images/universal-appro-after.png}
 \end{minipage}
 
-\subsection{Dealing with D > 1}
-Dans la majorité des cas il y a plusieurs features, comment faire ?
+\subsection{Architecture}
+
+Un réseau de neurones est composé de couches successives de transformations affines suivies de non-linéarités.
+
+Pour plusieurs features ($D > 1$) :
 \[
 a_{(1)} = W_{(1)}^T
 \begin{pmatrix}1 \\ x_1 \\ \vdots \\ x_D\end{pmatrix}
 \in \mathbb{R}^{M \times 1} \quad\text{and}\quad
 z_{(1)} = f\!\left(a_{(1)}\right) \in \mathbb{R}^{M \times 1}
-\] 
+\]
 
-\subsection{Dealing with C > 1}
-De même, généralement, plusieurs output sont calculées, comment faire ? On va remplacer $w_{(2)}$ par une matrice $W_{(2)} \in \mathbb{R}^{M \times C}$.
+Pour plusieurs sorties ($C > 1$), on remplace $w_{(2)}$ par une matrice $W_{(2)} \in \mathbb{R}^{M \times C}$ :
 \[\hat{y} = W_{(2)}^T z_{(1)} \in \mathbb{R}^{C \times 1}\]
 
-The resulting simple artifical neural network with one hidden layer can be depicted as shown below:
 \begin{center}
 \includegraphics[width=0.4\textwidth]{images/simple-artifical-nn.png}
 \end{center}
 
-\subsection{Multilayer perceptron (MLP)}
-En prenant M très grand, on remarque que la fonction devient de plus en plus précise, mais il se passe quoi si on ajoute des couches intermédiaires ?
+\subsection{Activation functions}
 
+\begin{defnbox}[title=Fonctions d'activation courantes]
+\begin{itemize}
+    \item \textbf{Sigmoid :} $\sigma(z) = \frac{1}{1+e^{-z}} \in (0,1)$ -- utilisée pour les sorties binaires.
+
+    \item \textbf{ReLU :} $\sigma(z) = \max(0, z)$ -- la plus utilisée dans les couches cachées (évite le problème de vanishing gradient).
+
+    \item \textbf{Softmax :} $\sigma(z)^{(k)} = \frac{e^{z^{(k)}}}{\sum_j e^{z^{(j)}}}$ -- utilisée en sortie pour la classification multi-classe.
+\end{itemize}
+\end{defnbox}
+
+\vspace{0.4cm}
+
+\subsection{Multilayer perceptron (MLP)}
+
+En ajoutant des couches intermédiaires, le modèle apprend des représentations de plus en plus abstraites :
 
 \begin{minipage}{0.38\textwidth}
 \[
@@ -2182,8 +2063,7 @@ z_{(l)} &= f\!\left(W_{(l)}^{T}z_{(l-1)}\right)
 \includegraphics[width=\textwidth]{images/multilayer-perceptron.png}
 \end{minipage}
 
-
-We call going from $x$ to $y$ the \textbf{forward pass} of the network. Finally:
+We call going from $x$ to $\hat{y}$ the \textbf{forward pass} of the network:
 
 \[
 \hat{y} = W_{(L)}^T z_{(L-1)}
@@ -2191,17 +2071,24 @@ We call going from $x$ to $y$ the \textbf{forward pass} of the network. Finally:
 \]
 
 \begin{itemize}
-    \item This is not very convenient, and it is easier to simply think of $\hat{y}$ as a function of all parameters
+    \item It is easier to simply think of $\hat{y}$ as a function of all parameters:
     \[
-    \hat{y} = \hat{y}(\mathbf{W})
+    \hat{y} = \hat{y}(\mathbf{W}), \quad \mathbf{W} = \left\{ W_{(l)} \right\}
     \]
-    where $\mathbf{W} = \left\{ W_{(l)} \right\}$ encompasses the parameters of all the layers
 \end{itemize}
 
-\subsection{Training}
+\subsection{Training -- Backpropagation}
+
 \begin{center}
 \includegraphics[width=0.7\textwidth]{images/mlp-explanation.png}
 \end{center}
+
+La phase d'entraînement consiste à minimiser la loss function $R(\mathbf{W})$ par rapport à tous les paramètres $\{W_{(l)}\}$ :
+
+\begin{itemize}
+    \item \textbf{Régression :} $R(\mathbf{W}) = \frac{1}{N}\sum_i \|\hat{y}_i - y_i\|^2$
+    \item \textbf{Classification :} $R(\mathbf{W}) = -\frac{1}{N}\sum_i \sum_k y_i^{(k)} \ln \hat{y}_i^{(k)}$ (cross-entropy)
+\end{itemize}
 
 \begin{minipage}{0.48\textwidth}
 \centering
@@ -2282,28 +2169,10 @@ z_{(l-1)}
 \]
 
 \end{minipage}
-For regression, the empirical risk is typically defined using the square loss:
-
-\[
-R(W)
-=
-\frac{1}{N}
-\sum_{i=1}^{N}
-\|
-\hat{y}_i(W)-y_i
-\|^2
-\]
-
-where:
-\begin{itemize}
-    \item $N$ is the number of training samples,
-    \item $\hat{y}_i(W)$ is the prediction of the network for sample $i$,
-    \item $y_i$ is the target value.
-\end{itemize}
 
 \medskip
 
-Because the empirical risk is an average over the training samples, its gradient is also an average of gradients:
+Puisque le risque empirique est une moyenne, on peut se concentrer sur le gradient d'un seul terme $\ell_i$ :
 
 \[
 R(\{W_{(l)}\})
@@ -2317,25 +2186,7 @@ R(\{W_{(l)}\})
 \ell_i
 \]
 
-Thus, to compute the gradient of the full empirical risk, we can focus on the gradient of a single loss term $\ell_i$.
-
-\medskip
-
-For a neuron $k$ in layer $l$, define the pre-activation value:
-
-\[
-a^{(k)}_{(l)}
-=
-\sum_j
-W^{(k,j)}_{(l)}
-z^{(j)}_{(l-1)}
-\]
-
-which corresponds to the weighted sum of the outputs from the previous layer.
-
-\medskip
-
-The quantity
+On définit la sensibilité de la loss à la pré-activation du neurone $(k,l)$ :
 
 \[
 \delta^{(k)}_{(l)}
@@ -2344,11 +2195,7 @@ The quantity
 {\partial a^{(k)}_{(l)}}
 \]
 
-measures how sensitive the loss is to the pre-activation of neuron $(k,l)$.
-
-\medskip
-
-Since $a^{(k)}_{(l)}$ depends linearly on the weights, we have:
+Puisque $a^{(k)}_{(l)}$ dépend linéairement des poids :
 
 \[
 \frac{\partial a^{(k)}_{(l)}}
@@ -2357,7 +2204,7 @@ Since $a^{(k)}_{(l)}$ depends linearly on the weights, we have:
 z^{(j)}_{(l-1)}
 \]
 
-Finally, by applying the chain rule:
+Et par la règle de la chaîne :
 
 \[
 \frac{\partial \ell_i}
@@ -2367,7 +2214,11 @@ Finally, by applying the chain rule:
 z^{(j)}_{(l-1)}
 \]
 
-To go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
+Le gradient $\nabla_{W^{(l)}} R$ est calculé par \textbf{backpropagation} en propagant l'erreur depuis la sortie vers l'entrée. On met ensuite à jour les paramètres (ou une variante comme \textbf{Adam}) :
+
+\[
+W^{(l)} \leftarrow W^{(l)} - \eta \, \nabla_{W^{(l)}} R
+\]
 
 \textbf{VIDEO INCROYABLE}: \url{https://www.youtube.com/watch?v=tIeHLnjs5U8}
 
@@ -2375,7 +2226,7 @@ To go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
 
 \begin{algbox}[title=Back propagation]
 \begin{enumerate}
-    \item Propagate $x_i$ forward through the network (using gradient descent)
+    \item Propagate $x_i$ forward through the network (forward pass)
 
     \item Compute $\delta^{(L)}$ depending on the loss
 
@@ -2396,29 +2247,14 @@ To go back we will use a special algorithm \textbf{BACK PROPAGATION!!!!}
 \end{enumerate}
 \end{algbox}
 
-
-
-
-
 \subsection{Stochastic gradient descent}
 
 Vidéo qui explique très bien [3 mins]: \url{https://www.youtube.com/watch?v=UmathvAKj80}
 
-On va avoir des adaptations du gradient descent pour pouvoir le  corroborrer à notre problème.
-
-\[
-\text{inspired by the gradient descent -- the gradient is sample in each iteration.}
-\]
+Plutôt que de calculer le gradient sur tout le dataset (coûteux), on estime le gradient sur un \textbf{mini-batch} de $B$ samples à chaque itération :
 
 \[
 W_k \leftarrow W_{k-1} - \eta \nabla \ell_{i(k)}(W_{k-1})
-\]
-
-\[
-\Rightarrow \text{but has problems with jumps as } i \text{ obtain a more reliable}
-\]
-\[
-\text{gradient estimate, SGD with mini-batches of } B \text{ examples}
 \]
 
 \[
@@ -2427,11 +2263,7 @@ W_k \leftarrow W_{k-1} - \eta \sum_{b=1}^{B} \nabla \ell_{(b,k)}(W_{k-1})
 
 \bigskip
 
-\textbf{SGD extensions}
-
-\[
-\text{momentum } \Rightarrow \text{ add inertia the parameter updates}
-\]
+\textbf{SGD avec momentum} -- on ajoute de l'inertie aux mises à jour pour accélérer la convergence :
 
 \[
 \nu \leftarrow \gamma \nu + \eta\nabla R(W)
@@ -2441,13 +2273,11 @@ W_k \leftarrow W_{k-1} - \eta \sum_{b=1}^{B} \nabla \ell_{(b,k)}(W_{k-1})
 W \leftarrow W - \nu
 \]
 
-\[
-\text{with } \gamma>0 \Rightarrow \text{ accelerates if the gradient does not change too much}
-\]
+avec $\gamma > 0$ : accélère si le gradient ne change pas trop.
 
-\textbf{For classification}
+\medskip
 
-We can use the softmax.
+\textbf{Pour la classification}, on utilise la softmax en sortie :
 
 \[
 \hat{y}^{(k)} =
@@ -2463,14 +2293,13 @@ We can use the softmax.
 w_{(L)j} \text{ : column of } W_{(L)}
 \]
 
-In this case:
+combinée à la cross-entropie :
 
 \[
 R(W) := - \frac{1}{N}
 \sum_{i=1}^{N} \sum_{j=1}^{C}
-y_{i}^(k) \log \hat{y}^{(k)}_j
+y_{i}^{(k)} \log \hat{y}^{(k)}_j
 \]
-
 
 \begin{itemize}
     \item TensorFlow Playground Regression Demo:
@@ -2515,6 +2344,14 @@ y_{i}^(k) \log \hat{y}^{(k)}_j
 
 
 
+
+% ============================================================
+\chapter{Unsupervised ML}
+% ============================================================
+
+\section{Dimensionality reduction}
+
+\newpage \section{k-Means Clustering}
 
 
 
