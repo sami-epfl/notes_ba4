@@ -50,33 +50,10 @@ Each subject folder contains `cheatsheet.tex` (the cheat sheet) and `course.tex`
 
 ## Authors 
 
-### ✨👑 Sami Kabbaj 👑✨
-
-━━━━━━━━━━━━━━━━━━━━━━━  
-🚀💻🧠⚙️🧩🔥💀⌐■_■  
-━━━━━━━━━━━━━━━━━━━━━━━  
-
-🚀 **Software Engineer** | 🧠 **Builder** | ⚙️ **Problem Solver**  
-
-━━━━━━━━━━━━━━━━━━━━━━━  
-🔥🔥🔥━━━━━━━━━━━━━━━🔥🔥🔥  
-━━━━━━━━━━━━━━━━━━━━━━━  
-
-[![GitHub](https://img.shields.io/badge/GitHub-Sami%20Kabbaj-181717?logo=github&style=for-the-badge)](https://github.com/SamiPro206)
-
-━━━━━━━━━━━━━━━━━━━━━━━  
-⚡💀⚡💀⚡💀⚡💀⚡💀⚡  
-━━━━━━━━━━━━━━━━━━━━━━━  
-
-⌐■_■  ━━━  (▀̿Ĺ̯▀̿ ̿)  ━━━  ■_■⌐  
-
-━━━━━━━━━━━━━━━━━━━━━━━  
-🔥━━━━━━━━━━━━━━━━━━━━🔥  
-━━━━━━━━━━━━━━━━━━━━━━━  
-
 **Salim Chaoui El Faiz**  
 🔗 [GitHub – Salim Chaoui El Faiz](https://github.com/SalimThePokemonMaster)
 
-
+**Sami Kabbaj**  
+🔗 [GitHub – Sami Kabbaj](https://github.com/SamiPro206)
 
 ---
