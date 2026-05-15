@@ -343,6 +343,7 @@ By the max-flow min-cut theorem, it also equals the minimum number of edges whos
 removal disconnects $s$ from $t$.
 \end{thmbox}
 
+
 \chapter{Quizzes}
 
 \section{Quiz \#7}
@@ -391,5 +392,36 @@ capacité de chaque arête = 1
 La capacité 1 force chaque arête à n'être empruntée qu'une fois. Le max flow donne
 alors directement le nombre maximum de chemins arête-disjoints.
 \end{exbox}
+
+\section{Quiz \#9}
+
+\subsection{Bellman-Ford}
+
+\begin{enumerate}
+    \item \textbf{Pourquoi $|V|-1$ itérations sont suffisantes :} Le nombre $|V|-1$ correspond au nombre maximal d'arêtes dans un chemin simple. Après $|V|-1$ itérations, l'algorithme a nécessairement trouvé tous les plus courts chemins ne contenant aucun cycle.
+
+    \item \textbf{Détection des cycles négatifs :} Si le coût d'un chemin peut encore être réduit lors de la $|V|$-ième itération, cela implique que le plus court chemin contient plus de $|V|-1$ arêtes. Ceci n'est possible que si le chemin contient un cycle, et pour que le coût diminue, ce cycle doit être négatif.
+\end{enumerate}
+
+\subsubsection{Problème d'examen vu en cours}
+
+\begin{exbox}[title=Problem solving (exam)]
+\includegraphics[width=\linewidth]{images/bellman-problem.png}
+\end{exbox}
+
+\paragraph{Idée.} La carte est cohérente si et seulement si tout cycle $C$ du graphe vérifie $W(C) = 0$. On décompose cette condition en deux :
+\[
+\forall C : W(C) = 0 \iff \bigl(\forall C : W(C) \geq 0\bigr) \;\textbf{ET}\; \bigl(\forall C : W(C) \leq 0\bigr)
+\]
+Chacune se vérifie avec Bellman-Ford en détectant l'absence de cycle négatif : une fois avec les poids $w$, une fois avec $-w$.
+
+\paragraph{Pourquoi $|V|-1$ itérations suffisent.}
+Un plus court chemin sans cycle a au plus $|V|-1$ arêtes. Après $|V|-1$ itérations de relaxation, toutes les distances correctes sont calculées.
+\begin{itemize}
+    \item \textbf{Pas de cycle négatif :} tout est stabilisé après $|V|-1$ itérations ; une $|V|$-ème ne relaxera plus rien.
+    \item \textbf{Cycle négatif présent :} on peut indéfiniment réduire une distance en repassant par le cycle, donc la $|V|$-ème itération relaxe encore au moins une arête.
+\end{itemize}
+
+En exécutant Bellman-Ford deux fois (une fois avec $w$, une fois avec $-w$), la solution complète reste $O(|V| \cdot |E|)$.
 
 \end{document}
