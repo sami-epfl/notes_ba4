@@ -96,27 +96,32 @@
     }
 
     for (const [id, n] of Object.entries(NODES)) {
-      const isSource  = id === SOURCE;
-      const isHighlit = step.nodeHighlight && step.nodeHighlight.has(id);
-      const label     = step.nodeLabels ? (step.nodeLabels[id] ?? id) : id;
+      const isSource    = id === SOURCE;
+      const isHighlit   = step.nodeHighlight   && step.nodeHighlight.has(id);
+      const isDone      = step.nodeDone        && step.nodeDone.has(id);
+      const isExtracted = step.nodeExtracted  === id;
+      const label       = step.nodeLabels ? (step.nodeLabels[id] ?? id) : id;
+
+      // priority: updated (red) > extracted (gold) > finalized (blue) > source (pink) > default
+      let fill, stroke, lw, textColor;
+      if      (isHighlit)   { fill = '#fff0f0'; stroke = '#bb0000'; lw = 2.4; textColor = '#bb0000'; }
+      else if (isExtracted) { fill = '#fffbe6'; stroke = '#cc8800'; lw = 2.4; textColor = '#cc8800'; }
+      else if (isDone)      { fill = '#dce8ff'; stroke = '#5580cc'; lw = 2.0; textColor = '#3355aa'; }
+      else if (isSource)    { fill = '#f8c8c8'; stroke = '#222222'; lw = 1.5; textColor = '#111111'; }
+      else                  { fill = '#ffffff'; stroke = '#222222'; lw = 1.5; textColor = '#111111'; }
 
       ctx.beginPath();
       ctx.arc(n.x, n.y, R, 0, 2 * Math.PI);
-      ctx.fillStyle   = isSource ? '#f8c8c8' : isHighlit ? '#fff0f0' : '#ffffff';
-      ctx.fill();
-      ctx.strokeStyle = isHighlit ? '#bb0000' : '#222222';
-      ctx.lineWidth   = isHighlit ? 2.4 : 1.5;
-      ctx.stroke();
+      ctx.fillStyle = fill; ctx.fill();
+      ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke();
 
-      ctx.font         = 'bold 13px Segoe UI';
-      ctx.fillStyle    = isHighlit ? '#bb0000' : '#111111';
-      ctx.textAlign    = 'center';
+      ctx.font = 'bold 13px Segoe UI';
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(label, n.x, n.y);
     }
   }
-
-  // ── Public init ──────────────────────────────────────────────────────────
 
   // ── Pseudocode panel ─────────────────────────────────────────────────────
   // Populated once from the PSEUDOCODE global (if defined), then only the
