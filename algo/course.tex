@@ -424,4 +424,30 @@ Un plus court chemin sans cycle a au plus $|V|-1$ arêtes. Après $|V|-1$ itéra
 
 En exécutant Bellman-Ford deux fois (une fois avec $w$, une fois avec $-w$), la solution complète reste $O(|V| \cdot |E|)$.
 
+\subsection{Dijkstra}
+
+\begin{exbox}[title=Ce qu'il faut retenir]
+\small\raggedright
+
+\textbf{L'idée centrale.}
+A chaque étape on finalise le sommet non-visité dont la distance
+estimée est minimale. Cette distance est déjà optimale — car tous les poids sont
+$\geq 0$, aucun chemin futur ne pourra la réduire.
+C'est exactement ce qui distingue Dijkstra de Bellman-Ford : pas de deuxième chance,
+pas de retour en arrière.
+
+\textbf{Ce qui se passe à chaque itération.}
+\begin{enumerate}
+  \item On extrait $u = \arg\min_{v \in Q}\, v.d$ de la file.
+  \item On l'ajoute à $S$ — sa distance est maintenant définitive.
+  \item Pour chaque voisin $v$ de $u$ : si $u.d + w(u,v) < v.d$, on met à jour
+        $v.d$ \emph{et} $v.\pi$.
+\end{enumerate}
+
+\textbf{Pourquoi ça ne marche pas avec des poids négatifs.}
+Si une arête négative $(x, y)$ existe, un sommet $x$ déjà dans $S$ pourrait offrir un
+chemin plus court vers $y$ mais $y$ est peut-être déjà finalisé.
+
+\end{exbox}
+
 \end{document}
