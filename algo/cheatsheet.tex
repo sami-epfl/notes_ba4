@@ -248,25 +248,31 @@ Run a $|V|$-th iteration: if any edge $(u,v)$ can still be relaxed, the shortest
 $\Theta(E\cdot V)$. Good for distributed routing: each vertex repeatedly asks neighbors for best path.
 \end{prop}
 
-\newpage
-% needs to be checked:
-
 \subsection{Dijkstra's Algorithm}
-Non-negative weights only. Greedy (essentially weighted BFS, like Prim's).
+Non-negative weights only. (an algo like Prim's)
 
 \begin{lstlisting}
 DIJKSTRA(G, w, s)
     INIT-SINGLE-SOURCE(G, s)
-    Q = G.V   // min-heap on d
+    S = {}
+    Q = G.V   // min-priority queue (sorted by d(v))
     while Q != {}:
         u = EXTRACT-MIN(Q)
-        for v in G.Adj[u]: RELAX(u, v, w)
+        S = S U {u}
+        for each vertex v in G.Adj[u]:
+            RELAX(u, v, w)
 \end{lstlisting}
 
+\begin{thm}[title=Loop invariant (correctness)]
+At the start of each iteration, we have for all $v \in S$ that the distance $v.d$ from $s$ to $v$ is equal to the shortest path from $s$ to $v$.
+\end{thm}
+
 \begin{prop}[title=Runtime]
-$O(E\lg V)$ with binary heap. $O(V\lg V+E)$ with Fibonacci heap.
+The runtime is the same as Prim's algorithm.
 \end{prop}
 
+\newpage
+% needs to be checked:
 % ============================================================
 \section{Probabilistic Analysis}
 
