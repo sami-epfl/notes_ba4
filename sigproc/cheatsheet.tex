@@ -755,7 +755,8 @@ Constant group delay $\Leftrightarrow$ linear phase. All realizable linear-phase
 \subsection{Running Examples}
 
 \begin{defn}[title=Moving Average (MA)]
-\[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k],\quad h[n]=\begin{cases}\tfrac{1}{M}&0\le n<M\\0&\text{else}\end{cases}\]
+\[y[n]=\frac{1}{M}\sum_{k=0}^{M-1}x[n-k]\]
+$h[n]=\tfrac{1}{M}$ for $0\le n<M$, else $0$.
 Causal FIR $\Rightarrow$ always BIBO stable. Cost: $M{-}1$ additions $+$ 1 mult per sample.\\
 \textbf{Zero-centered} (noncausal): $y[n]=\frac{1}{2L+1}\sum_{k=-L}^{L}x[n-k]$ — no lag; causal up to delay $L$.
 \end{defn}
@@ -1072,9 +1073,14 @@ f = $\#$rep/s = $Hz$ ; $\Omega = 2\pi f$
 A CT signal is $F_S$-BL $\Leftrightarrow$ X(f) for $|f|>F_S/2$
 \end{defn}
 
-\begin{prop}[title=Support of a function]
+\begin{defn}[title=Support of a function]
 The interval where the function is non-trivially zero
-\end{prop}
+\end{defn}
+
+\begin{thm}[title=Sampling theorem (Shannon--Nyquist)]
+Any signal $x(t)$ whose highest frequency component is $F_N$ Hz can be sampled with \textbf{no loss of information} using a sampling frequency:
+\[F_s \ge 2F_N \quad \left(\text{i.e.\ } T_s \le \tfrac{1}{2F_N}\right)\]
+\end{thm}
 
 \subsection{Interpolation x[n] → x(t)}
 \begin{prop}[title=Interpolation requirement]
@@ -1084,6 +1090,32 @@ The interval where the function is non-trivially zero
   \item make sure x(t) is smooth
 \end{itemize}
 \end{prop}
+
+\begin{prop}[title=Interpolations pros and cons]
+\kv{Polynomial}{\textbf{+} $C^\infty$ (max.\ smooth) \ \textbf{--} kernels $L_n^{(N)}$ depend on $N$}\\
+\kv{Local}{\textbf{+} kernel indep.\ of $N$ \ \textbf{--} lacks smoothness}
+\end{prop}
+
+\begin{thm}[title=Remarkable result]
+\[\lim_{N\to\infty} L_n^{(N)}(t) = \mathrm{sinc}(t-n)\]
+\end{thm}
+
+\begin{defn}[title=Sinc interpolation]
+\[x(t)=\sum_{n\in\Z} x[n]\,\mathrm{sinc}(t-n)\]
+$\mathrm{sinc}(m-n)=\delta[m-n]$, $\forall\, m,n\in\Z$\\
+\textbf{CTFT pair} ($T_s=1/F_s$)\textbf{:}
+\[\varphi(t)=\mathrm{sinc}\!\left(\tfrac{t}{T_s}\right)\longleftrightarrow\Phi(f)=\tfrac{1}{F_s}\,\mathrm{rect}\!\left(\tfrac{f}{F_s}\right)\]
+\end{defn}
+
+\begin{defn}[title=Raw Sampling]
+\[x[n] = x(nT_s)\]
+\includegraphics[width=\linewidth]{images/raw_sampling.png}
+\end{defn}
+
+\begin{defn}[title=Sinc Sampling]
+\[x[n] = \left\langle \mathrm{sinc}\!\left(\frac{t - nT_s}{T_s}\right),\, x(t)\right\rangle\]
+\includegraphics[width=\linewidth]{images/sinc_sampling.png}
+\end{defn}
 
 \newpage
 % ============================================================
