@@ -70,3 +70,35 @@ Training an encoder-decoder model
 **Limitations:**
 - State represented as a single vector —> Massive compression of information
 - Challenging to learn long-range dependencies/interactions
+
+Dans le seq2seq classique, toute la phrase d'entrée était compressée dans un seul vecteur C. C'est comme si tu devais traduire un paragraphe après l'avoir lu une seule fois et n'avoir le droit de garder qu'une seule phrase de résumé en mémoire. Pour les phrases longues, ça devient catastrophique.
+
+**Incorporating attention:**
+- Recall: At each encoder time step, there is an output of the RNN!
+- Idea: Use the output of the Decoder LSTM to compute an attention (mixture) over all the h_t^e outputs of the encoder LSTM
+- Intuition: focus on different parts of the input at each time step
+
+![alt text](temp/incorporating-attention.png)
+
+![alt text](temp/attention-function.png)
+
+![alt text](temp/attention-functions.png)
+
+**Interpretability:**
+- Main idea: attention can be visualised based on the score given to each encoder hidden state
+- What is focused on when each word is generated ?
+- Training with attention gives us implicit alignment for free!
+
+![alt text](temp/interpretability.png)
+
+**Problem: Encoder is recurrent**
+- Encoder: not parallelized because the previous state needs to be computed before the next one
+-> **Solution:** Transformer: encode sequences with self-attention
+
+En amélioré j'imagine:
+- masked multi-head self-attention
+- Cross attention
+
+### GPT: Generative Pretrained Transformer
+ah oui quand même:
+![alt text](temp/gpt-scale.png)
